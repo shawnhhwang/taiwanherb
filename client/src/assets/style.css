@@ -1,0 +1,919 @@
+/**
+ * client/src/assets/style.css
+ * 台灣本草東方植物圖鑑美學樣式表
+ */
+
+:root {
+  --primary-deep: #1b4332;
+  --primary: #2d6a4f;
+  --primary-light: #40916c;
+  --primary-pale: #e9f5ee;
+  
+  --amber-deep: #8f531f;
+  --amber: #b07d48;
+  --amber-light: #f5eedf;
+  
+  --bg-parchment: #faf7f2;
+  --bg-card: #ffffff;
+  --bg-subtle: #f2eee6;
+  
+  --ink-heavy: #1c2621;
+  --ink-body: #34433c;
+  --ink-muted: #6e7f76;
+  --border-light: #e4ddd3;
+  --border-card: #e8e2d8;
+  
+  --shadow-sm: 0 2px 8px rgba(27, 67, 50, 0.04);
+  --shadow-md: 0 6px 20px rgba(27, 67, 50, 0.08);
+  --shadow-lg: 0 14px 34px rgba(27, 67, 50, 0.12);
+
+  --font-serif: 'Noto Serif TC', serif, Georgia, 'Times New Roman';
+  --font-sans: 'Noto Sans TC', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-parchment);
+  color: var(--ink-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--primary-deep);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* 佈局容器 */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 頂部導覽列 */
+.top-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.brand-seal {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+  color: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 4px 10px rgba(45, 106, 79, 0.3);
+}
+
+.brand-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--primary-deep);
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.brand-subtitle {
+  font-size: 11px;
+  color: var(--ink-muted);
+  letter-spacing: 1px;
+}
+
+/* 導覽列搜尋區 */
+.nav-search-container {
+  flex: 1;
+  max-width: 500px;
+  position: relative;
+}
+
+.nav-search-input {
+  width: 100%;
+  padding: 10px 16px 10px 42px;
+  background: var(--bg-parchment);
+  border: 1px solid var(--border-light);
+  border-radius: 24px;
+  font-size: 14px;
+  color: var(--ink-heavy);
+  transition: all 0.25s ease;
+}
+
+.nav-search-input:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
+}
+
+.nav-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-muted);
+  pointer-events: none;
+}
+
+.nav-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-muted);
+  font-size: 14px;
+  padding: 4px;
+  border-radius: 50%;
+}
+
+.nav-search-clear:hover {
+  color: var(--ink-heavy);
+}
+
+/* 頂部操作按鈕 */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-pill {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-pill-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn-pill-primary:hover {
+  background: var(--primary-deep);
+  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.25);
+}
+
+.btn-pill-subtle {
+  background: var(--bg-subtle);
+  color: var(--ink-body);
+  border: 1px solid var(--border-light);
+}
+
+.btn-pill-subtle:hover {
+  background: #fff;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* 狀態徽章 */
+.health-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 500;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  cursor: pointer;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #10b981;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* 主體區塊 */
+.main-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 28px;
+  width: 100%;
+  flex: 1;
+}
+
+/* 側邊篩選欄 */
+.sidebar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 16px;
+  padding: 20px;
+  height: fit-content;
+  position: sticky;
+  top: 86px;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-deep);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.sidebar-reset-btn {
+  font-size: 12px;
+  color: var(--amber-deep);
+  font-weight: normal;
+  text-decoration: underline;
+}
+
+.filter-group {
+  margin-bottom: 22px;
+}
+
+.filter-heading {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-heavy);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: var(--ink-body);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.category-item:hover {
+  background: var(--bg-subtle);
+  color: var(--primary-deep);
+}
+
+.category-item.active {
+  background: var(--primary-pale);
+  color: var(--primary-deep);
+  font-weight: 700;
+}
+
+.category-count {
+  font-size: 11px;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 7px;
+  border-radius: 10px;
+  color: var(--ink-muted);
+}
+
+.category-item.active .category-count {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* 標籤雲 (藥性、歸經) */
+.chip-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-chip {
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-parchment);
+  color: var(--ink-body);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.filter-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* 內容區 */
+.content-area {
+  min-width: 0;
+}
+
+/* 標題與工具列 */
+.catalog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.catalog-title-group h2 {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  color: var(--primary-deep);
+  font-weight: 800;
+}
+
+.catalog-stats {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.catalog-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.select-custom {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  font-size: 13px;
+  color: var(--ink-body);
+  outline: none;
+}
+
+.view-toggle-btn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.view-toggle-btn.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+/* 卡片網格 */
+.herbs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 22px;
+  margin-bottom: 32px;
+}
+
+/* 單一藥材卡片 */
+.herb-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  cursor: pointer;
+}
+
+.herb-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(45, 106, 79, 0.4);
+}
+
+.herb-card-img-wrap {
+  width: 100%;
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-subtle);
+}
+
+.herb-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.herb-card:hover .herb-card-img {
+  transform: scale(1.05);
+}
+
+.herb-card-category-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(27, 67, 50, 0.85);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+}
+
+.herb-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.herb-card-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.herb-card-name {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--primary-deep);
+}
+
+.herb-card-scientific {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--ink-muted);
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.herb-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+/* 藥性徽章樣式 */
+.badge-nature {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.nature-cold { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+.nature-cool { background: #e0f7fa; color: #00796b; border: 1px solid #b2dfdb; }
+.nature-neutral { background: #edf5f0; color: #2d6a4f; border: 1px solid #cce3d6; }
+.nature-warm { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+.nature-hot { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+
+/* 歸經徽章 */
+.badge-channel {
+  font-size: 11px;
+  background: var(--bg-parchment);
+  color: var(--ink-body);
+  border: 1px solid var(--border-light);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.herb-card-efficacy {
+  font-size: 13px;
+  color: var(--ink-body);
+  line-height: 1.5;
+  margin-bottom: 14px;
+  flex: 1;
+}
+
+.herb-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-light);
+}
+
+.btn-card-action {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-compare-toggle {
+  font-size: 11.5px;
+  color: var(--amber-deep);
+  border: 1px dashed var(--amber);
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--amber-light);
+}
+
+.btn-compare-toggle.active {
+  background: var(--amber);
+  color: #fff;
+  border-style: solid;
+}
+
+/* 詳情頁 (Detail View) 展卷典雅風格 */
+.detail-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: var(--shadow-md);
+}
+
+.detail-back-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.detail-breadcrumbs {
+  font-size: 13px;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 36px;
+}
+
+.detail-image-box {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+}
+
+.detail-image {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  display: block;
+}
+
+.detail-key-info {
+  margin-top: 18px;
+  background: var(--bg-parchment);
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid var(--border-light);
+}
+
+.detail-info-row {
+  display: flex;
+  margin-bottom: 10px;
+  font-size: 13.5px;
+}
+
+.detail-info-label {
+  width: 80px;
+  color: var(--ink-muted);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.detail-info-value {
+  color: var(--ink-heavy);
+  font-weight: 500;
+}
+
+/* 詳情右側文章區 */
+.detail-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail-header-seal-wrap {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.detail-title {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--primary-deep);
+  line-height: 1.2;
+}
+
+.detail-scientific {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+
+.detail-pinyin {
+  font-size: 13px;
+  color: var(--amber);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* 詳情各項區塊卡片 */
+.section-block {
+  background: var(--bg-parchment);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 18px 22px;
+}
+
+.section-block-title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-deep);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-light);
+}
+
+.section-block-content {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--ink-body);
+}
+
+/* 禁忌警告方塊 */
+.caution-block {
+  background: #fff8f5;
+  border: 1px solid #fecaca;
+  border-left: 5px solid #ef4444;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.caution-title {
+  color: #b91c1c;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+/* 台灣在地特色專題方塊 */
+.taiwan-heritage-block {
+  background: #f4faf6;
+  border: 1px solid #cce3d6;
+  border-left: 5px solid var(--primary);
+  border-radius: 12px;
+  padding: 18px 22px;
+}
+
+.taiwan-heritage-title {
+  color: var(--primary-deep);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-family: var(--font-serif);
+}
+
+/* 相關推薦卡片列 */
+.related-herbs-section {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-light);
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.related-mini-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.related-mini-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.related-thumb {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.related-info-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--primary-deep);
+}
+
+.related-info-cat {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+/* 比對彈窗 (Compare Modal) */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 30, 24, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-card {
+  background: #ffffff;
+  border-radius: 18px;
+  max-width: 960px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.compare-table th, .compare-table td {
+  padding: 14px 16px;
+  border: 1px solid var(--border-light);
+  text-align: left;
+  vertical-align: top;
+  font-size: 13.5px;
+}
+
+.compare-table th {
+  background: var(--bg-parchment);
+  color: var(--primary-deep);
+  font-weight: 700;
+  width: 120px;
+}
+
+/* 頁尾 */
+.footer-bar {
+  background: #ffffff;
+  border-top: 1px solid var(--border-light);
+  padding: 24px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin-top: auto;
+}
+
+/* 響應式佈局 */
+@media (max-width: 992px) {
+  .main-wrapper {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: static;
+    margin-bottom: 20px;
+  }
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .navbar-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .nav-search-container {
+    max-width: 100%;
+  }
+  .catalog-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
