@@ -31,10 +31,51 @@
   --font-sans: 'Noto Sans TC', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+/* 晨曦竹林主題 (Bamboo) */
+[data-theme="bamboo"] {
+  --primary-deep: #143d2b;
+  --primary: #215a3f;
+  --primary-light: #388e63;
+  --primary-pale: #e3f2ea;
+  --bg-parchment: #f0f7f3;
+  --bg-card: #ffffff;
+  --bg-subtle: #e5efe9;
+  --ink-heavy: #0d1e16;
+  --ink-body: #233b2e;
+  --ink-muted: #597365;
+  --border-light: #cde0d5;
+  --border-card: #d4e5dc;
+}
+
+/* 暮夜玄青主題 (Midnight Herbarium) */
+[data-theme="midnight"] {
+  --primary-deep: #52b788;
+  --primary: #40916c;
+  --primary-light: #74c69d;
+  --primary-pale: #1c3228;
+  --amber-deep: #e2a058;
+  --amber: #cca476;
+  --amber-light: #2c2419;
+  --bg-parchment: #0f1713;
+  --bg-card: #18231e;
+  --bg-subtle: #202d26;
+  --ink-heavy: #f0fdf4;
+  --ink-body: #d1fae5;
+  --ink-muted: #86a394;
+  --border-light: #283a31;
+  --border-card: #2f4339;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.55);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -917,3 +958,47 @@ button {
     align-items: flex-start;
   }
 }
+
+/* 典雅本草捲軸美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-parchment);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* 列印專屬本草標本箋樣式 */
+@media print {
+  .top-navbar,
+  .footer-bar,
+  .hero-navigation-pills,
+  .detail-back-bar button,
+  .sidebar,
+  .btn-compare-toggle,
+  .herb-atmosphere-canvas {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .detail-container {
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+}
+
