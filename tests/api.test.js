@@ -124,6 +124,155 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.ok(Array.isArray(body.data));
   });
 
+  test('GET /api/regions - 應回傳風土產區統計', async () => {
+    const { status, body } = await fetchJson('/api/regions');
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    assert.ok(Array.isArray(body.data));
+    assert.ok(body.data.some(r => r.name.includes('桃竹苗') || r.name.includes('客庄')));
+  });
+
+  test('GET /api/folk-applications - 應回傳民間生活應用統計', async () => {
+    const { status, body } = await fetchJson('/api/folk-applications');
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    assert.ok(Array.isArray(body.data));
+    assert.ok(body.data.some(f => f.name.includes('青草茶') || f.name.includes('辟邪')));
+  });
+
+  test('GET /api/herbs?region=桃竹苗 - 風土產區篩選應正確生效', async () => {
+    const { status, body } = await fetchJson('/api/herbs?region=' + encodeURIComponent('桃竹苗'));
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    assert.ok(body.data.length > 0);
+    body.data.forEach(h => {
+      assert.ok(h.region.includes('桃竹苗'));
+    });
+  });
+
+  test('GET /api/herbs?q=狗貼耳 - 應能透過台語/俗名搜尋到魚腥草', async () => {
+    const { status, body } = await fetchJson('/api/herbs?q=' + encodeURIComponent('狗貼耳'));
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    const found = body.data.some(h => h.name === '魚腥草');
+    assert.ok(found);
+  });
+
+  test('GET /api/consult/experts - 應回傳 4 大專家 Persona 名錄', async () => {
+    const { status, body } = await fetchJson('/api/consult/experts');
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    assert.ok(Array.isArray(body.data));
+    assert.equal(body.data.length, 4);
+    const ids = body.data.map(e => e.id);
+    assert.ok(ids.includes('wanhua_uncle'));
+    assert.ok(ids.includes('hakka_grandmother'));
+    assert.ok(ids.includes('pharmacist_phd'));
+    assert.ok(ids.includes('indigenous_forager'));
+  });
+
+  test('POST /api/consult - 萬華青草伯 RAG 諮詢應回傳在地語意與藥材引用', async () => {
+    const payload = {
+      expertId: 'wanhua_uncle',
+      message: '最近常常熬夜口乾舌燥火氣大，想要煮青草茶退火'
+    };
+    const { status, body } = await fetchJson('/api/consult', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    assert.ok(body.data.reply);
+    assert.ok(body.data.reply.includes('老茶師'));
+    assert.ok(Array.isArray(body.data.citations));
+    assert.ok(body.data.citations.length > 0);
+    assert.ok(body.data.citations[0].name);
+    assert.ok(Array.isArray(body.data.suggestedQuestions));
+  });
+
+  test('POST /api/consult - 客庄阿婆 RAG 諮詢應以客家長輩口吻回覆', async () => {
+    const payload = {
+      expertId: 'hakka_grandmother',
+      message: '家裡小孩受驚啼哭，客家傳統用什麼草沐浴安神？'
+    };
+    const { status, body } = await fetchJson('/api/consult', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    assert.ok(body.data.reply.includes('阿婆') || body.data.reply.includes('阿妹阿弟'));
+    const hasMoCao = body.data.citations.some(c => c.name === '抹草' || c.name === '艾草');
+    assert.ok(hasMoCao);
+  });
+
+  test('POST /api/admin/login - 管理密碼登入驗證', async () => {
+    const failRes = await fetchJson('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: 'wrong' })
+    });
+    assert.equal(failRes.status, 401);
+
+    const okRes = await fetchJson('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: 'taiwanherb2026' })
+    });
+    assert.equal(okRes.status, 200);
+    assert.equal(okRes.body.data.authenticated, true);
+    assert.ok(okRes.body.data.token);
+  });
+
+  test('GET /api/admin/stats - 應回傳全庫管理統計儀表板數據', async () => {
+    const { status, body } = await fetchJson('/api/admin/stats');
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    assert.ok(body.data.totalHerbs >= 25);
+    assert.ok(body.data.categoriesCount > 0);
+    assert.ok(body.data.regionsCount > 0);
+  });
+
+  test('POST /api/admin/herbs & DELETE - 管理者草藥新增與刪除驗證', async () => {
+    const newHerb = {
+      name: '測試草藥',
+      scientificName: 'Testus herbalis',
+      category: '台灣青草茶經典',
+      nature: '平',
+      region: '北部 (萬華/淡水河/雙北)',
+      efficacy: '生津止渴、平肝潤燥'
+    };
+
+    const createRes = await fetchJson('/api/admin/herbs', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newHerb)
+    });
+
+    assert.equal(createRes.status, 201);
+    const createdId = createRes.body.data.id;
+    assert.ok(createdId);
+
+    // 刪除
+    const deleteRes = await fetchJson(`/api/admin/herbs/${createdId}`, {
+      method: 'DELETE'
+    });
+    assert.equal(deleteRes.status, 200);
+    assert.equal(deleteRes.body.data.id, createdId);
+  });
+
+  test('GET /api/admin/logs - 應正確回傳系統審計日誌', async () => {
+    const { status, body } = await fetchJson('/api/admin/logs');
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    assert.ok(Array.isArray(body.data));
+    assert.ok(body.data.length > 0);
+  });
+
   test('GET / - 應正確提供 Vue 3 單頁前端靜態頁面', async () => {
     const res = await fetch(`${baseUrl}/`);
     assert.equal(res.status, 200);

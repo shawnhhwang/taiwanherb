@@ -109,6 +109,10 @@ const filteredResults = computed(() => {
     return (
       h.name.toLowerCase().includes(q) ||
       (h.scientificName || '').toLowerCase().includes(q) ||
+      (h.region || '').toLowerCase().includes(q) ||
+      (h.folkApplication || '').toLowerCase().includes(q) ||
+      (h.terroir || '').toLowerCase().includes(q) ||
+      (h.dialectNames || []).some(d => (d.name || '').toLowerCase().includes(q)) ||
       (h.efficacy || '').toLowerCase().includes(q) ||
       (h.category || '').toLowerCase().includes(q) ||
       (h.channels || []).some(c => c.toLowerCase().includes(q)) ||

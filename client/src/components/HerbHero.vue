@@ -52,11 +52,19 @@
           </button>
           <button
             class="hero-nav-pill"
+            :class="{ active: currentTab === 'consult' }"
+            @click="$emit('switch-tab', 'consult')"
+          >
+            <span>🍵</span>
+            <span>專家諮詢茶堂 (RAG)</span>
+          </button>
+          <button
+            class="hero-nav-pill"
             :class="{ active: currentTab === 'alchemy' }"
             @click="$emit('switch-tab', 'alchemy')"
           >
-            <span>🍵</span>
-            <span>方劑調配研製所</span>
+            <span>🏺</span>
+            <span>方劑研製所</span>
           </button>
           <button
             class="hero-nav-pill"
@@ -64,7 +72,7 @@
             @click="$emit('switch-tab', 'meridian')"
           >
             <span>🫀</span>
-            <span>五行經絡引導圖</span>
+            <span>五行經絡圖</span>
           </button>
           <button
             class="hero-nav-pill"
@@ -73,6 +81,14 @@
           >
             <span>🔖</span>
             <span>藏書票 ({{ favoritesCount }})</span>
+          </button>
+          <button
+            class="hero-nav-pill"
+            :class="{ active: currentTab === 'admin' }"
+            @click="$emit('switch-tab', 'admin')"
+          >
+            <span>⚙️</span>
+            <span>典藏管理後台</span>
           </button>
         </div>
       </div>

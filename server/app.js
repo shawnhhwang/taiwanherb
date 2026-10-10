@@ -12,6 +12,8 @@ const errorHandler = require('./middlewares/errorHandler');
 const herbRoutes = require('./routes/herbRoutes');
 const healthRoutes = require('./routes/healthRoutes');
 const taxonomyRoutes = require('./routes/taxonomyRoutes');
+const consultRoutes = require('./routes/consultRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 const ApiResponse = require('./utils/apiResponse');
 
 const app = express();
@@ -25,6 +27,8 @@ app.use(logger);
 // API 路由
 app.use('/api/herbs', herbRoutes);
 app.use('/api/health', healthRoutes);
+app.use('/api/consult', consultRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api', taxonomyRoutes);
 
 // 提供靜態檔案 (Vue 編譯成品 client/dist)

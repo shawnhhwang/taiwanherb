@@ -1,16 +1,33 @@
 /**
  * client/src/services/api.js
- * 前端 API 串接服務層 (封裝 Result Pattern，具備錯誤降級與超時保護)
+ * 前端 API 串接服務層 (封裝 Result Pattern，具備錯誤降級、多維度風土檢索、RAG 諮詢與管理認證)
  */
 
 const API_BASE = '/api';
 
 export const HerbApi = {
+  getAuthToken() {
+    return localStorage.getItem('taiwanherb_admin_token') || '';
+  },
+
+  setAuthToken(token) {
+    if (token) {
+      localStorage.setItem('taiwanherb_admin_token', token);
+    } else {
+      localStorage.removeItem('taiwanherb_admin_token');
+    }
+  },
+
   async request(endpoint, options = {}) {
     const defaultHeaders = {
       'Content-Type': 'application/json',
       'Accept': 'application/json'
     };
+
+    const token = this.getAuthToken();
+    if (token) {
+      defaultHeaders['Authorization'] = `Bearer ${token}`;
+    }
 
     try {
       const response = await fetch(`${API_BASE}${endpoint}`, {
@@ -32,7 +49,7 @@ export const HerbApi = {
   },
 
   /**
-   * 搜尋與篩選藥材
+   * 搜尋與篩選藥材 (支援風土區域、民間情境、部位、安全等級)
    */
   async getHerbs(params = {}) {
     const queryParts = [];
@@ -40,6 +57,11 @@ export const HerbApi = {
     if (params.category && params.category !== '全部') queryParts.push(`category=${encodeURIComponent(params.category)}`);
     if (params.channel && params.channel !== '全部') queryParts.push(`channel=${encodeURIComponent(params.channel)}`);
     if (params.nature && params.nature !== '全部') queryParts.push(`nature=${encodeURIComponent(params.nature)}`);
+    if (params.region && params.region !== '全部') queryParts.push(`region=${encodeURIComponent(params.region)}`);
+    if (params.folkApplication && params.folkApplication !== '全部') queryParts.push(`folkApplication=${encodeURIComponent(params.folkApplication)}`);
+    if (params.partsUsed && params.partsUsed !== '全部') queryParts.push(`partsUsed=${encodeURIComponent(params.partsUsed)}`);
+    if (params.safetyLevel && params.safetyLevel !== '全部') queryParts.push(`safetyLevel=${encodeURIComponent(params.safetyLevel)}`);
+    if (params.status && params.status !== '全部') queryParts.push(`status=${encodeURIComponent(params.status)}`);
     if (params.page) queryParts.push(`page=${params.page}`);
     if (params.limit) queryParts.push(`limit=${params.limit}`);
     if (params.sort) queryParts.push(`sort=${params.sort}`);
@@ -69,26 +91,40 @@ export const HerbApi = {
   },
 
   /**
-   * 取得分類統計
+   * 統計維度
    */
   async getCategories() {
     const res = await this.request('/categories');
     return res.data || [];
   },
 
-  /**
-   * 取得歸經統計
-   */
   async getChannels() {
     const res = await this.request('/channels');
     return res.data || [];
   },
 
-  /**
-   * 取得藥性統計
-   */
   async getNatures() {
     const res = await this.request('/natures');
+    return res.data || [];
+  },
+
+  async getRegions() {
+    const res = await this.request('/regions');
+    return res.data || [];
+  },
+
+  async getFolkApplications() {
+    const res = await this.request('/folk-applications');
+    return res.data || [];
+  },
+
+  async getPartsUsed() {
+    const res = await this.request('/parts-used');
+    return res.data || [];
+  },
+
+  async getSafetyLevels() {
+    const res = await this.request('/safety-levels');
     return res.data || [];
   },
 
@@ -118,6 +154,106 @@ export const HerbApi = {
     const res = await this.request('/health/failover-test', {
       method: 'POST',
       body: JSON.stringify({ reason })
+    });
+    return res.data;
+  },
+
+  /**
+   * RAG 諮詢模組
+   */
+  async getConsultExperts() {
+    const res = await this.request('/consult/experts');
+    return res.data || [];
+  },
+
+  async consult(message, expertId = 'wanhua_uncle') {
+    const res = await this.request('/consult', {
+      method: 'POST',
+      body: JSON.stringify({ message, expertId })
+    });
+    return res.data;
+  },
+
+  /**
+   * 後台管理模組
+   */
+  async adminLogin(password) {
+    const res = await this.request('/admin/login', {
+      method: 'POST',
+      body: JSON.stringify({ password })
+    });
+    if (res.data?.token) {
+      this.setAuthToken(res.data.token);
+    }
+    return res.data;
+  },
+
+  async getAdminStatus() {
+    const res = await this.request('/admin/status');
+    return res.data;
+  },
+
+  async getAdminStats() {
+    const res = await this.request('/admin/stats');
+    return res.data;
+  },
+
+  async getAdminHerbs(params = {}) {
+    const queryParts = [];
+    if (params.q) queryParts.push(`q=${encodeURIComponent(params.q)}`);
+    if (params.category && params.category !== '全部') queryParts.push(`category=${encodeURIComponent(params.category)}`);
+    if (params.region && params.region !== '全部') queryParts.push(`region=${encodeURIComponent(params.region)}`);
+    if (params.status && params.status !== '全部') queryParts.push(`status=${encodeURIComponent(params.status)}`);
+    if (params.page) queryParts.push(`page=${params.page}`);
+    if (params.limit) queryParts.push(`limit=${params.limit}`);
+
+    const queryString = queryParts.length ? `?${queryParts.join('&')}` : '';
+    const res = await this.request(`/admin/herbs${queryString}`);
+    return {
+      items: res.data || [],
+      meta: res.meta || { page: 1, limit: 50, total: res.data.length, totalPages: 1 }
+    };
+  },
+
+  async createHerb(data) {
+    const res = await this.request('/admin/herbs', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  async updateHerb(id, data) {
+    const res = await this.request(`/admin/herbs/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  async deleteHerb(id) {
+    const res = await this.request(`/admin/herbs/${id}`, {
+      method: 'DELETE'
+    });
+    return res.data;
+  },
+
+  async updateExpert(id, data) {
+    const res = await this.request(`/admin/experts/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  async getAdminLogs() {
+    const res = await this.request('/admin/logs');
+    return res.data || [];
+  },
+
+  async resetDatabase() {
+    const res = await this.request('/admin/reset', {
+      method: 'POST'
     });
     return res.data;
   }

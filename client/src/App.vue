@@ -9,12 +9,14 @@
       :compare-list="compareList"
       :health-info="healthInfo"
       :current-theme="currentTheme"
+      :active-tab="activeTab"
       @go-home="goCatalog"
       @random-pick="fetchRandomHerb"
       @open-compare="isCompareModalOpen = true"
       @open-health="openHealthModal"
       @open-cmd="isCmdPaletteOpen = true"
       @change-theme="setTheme"
+      @switch-tab="switchMainTab"
     />
 
     <!-- Awwwards 殿堂級 Hero 敘事區 (僅在首頁/目錄頁展示) -->
@@ -31,17 +33,27 @@
 
     <!-- 主體內容區塊 -->
     <div class="main-wrapper">
-      <!-- 標籤頁一：青草茶方劑調配研製所 (Alchemy Lab) -->
-      <div v-if="!selectedHerbId && activeTab === 'alchemy'" style="grid-column: 1 / -1;">
+      <!-- 標籤頁一：專家諮詢茶堂 (RAG Consultation Lab) -->
+      <div v-if="!selectedHerbId && activeTab === 'consult'" style="grid-column: 1 / -1;">
+        <HerbConsultationLab @select-herb-id="openHerbDetail" />
+      </div>
+
+      <!-- 標籤頁二：典藏後台與數據中心 (Admin Dashboard) -->
+      <div v-else-if="!selectedHerbId && activeTab === 'admin'" style="grid-column: 1 / -1;">
+        <HerbAdminDashboard />
+      </div>
+
+      <!-- 標籤頁三：青草茶方劑調配研製所 (Alchemy Lab) -->
+      <div v-else-if="!selectedHerbId && activeTab === 'alchemy'" style="grid-column: 1 / -1;">
         <HerbAlchemyLab :all-herbs="allHerbsFullList" />
       </div>
 
-      <!-- 標籤頁二：五行經絡引導圖 (Meridian Body Map) -->
+      <!-- 標籤頁四：五行經絡引導圖 (Meridian Body Map) -->
       <div v-else-if="!selectedHerbId && activeTab === 'meridian'" style="grid-column: 1 / -1;">
         <HerbMeridianMap :herbs="allHerbsFullList" @select-herb="openHerbDetail" />
       </div>
 
-      <!-- 標籤頁三：藏書票收藏冊 (Favorites Cabinet) -->
+      <!-- 標籤頁五：藏書票收藏冊 (Favorites Cabinet) -->
       <div v-else-if="!selectedHerbId && activeTab === 'favorites'" style="grid-column: 1 / -1;">
         <FavoritesCabinet
           :favorite-herbs="favoriteHerbs"
@@ -51,36 +63,55 @@
         />
       </div>
 
-      <!-- 標籤頁四：典藏圖鑑目錄 (Catalog) 包含側邊欄 -->
+      <!-- 標籤頁六：典藏圖鑑目錄 (Catalog) 包含側邊欄 -->
       <template v-else-if="!selectedHerbId">
         <!-- 側邊多維度篩選欄 -->
         <HerbSidebar
           :categories="categories"
           :channels="channels"
           :natures="natures"
+          :regions="regions"
+          :folk-applications="folkApplications"
+          :safety-levels="safetyLevels"
           :current-category="currentCategory"
           :current-channel="currentChannel"
           :current-nature="currentNature"
+          :current-region="currentRegion"
+          :current-folk-app="currentFolkApp"
+          :current-safety-level="currentSafetyLevel"
           :total-herbs-count="pagination.total"
           @select-category="onSelectCategory"
           @select-channel="onSelectChannel"
           @select-nature="onSelectNature"
+          @select-region="onSelectRegion"
+          @select-folk-app="onSelectFolkApp"
+          @select-safety-level="onSelectSafetyLevel"
           @reset-filters="resetFilters"
         />
 
         <!-- 內容區 (圖鑑目錄模式) -->
         <main class="content-area">
+          <!-- 台灣風土產區探索地圖導覽 -->
+          <TaiwanTerroirMap
+            :current-region="currentRegion"
+            :all-herbs="allHerbsFullList"
+            @select-region="onSelectRegion"
+          />
+
           <!-- 頂部資訊與控制欄 -->
           <div class="catalog-header">
             <div class="catalog-title-group">
               <h2>
-                {{ currentCategory === '全部' ? '台灣中草藥植物圖鑑' : currentCategory }}
+                {{ currentCategory === '全部' ? '台灣本土草藥植物圖鑑' : currentCategory }}
               </h2>
               <div class="catalog-stats">
-                共檢索到 <strong>{{ pagination.total }}</strong> 味藥材
-                <span v-if="searchQuery"> · 搜尋關鍵字：「{{ searchQuery }}」</span>
+                共檢索到 <strong>{{ pagination.total }}</strong> 味島嶼本草
+                <span v-if="searchQuery"> · 搜尋：「{{ searchQuery }}」</span>
+                <span v-if="currentRegion !== '全部'"> · 風土：{{ currentRegion }}</span>
+                <span v-if="currentFolkApp !== '全部'"> · 情境：{{ currentFolkApp }}</span>
                 <span v-if="currentNature !== '全部'"> · 性味：{{ currentNature }}</span>
                 <span v-if="currentChannel !== '全部'"> · 歸經：{{ currentChannel }}經</span>
+                <span v-if="currentSafetyLevel !== '全部'"> · 安全：{{ currentSafetyLevel }}</span>
               </div>
             </div>
 
@@ -90,6 +121,7 @@
                 <option value="id_asc">依推薦順序</option>
                 <option value="name_asc">依名稱筆劃 (升冪)</option>
                 <option value="name_desc">依名稱筆劃 (降冪)</option>
+                <option value="solar">依節氣時序排序</option>
               </select>
 
               <button
@@ -124,7 +156,7 @@
           >
             <div style="font-size: 40px; margin-bottom: 12px;">🍃</div>
             <h3 style="font-family: var(--font-serif); color: var(--primary-deep); margin-bottom: 8px;">未找到符合條件的本草藥材</h3>
-            <p style="color: var(--ink-muted); margin-bottom: 20px;">建議更換搜尋關鍵字，或清除側邊的藥性與歸經篩選條件。</p>
+            <p style="color: var(--ink-muted); margin-bottom: 20px;">建議更換搜尋關鍵字，或重設風土、性味與歸經篩選條件。</p>
             <button class="btn-pill btn-pill-primary" @click="resetFilters">重設所有篩選條件</button>
           </div>
 
@@ -149,8 +181,8 @@
                 <tr>
                   <th style="width: 70px;">圖鑑</th>
                   <th>藥材名稱 / 學名</th>
-                  <th>分類</th>
-                  <th>四氣</th>
+                  <th>風土產區</th>
+                  <th>四氣五味</th>
                   <th>歸經</th>
                   <th>核心功效</th>
                   <th style="width: 140px; text-align: center;">操作</th>
@@ -166,10 +198,10 @@
                     <div style="font-size: 11px; font-style: italic; color: var(--ink-muted);">{{ h.scientificName }}</div>
                   </td>
                   <td>
-                    <span class="badge-channel" style="background: var(--primary-pale); color: var(--primary-deep);">{{ h.category }}</span>
+                    <span class="badge-channel" style="background: var(--bg-subtle); color: var(--ink-heavy);">{{ h.region ? h.region.split(' ')[0] : '全島' }}</span>
                   </td>
                   <td>
-                    <strong>{{ h.nature }}</strong>
+                    <strong>{{ h.nature }}</strong> · {{ (h.taste || []).join('、') }}
                   </td>
                   <td>
                     <span v-for="ch in h.channels" :key="ch" class="badge-channel" style="margin-right: 4px;">{{ ch }}</span>
@@ -199,7 +231,7 @@
         </main>
       </template>
 
-      <!-- 模式五：藥材詳情頁 (Detail View) 跨越全欄 -->
+      <!-- 模式七：藥材詳情頁 (Detail View) 跨越全欄 -->
       <main v-else class="content-area" style="grid-column: 1 / -1;">
         <HerbDetail
           :herb="herbDetail"
@@ -243,7 +275,7 @@
     <footer class="footer-bar">
       <div>台灣本草植物 Wiki 資料庫系統 · Taiwan Herb Wiki</div>
       <div style="margin-top: 4px; font-size: 11.5px; color: var(--ink-muted);">
-        榮獲數位美學與植物學知識庫設計標準 · 沉澱四百年風土草木智慧
+        榮獲數位美學與植物學知識庫設計標準 · 沉澱四百年風土草木智慧 · RAG 專家語意系統
       </div>
     </footer>
   </div>
@@ -257,8 +289,11 @@ import HerbAtmosphere from './components/HerbAtmosphere.vue';
 import HerbNavbar from './components/HerbNavbar.vue';
 import HerbHero from './components/HerbHero.vue';
 import HerbSidebar from './components/HerbSidebar.vue';
+import TaiwanTerroirMap from './components/TaiwanTerroirMap.vue';
 import HerbCard from './components/HerbCard.vue';
 import HerbDetail from './components/HerbDetail.vue';
+import HerbConsultationLab from './components/HerbConsultationLab.vue';
+import HerbAdminDashboard from './components/HerbAdminDashboard.vue';
 import HerbAlchemyLab from './components/HerbAlchemyLab.vue';
 import HerbMeridianMap from './components/HerbMeridianMap.vue';
 import FavoritesCabinet from './components/FavoritesCabinet.vue';
@@ -272,14 +307,21 @@ const allHerbsFullList = ref([]);
 const categories = ref([]);
 const channels = ref([]);
 const natures = ref([]);
+const regions = ref([]);
+const folkApplications = ref([]);
+const safetyLevels = ref([]);
 
 const currentCategory = ref('全部');
 const currentChannel = ref('全部');
 const currentNature = ref('全部');
+const currentRegion = ref('全部');
+const currentFolkApp = ref('全部');
+const currentSafetyLevel = ref('全部');
+
 const searchQuery = ref('');
 const sortOption = ref('id_asc');
 const viewMode = ref('grid'); // 'grid' | 'list'
-const activeTab = ref('catalog'); // 'catalog' | 'alchemy' | 'meridian' | 'favorites'
+const activeTab = ref('catalog'); // 'catalog' | 'consult' | 'admin' | 'alchemy' | 'meridian' | 'favorites'
 
 const selectedHerbId = ref(null);
 const herbDetail = ref(null);
@@ -310,7 +352,7 @@ const featuredHerb = ref({
 
 const pagination = ref({
   page: 1,
-  limit: 24,
+  limit: 30,
   total: 0,
   totalPages: 1
 });
@@ -340,13 +382,16 @@ const loadHerbs = async () => {
       category: currentCategory.value,
       channel: currentChannel.value,
       nature: currentNature.value,
+      region: currentRegion.value,
+      folkApplication: currentFolkApp.value,
+      safetyLevel: currentSafetyLevel.value,
       sort: sortOption.value,
       limit: pagination.value.limit
     });
     herbs.value = res.items;
     pagination.value = res.meta;
 
-    // 若第一次載入全草藥，備份全列表供研製所與經絡圖使用
+    // 若第一次載入全草藥，備份全列表供研製所、經絡圖與地圖使用
     if (allHerbsFullList.value.length === 0) {
       allHerbsFullList.value = res.items;
       if (res.items.length > 0) {
@@ -360,17 +405,23 @@ const loadHerbs = async () => {
   }
 };
 
-// 載入分類與統計
+// 載入分類、風土與各維度統計
 const loadTaxonomy = async () => {
   try {
-    const [cats, chs, nats] = await Promise.all([
+    const [cats, chs, nats, regs, folks, safeties] = await Promise.all([
       HerbApi.getCategories(),
       HerbApi.getChannels(),
-      HerbApi.getNatures()
+      HerbApi.getNatures(),
+      HerbApi.getRegions(),
+      HerbApi.getFolkApplications(),
+      HerbApi.getSafetyLevels()
     ]);
     categories.value = cats;
     channels.value = chs;
     natures.value = nats;
+    regions.value = regs;
+    folkApplications.value = folks;
+    safetyLevels.value = safeties;
   } catch (err) {
     console.error('載入統計資訊失敗:', err);
   }
@@ -394,6 +445,7 @@ const openHerbDetail = async (id) => {
     selectedHerbId.value = id;
     window.location.hash = `#/herb/${id}`;
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    audio.playScroll();
   } catch (err) {
     console.error('載入詳情失敗:', err);
   } finally {
@@ -458,11 +510,38 @@ const onSelectNature = (nat) => {
   loadHerbs();
 };
 
+const onSelectRegion = (reg) => {
+  audio.playClick();
+  currentRegion.value = reg;
+  activeTab.value = 'catalog';
+  if (selectedHerbId.value) backToCatalog();
+  loadHerbs();
+};
+
+const onSelectFolkApp = (folk) => {
+  audio.playClick();
+  currentFolkApp.value = folk;
+  activeTab.value = 'catalog';
+  if (selectedHerbId.value) backToCatalog();
+  loadHerbs();
+};
+
+const onSelectSafetyLevel = (lvl) => {
+  audio.playClick();
+  currentSafetyLevel.value = lvl;
+  activeTab.value = 'catalog';
+  if (selectedHerbId.value) backToCatalog();
+  loadHerbs();
+};
+
 const resetFilters = () => {
   audio.playClick();
   currentCategory.value = '全部';
   currentChannel.value = '全部';
   currentNature.value = '全部';
+  currentRegion.value = '全部';
+  currentFolkApp.value = '全部';
+  currentSafetyLevel.value = '全部';
   searchQuery.value = '';
   loadHerbs();
 };

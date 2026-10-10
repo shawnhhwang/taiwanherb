@@ -87,6 +87,28 @@
           <span>{{ healthInfo?.database?.isMemoryMode ? '正常 (Memory)' : `正常 (${healthInfo?.database?.activeNode})` }}</span>
         </button>
 
+        <!-- 諮詢茶堂 (RAG 專家問答) -->
+        <button
+          class="btn-pill"
+          :class="activeTab === 'consult' ? 'btn-pill-primary' : 'btn-pill-subtle'"
+          title="請益本草名醫與風土達人 (RAG 語意問答)"
+          @click="$emit('switch-tab', 'consult')"
+        >
+          <span>🍵</span>
+          <span>諮詢茶堂</span>
+        </button>
+
+        <!-- 管理後台模式 -->
+        <button
+          class="btn-pill"
+          :class="activeTab === 'admin' ? 'btn-pill-primary' : 'btn-pill-subtle'"
+          title="進入本草典藏後台與數據中心"
+          @click="$emit('switch-tab', 'admin')"
+        >
+          <span>⚙️</span>
+          <span>管理後台</span>
+        </button>
+
         <!-- 隨機推薦藥材 -->
         <button class="btn-pill btn-pill-primary" @click="$emit('random-pick')">
           <span>✨</span>
@@ -115,7 +137,8 @@ const props = defineProps({
   searchQuery: { type: String, default: '' },
   compareList: { type: Array, default: () => [] },
   healthInfo: { type: Object, default: null },
-  currentTheme: { type: String, default: 'parchment' }
+  currentTheme: { type: String, default: 'parchment' },
+  activeTab: { type: String, default: 'catalog' }
 });
 
 const emit = defineEmits([
@@ -125,7 +148,8 @@ const emit = defineEmits([
   'open-compare',
   'open-health',
   'open-cmd',
-  'change-theme'
+  'change-theme',
+  'switch-tab'
 ]);
 
 const isMuted = ref(audio.isMuted);

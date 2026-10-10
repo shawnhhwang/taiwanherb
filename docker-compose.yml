@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  taiwanherb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: taiwanherb:latest
+    container_name: taiwanherb-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - DB_FALLBACK_MEMORY=true
+      - ADMIN_PASSWORD=taiwanherb2026
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

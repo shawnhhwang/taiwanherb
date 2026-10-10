@@ -97,6 +97,26 @@
             <span class="detail-info-label">民間俗名</span>
             <span class="detail-info-value">{{ herb.commonNames.join('、') }}</span>
           </div>
+          <div v-if="herb.dialectNames && herb.dialectNames.length" class="detail-info-row">
+            <span class="detail-info-label">台灣本地方言</span>
+            <span class="detail-info-value">
+              <span v-for="d in herb.dialectNames" :key="d.name" class="dialect-pill" style="margin-right: 4px; background: var(--bg-subtle); padding: 2px 6px; border-radius: 4px; font-size: 12px;">
+                {{ d.dialect }}: {{ d.name }}
+              </span>
+            </span>
+          </div>
+          <div v-if="herb.region" class="detail-info-row">
+            <span class="detail-info-label">風土分佈</span>
+            <span class="detail-info-value font-highlight">{{ herb.region }}</span>
+          </div>
+          <div v-if="herb.folkApplication" class="detail-info-row">
+            <span class="detail-info-label">生活情境</span>
+            <span class="detail-info-value">{{ herb.folkApplication }}</span>
+          </div>
+          <div v-if="herb.safetyLevel" class="detail-info-row">
+            <span class="detail-info-label">安全等級</span>
+            <span class="detail-info-value" style="color: var(--amber-deep); font-weight: bold;">{{ herb.safetyLevel }}</span>
+          </div>
         </div>
 
         <!-- 活性化學成分徽章雲 -->

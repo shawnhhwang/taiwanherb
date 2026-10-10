@@ -58,10 +58,12 @@
         </span>
       </div>
 
-      <!-- 風土產地與活性化學成分微標籤 -->
-      <div v-if="herb.terroir || (herb.activeCompounds && herb.activeCompounds.length)" class="herb-card-terroir-row">
-        <span v-if="herb.terroir" class="terroir-pill">📍 {{ herb.terroir.split('、')[0] }}</span>
-        <span v-if="herb.activeCompounds && herb.activeCompounds[0]" class="compound-pill">🔬 {{ herb.activeCompounds[0].split(' ')[0] }}</span>
+      <!-- 風土產地與民間應用微標籤 -->
+      <div class="herb-card-terroir-row">
+        <span v-if="herb.region" class="terroir-pill">📍 {{ herb.region.split(' ')[0] }}</span>
+        <span v-else-if="herb.terroir" class="terroir-pill">📍 {{ herb.terroir.split('、')[0] }}</span>
+        <span v-if="herb.folkApplication" class="compound-pill">🍵 {{ herb.folkApplication }}</span>
+        <span v-else-if="herb.activeCompounds && herb.activeCompounds[0]" class="compound-pill">🔬 {{ herb.activeCompounds[0].split(' ')[0] }}</span>
       </div>
 
       <!-- 功效摘要 -->

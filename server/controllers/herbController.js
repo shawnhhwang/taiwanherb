@@ -1,6 +1,6 @@
 /**
  * server/controllers/herbController.js
- * 藥材 API 控制器
+ * 藥材 API 控制器 (支援多維度本土風土篩選與統計)
  */
 const herbService = require('../services/herbService');
 const ApiResponse = require('../utils/apiResponse');
@@ -12,12 +12,32 @@ class HerbController {
    */
   async getHerbs(req, res, next) {
     try {
-      const { q, query, category, channel, nature, page, limit, sort } = req.query;
+      const {
+        q,
+        query,
+        category,
+        channel,
+        nature,
+        region,
+        folkApplication,
+        partsUsed,
+        safetyLevel,
+        status,
+        page,
+        limit,
+        sort
+      } = req.query;
+
       const result = await herbService.searchHerbs({
         query: q || query,
         category,
         channel,
         nature,
+        region,
+        folkApplication,
+        partsUsed,
+        safetyLevel,
+        status,
         page,
         limit,
         sort
@@ -92,6 +112,58 @@ class HerbController {
     try {
       const natures = await herbService.getNatures();
       return res.json(ApiResponse.ok(natures, '成功取得藥性清單'));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * GET /api/regions
+   * 取得風土產區分佈統計
+   */
+  async getRegions(req, res, next) {
+    try {
+      const regions = await herbService.getRegions();
+      return res.json(ApiResponse.ok(regions, '成功取得風土產區清單'));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * GET /api/folk-applications
+   * 取得民間生活情境應用統計
+   */
+  async getFolkApplications(req, res, next) {
+    try {
+      const apps = await herbService.getFolkApplications();
+      return res.json(ApiResponse.ok(apps, '成功取得民間應用情境清單'));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * GET /api/parts-used
+   * 取得入藥部位統計
+   */
+  async getPartsUsed(req, res, next) {
+    try {
+      const parts = await herbService.getPartsUsed();
+      return res.json(ApiResponse.ok(parts, '成功取得入藥部位清單'));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * GET /api/safety-levels
+   * 取得安全用藥分級統計
+   */
+  async getSafetyLevels(req, res, next) {
+    try {
+      const levels = await herbService.getSafetyLevels();
+      return res.json(ApiResponse.ok(levels, '成功取得安全分級清單'));
     } catch (err) {
       next(err);
     }
