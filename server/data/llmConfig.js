@@ -3,8 +3,10 @@
  * LLM API 來源與提供商預設配置
  */
 
+const isTestEnv = process.env.NODE_ENV === 'test';
+
 const DEFAULT_LLM_CONFIG = {
-  activeProvider: 'builtin', // 'builtin' | 'gemini' | 'openai' | 'claude'
+  activeProvider: isTestEnv ? 'builtin' : (process.env.ACTIVE_LLM_PROVIDER || 'ollama'), // 測試環境走快速 builtin，正式環境預設即時呼叫本地免金鑰 Ollama
   temperature: 0.7,
   maxTokens: 2000,
   timeoutMs: 60000,

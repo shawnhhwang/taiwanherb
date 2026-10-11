@@ -2,6 +2,8 @@
  * tests/api.test.js
  * 驗證後端 API 端點、ApiResponse 規格、搜尋與 Failover
  */
+process.env.NODE_ENV = 'test';
+
 const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('http');

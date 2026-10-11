@@ -340,8 +340,20 @@ class RagService {
     let engineUsed = '臺灣本草內建語意特徵引擎 (Zero-Dependency Grounded)';
     const llmCfg = llmService.config;
 
+    console.log(`\n=================== [RAG 語意檢索與後端資料拋接] ===================`);
+    console.log(`[RAG Consult] 使用者提問: "${message}"`);
+    console.log(`[RAG Consult] 指定專家: ${expert.name} (${expert.title})`);
+    console.log(`[RAG Consult] 資料庫命中 ${retrieved.length} 味草藥 (Grounded Data):`);
+    retrieved.forEach((r, idx) => {
+      console.log(`  [草藥 ${idx + 1}] ${r.herb.name} (${r.herb.scientificName}) | 產區: ${r.herb.region} | 得分: ${r.score} | 理由: ${r.reason}`);
+    });
+    console.log(`[RAG Consult] 當前配置之活躍 LLM: ${llmCfg ? llmCfg.activeProvider : 'unknown'}`);
+
     // 若啟用外部 LLM (例如 Ollama 或其他提供商)，優先嘗試即時 LLM 推理生成
     if (llmCfg && llmCfg.activeProvider !== 'builtin') {
+      const prov = llmCfg.providers[llmCfg.activeProvider];
+      console.log(`[RAG Consult] 正在將資料庫欄位組裝進 Prompt，拋給後端 LLM API (${prov?.name || llmCfg.activeProvider} / ${prov?.model || 'default'})...`);
+      const startTime = Date.now();
       try {
         const prompt = this.buildConsultPrompt(expert, message, retrieved);
         const externalResult = await llmService.callLlm({
@@ -350,16 +362,21 @@ class RagService {
           systemPrompt: `你是一位深諳臺灣本土草藥文化的本草耆老，請完全融入以下專家 Persona 口吻回覆：${expert.name}（${expert.title}）。請嚴守不宣稱任何醫療效果，純粹分享民間傳統古早知識。`
         });
         if (externalResult && externalResult.trim() !== '') {
+          const duration = ((Date.now() - startTime) / 1000).toFixed(1);
           replyMarkdown = externalResult;
-          const prov = llmCfg.providers[llmCfg.activeProvider];
           engineUsed = `${prov ? prov.name : llmCfg.activeProvider} (${prov ? prov.model : 'Live LLM'}) 即時推理`;
+          console.log(`[RAG Consult] 後端 LLM API 即時推理成功！耗時: ${duration}s，產出字數: ${externalResult.length}`);
+          console.log(`====================================================================\n`);
         }
       } catch (err) {
-        console.warn('[RagService] External LLM consult failed, fallback to builtin synthesis:', err.message);
+        console.warn(`[RagService] External LLM consult failed (${err.message}), fallback to builtin synthesis.`);
+        console.log(`====================================================================\n`);
       }
     }
 
     if (!replyMarkdown) {
+      console.log(`[RAG Consult] 使用系統內建離線知識特徵引擎進行道地語意生成`);
+      console.log(`====================================================================\n`);
       replyMarkdown = this.synthesizeExpertReply(expert, message, retrieved);
     }
 

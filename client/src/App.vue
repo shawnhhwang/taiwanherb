@@ -10,12 +10,14 @@
       :health-info="healthInfo"
       :current-theme="currentTheme"
       :active-tab="activeTab"
+      :current-user="currentUser"
       @go-home="goCatalog"
       @random-pick="fetchRandomHerb"
       @open-compare="isCompareModalOpen = true"
       @open-health="openHealthModal"
       @open-cmd="isCmdPaletteOpen = true"
       @open-disclaimer="openDisclaimerModal"
+      @open-auth="isAuthModalOpen = true"
       @change-theme="setTheme"
       @switch-tab="switchMainTab"
     />
@@ -272,6 +274,16 @@
       @trigger-failover="handleFailoverDrill"
     />
 
+    <!-- 使用者登入與前後台權限管理視窗 (RBAC) -->
+    <AuthModal
+      :is-open="isAuthModalOpen"
+      :current-user="currentUser"
+      @close="isAuthModalOpen = false"
+      @login-success="handleLoginSuccess"
+      @logout="handleLogout"
+      @switch-to-admin="handleSwitchToAdmin"
+    />
+
     <!-- 全域傳統古早文化知識分享宣告欄 -->
     <div class="global-disclaimer-strip">
       <div class="disclaimer-strip-inner">
@@ -403,6 +415,7 @@ import FavoritesCabinet from './components/FavoritesCabinet.vue';
 import CommandPalette from './components/CommandPalette.vue';
 import HerbCompareModal from './components/HerbCompareModal.vue';
 import HealthModal from './components/HealthModal.vue';
+import AuthModal from './components/AuthModal.vue';
 
 // 狀態定義
 const herbs = ref([]);
@@ -435,6 +448,10 @@ const isCompareModalOpen = ref(false);
 const isDisclaimerModalOpen = ref(false);
 const isDisclaimerAgreed = ref(false);
 const shakeDisclaimerAgreement = ref(false);
+
+// 使用者身分與前後台權限狀態 (RBAC)
+const isAuthModalOpen = ref(false);
+const currentUser = ref(null);
 
 const openDisclaimerModal = () => {
   isDisclaimerAgreed.value = false;
@@ -773,9 +790,40 @@ const onKeyDown = (e) => {
   }
 };
 
+// 使用者登入與身分狀態管理
+const checkUserAuth = async () => {
+  try {
+    const res = await HerbApi.getAdminStatus();
+    if (res && res.authenticated && res.user) {
+      currentUser.value = {
+        ...res.user,
+        roleTitle: res.role?.name || res.user.role
+      };
+    } else {
+      currentUser.value = null;
+    }
+  } catch (err) {
+    currentUser.value = null;
+  }
+};
+
+const handleLoginSuccess = (user) => {
+  currentUser.value = user;
+  isAuthModalOpen.value = false;
+};
+
+const handleLogout = () => {
+  currentUser.value = null;
+};
+
+const handleSwitchToAdmin = () => {
+  isAuthModalOpen.value = false;
+  switchMainTab('admin');
+};
+
 onMounted(async () => {
   setTheme(currentTheme.value);
-  await Promise.all([loadHerbs(), loadTaxonomy(), loadHealth()]);
+  await Promise.all([loadHerbs(), loadTaxonomy(), loadHealth(), checkUserAuth()]);
   handleHashRouting();
   window.addEventListener('hashchange', handleHashRouting);
   window.addEventListener('keydown', onKeyDown);

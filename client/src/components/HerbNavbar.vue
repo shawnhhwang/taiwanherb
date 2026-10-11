@@ -119,6 +119,18 @@
           <span>知識免責聲明</span>
         </button>
 
+        <!-- 使用者身分與登入 (RBAC) -->
+        <button
+          class="btn-pill btn-user-auth"
+          :class="currentUser ? 'btn-pill-auth-active' : 'btn-pill-subtle'"
+          :title="currentUser ? `目前身分: ${currentUser.name} (${currentUser.roleTitle || currentUser.role}) - 點擊切換或管理權限` : '登入 / 切換使用者與檢視前後台權限'"
+          @click="$emit('open-auth')"
+        >
+          <span class="user-avatar-tag">{{ currentUser?.avatar || '👤' }}</span>
+          <span class="user-name-tag">{{ currentUser ? currentUser.name : '登入 / 身分' }}</span>
+          <span v-if="currentUser" class="user-role-pill">{{ currentUser.roleTitle || currentUser.role }}</span>
+        </button>
+
         <!-- 隨機推薦藥材 -->
         <button class="btn-pill btn-pill-primary" @click="$emit('random-pick')">
           <span>✨</span>
@@ -148,7 +160,8 @@ const props = defineProps({
   compareList: { type: Array, default: () => [] },
   healthInfo: { type: Object, default: null },
   currentTheme: { type: String, default: 'parchment' },
-  activeTab: { type: String, default: 'catalog' }
+  activeTab: { type: String, default: 'catalog' },
+  currentUser: { type: Object, default: null }
 });
 
 const emit = defineEmits([
@@ -160,7 +173,8 @@ const emit = defineEmits([
   'open-cmd',
   'open-disclaimer',
   'change-theme',
-  'switch-tab'
+  'switch-tab',
+  'open-auth'
 ]);
 
 const isMuted = ref(audio.isMuted);
@@ -274,5 +288,46 @@ const toggleAmbientSound = () => {
 .ambient-btn.active {
   background: #fef3c7;
   border-color: #f59e0b;
+}
+
+/* 使用者登入與權限身分按鈕 */
+.btn-user-auth {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  border-radius: 9999px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 6px 14px;
+}
+
+.btn-pill-auth-active {
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--primary, #2d5a27);
+  color: var(--primary-deep, #1a3c1b);
+  box-shadow: 0 2px 8px rgba(45, 90, 39, 0.12);
+}
+
+.user-avatar-tag {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.user-name-tag {
+  font-size: 13px;
+  max-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role-pill {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: rgba(45, 90, 39, 0.12);
+  color: var(--primary-deep, #1a3c1b);
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 </style>
