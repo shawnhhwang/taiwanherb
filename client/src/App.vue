@@ -15,7 +15,7 @@
       @open-compare="isCompareModalOpen = true"
       @open-health="openHealthModal"
       @open-cmd="isCmdPaletteOpen = true"
-      @open-disclaimer="isDisclaimerModalOpen = true"
+      @open-disclaimer="openDisclaimerModal"
       @change-theme="setTheme"
       @switch-tab="switchMainTab"
     />
@@ -280,7 +280,7 @@
           <strong>【民間文化與古早知識分享宣告】</strong>
           本系統所記載之性味、經絡歸屬、民俗應用及風土配伍，純粹說明臺灣傳統民間生活知識與文獻記錄分享，<strong>絕非醫療建議，亦無宣稱任何療效</strong>。身體有疾痛請務必尋求合格醫師診治。
         </span>
-        <button class="strip-link-btn" @click="isDisclaimerModalOpen = true">
+        <button class="strip-link-btn" @click="openDisclaimerModal">
           完整免責條款 ➔
         </button>
       </div>
@@ -294,8 +294,8 @@
       </div>
     </footer>
 
-    <!-- 民間古早文化知識分享與法律免責聲明彈窗 -->
-    <div v-if="isDisclaimerModalOpen" class="modal-backdrop" @click.self="isDisclaimerModalOpen = false">
+    <!-- 民間古早文化知識分享與法律免責聲明彈窗 (最前端前景) -->
+    <div v-if="isDisclaimerModalOpen" class="disclaimer-modal-overlay">
       <div class="disclaimer-modal-card">
         <div class="disclaimer-modal-header">
           <div class="header-seal-wrap">
@@ -305,12 +305,18 @@
               <div class="modal-subtitle">Legal & Medical Compliance Disclaimer</div>
             </div>
           </div>
-          <button class="modal-close" @click="isDisclaimerModalOpen = false">✕</button>
+          <button
+            class="modal-close"
+            :title="isDisclaimerAgreed ? '關閉聲明' : '請先勾選同意上述條款方可關閉'"
+            @click="handleDisclaimerCloseAttempt"
+          >
+            ✕
+          </button>
         </div>
 
         <div class="disclaimer-modal-body">
           <div class="disclaimer-callout">
-            <span class="callout-icon">⚠️</span>
+            <span class="callout-icon">⚖️</span>
             <div class="callout-text">
               <strong>重要宣告：本系統嚴格遵循法規，絕不宣稱任何醫療效果，純粹是說明臺灣古早民俗文化與本草知識分享。</strong>
             </div>
@@ -319,7 +325,7 @@
           <div class="disclaimer-section">
             <h4>一、文化傳承與歷史教育性質定位</h4>
             <p>
-              本「台灣本草植物誌 (Taiwan Herb Wiki)」為一聚焦於臺灣四百年常民生活風土、客家與原住民族野草採集歷史、傳統民間青草茶舖文獻之<strong>文化教育與植物學普及展示平台</strong>。本網站所有內容（包含草藥性味、十二經絡、功效記述、民俗用途、RAG 專家諮詢回答、文章專題及方劑研製），均源自古代典籍考據與民間鄉野傳承記錄，純供常民文化認知與生活生活茶飲探索參考。
+              本「台灣本草植物誌 (Taiwan Herb Wiki)」為一聚焦於臺灣四百年常民生活風土、客家與原住民族野草採集歷史、傳統民間青草茶舖文獻之<strong>文化教育與植物學普及展示平台</strong>。本網站所有內容（包含草藥性味、十二經絡、古籍文獻記述、民俗用途、RAG 專家諮詢回答、文章專題及方劑研製），均源自古代典籍考據與民間鄉野傳承記錄，純供常民文化認知與生活生活茶飲探索參考。
             </p>
           </div>
 
@@ -343,11 +349,34 @@
               野外野生草本常有形態相似之劇毒雜草（如大花曼陀羅、毛地黃、毒芹等），切勿於野外隨意採摘或生食未經植物學專家確證之植物。
             </p>
           </div>
+
+          <!-- 使用者確認打勾區塊 (必須打勾後方可確認結束) -->
+          <div class="disclaimer-agreement-box" :class="{ 'is-agreed': isDisclaimerAgreed, 'shake-hint': shakeDisclaimerAgreement }">
+            <label class="agreement-checkbox-label">
+              <input
+                type="checkbox"
+                v-model="isDisclaimerAgreed"
+                class="agreement-checkbox"
+                @change="onDisclaimerCheckboxChange"
+              />
+              <span class="agreement-text">
+                我已詳細閱讀、充分理解並同意：<strong>本平台所載內容純屬臺灣本土傳統民間草木文化交流與古早風土知識分享，非屬醫療意見，絕無任何醫療效果宣稱或診斷處方功能。若有病痛不適將尋求合格中西醫療院所診治。</strong>
+              </span>
+            </label>
+          </div>
         </div>
 
         <div class="disclaimer-modal-footer">
-          <button class="btn-ack" @click="isDisclaimerModalOpen = false">
-            我已清楚理解並同意純屬文化知識分享 ➔
+          <div class="footer-hint-text" v-if="!isDisclaimerAgreed">
+            ⚠️ 請先勾選上方同意方框以確認理解條款
+          </div>
+          <button
+            class="btn-ack"
+            :disabled="!isDisclaimerAgreed"
+            @click="confirmDisclaimer"
+          >
+            <span v-if="isDisclaimerAgreed">✓ 我已理解並同意上述免責聲明（確認進入） ➔</span>
+            <span v-else>請先勾選同意上述免責條款 ➔</span>
           </button>
         </div>
       </div>
@@ -404,6 +433,41 @@ const isLoading = ref(false);
 const compareList = ref([]);
 const isCompareModalOpen = ref(false);
 const isDisclaimerModalOpen = ref(false);
+const isDisclaimerAgreed = ref(false);
+const shakeDisclaimerAgreement = ref(false);
+
+const openDisclaimerModal = () => {
+  isDisclaimerAgreed.value = false;
+  isDisclaimerModalOpen.value = true;
+};
+
+const onDisclaimerCheckboxChange = () => {
+  if (isDisclaimerAgreed.value) {
+    audio.playClick();
+  }
+};
+
+const confirmDisclaimer = () => {
+  if (!isDisclaimerAgreed.value) {
+    handleDisclaimerCloseAttempt();
+    return;
+  }
+  audio.playStamp();
+  localStorage.setItem('taiwanherb_disclaimer_agreed', 'true');
+  isDisclaimerModalOpen.value = false;
+};
+
+const handleDisclaimerCloseAttempt = () => {
+  if (isDisclaimerAgreed.value) {
+    confirmDisclaimer();
+  } else {
+    audio.playClick();
+    shakeDisclaimerAgreement.value = true;
+    setTimeout(() => {
+      shakeDisclaimerAgreement.value = false;
+    }, 600);
+  }
+};
 
 const healthInfo = ref(null);
 const isHealthModalOpen = ref(false);
@@ -715,5 +779,10 @@ onMounted(async () => {
   handleHashRouting();
   window.addEventListener('hashchange', handleHashRouting);
   window.addEventListener('keydown', onKeyDown);
+
+  // 初次造訪使用者，自動於最前方前景彈出知識免責聲明，打勾確認後方可關閉
+  if (!localStorage.getItem('taiwanherb_disclaimer_agreed')) {
+    openDisclaimerModal();
+  }
 });
 </script>
