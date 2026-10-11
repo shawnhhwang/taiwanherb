@@ -100,20 +100,21 @@ class ArticleService {
     let articleMarkdown = '';
     let engineUsed = 'builtin-grounded-engine';
 
-    // 若配置了外部 LLM API (例如 Gemini / OpenAI / Claude) 且非 builtin
+    // 若配置了外部 LLM API (例如 Ollama / Gemini / OpenAI / Claude) 且非 builtin
     if (llmCfg.activeProvider !== 'builtin') {
       try {
         const prompt = this.buildPrompt({ herbs, expert, audience, typeInfo, customNotes });
-        // 呼叫外部 API
-        const externalResult = await this.callExternalLlm({
-          provider: llmCfg.providers[llmCfg.activeProvider],
+        // 呼叫統一 LLM 服務層 (支援免金鑰 Ollama)
+        const externalResult = await llmService.callLlm({
+          providerId: llmCfg.activeProvider,
           prompt,
-          systemPrompt: `你是一位資深的臺灣本草植物誌專欄作家，請完全融入以下專家 Persona 口吻撰寫文章：${expert.name} (${expert.title})。`
+          systemPrompt: `你是一位資深的臺灣本草植物誌專欄作家，請完全融入以下專家 Persona 口吻撰寫文章：${expert.name} (${expert.title})。請嚴守不宣稱任何醫療效果，純粹分享民間傳統古早知識。`
         });
 
         if (externalResult && externalResult.trim() !== '') {
           articleMarkdown = externalResult;
-          engineUsed = `${llmCfg.activeProvider} (${llmCfg.providers[llmCfg.activeProvider].model})`;
+          const prov = llmCfg.providers[llmCfg.activeProvider];
+          engineUsed = `${prov ? prov.name : llmCfg.activeProvider} (${prov ? prov.model : 'Custom'})`;
         }
       } catch (externalErr) {
         console.warn('[ArticleService] External LLM failed, fallback to builtin:', externalErr.message);
@@ -421,56 +422,13 @@ ${herbs.map(h => `
    * 調用外部 LLM API (依據 provider 設定)
    */
   async callExternalLlm({ provider, prompt, systemPrompt }) {
-    if (!provider || !provider.apiKey) {
-      throw new Error('未提供有效之 LLM API Key');
-    }
-
-    if (provider.id === 'gemini') {
-      const url = `${provider.baseUrl.replace(/\/+$/, '')}/v1beta/models/${provider.model}:generateContent?key=${encodeURIComponent(provider.apiKey)}`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: systemPrompt }] },
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.7, maxOutputTokens: 2500 }
-        })
-      });
-
-      if (!res.ok) {
-        throw new Error(`Gemini API 呼叫失敗 (${res.status})`);
-      }
-      const data = await res.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    }
-
-    if (provider.id === 'openai') {
-      const url = `${provider.baseUrl.replace(/\/+$/, '')}/chat/completions`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${provider.apiKey}`
-        },
-        body: JSON.stringify({
-          model: provider.model,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: prompt }
-          ],
-          temperature: 0.7,
-          max_tokens: 2500
-        })
-      });
-
-      if (!res.ok) {
-        throw new Error(`OpenAI API 呼叫失敗 (${res.status})`);
-      }
-      const data = await res.json();
-      return data.choices?.[0]?.message?.content || '';
-    }
-
-    throw new Error(`不支援的外部提供商類型：${provider.id}`);
+    return llmService.callLlm({
+      providerId: provider.id,
+      prompt,
+      systemPrompt,
+      temperature: 0.7,
+      maxTokens: 2500
+    });
   }
 }
 

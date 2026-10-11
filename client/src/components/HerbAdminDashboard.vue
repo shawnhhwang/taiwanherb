@@ -343,7 +343,7 @@
           </div>
         </div>
 
-        <!-- 4 大供應商選擇卡 -->
+        <!-- 提供商選擇卡 -->
         <div class="llm-providers-grid">
           <div
             v-for="(prov, key) in llmConfig.providers"
@@ -354,7 +354,7 @@
           >
             <div class="provider-card-header">
               <span class="provider-icon">
-                {{ key === 'builtin' ? '🌿' : key === 'gemini' ? '🤖' : key === 'openai' ? '⚡' : '🎭' }}
+                {{ key === 'builtin' ? '🌿' : key === 'gemini' ? '🤖' : key === 'openai' ? '⚡' : key === 'ollama' ? '🦙' : '🎭' }}
               </span>
               <div>
                 <div class="provider-name">{{ prov.name }}</div>
@@ -372,8 +372,8 @@
 
             <div class="provider-meta-row">
               <span class="meta-label">金鑰狀態：</span>
-              <span :class="prov.hasApiKey || key === 'builtin' ? 'text-success' : 'text-muted'">
-                {{ key === 'builtin' ? '免金鑰 (內建)' : (prov.hasApiKey ? '已配置 (已脫敏)' : '未設定') }}
+              <span :class="prov.hasApiKey || prov.isKeylessAllowed || key === 'builtin' ? 'text-success' : 'text-muted'">
+                {{ key === 'builtin' ? '免金鑰 (內建)' : (prov.isKeylessAllowed ? '免金鑰 (本地/Ollama)' : (prov.hasApiKey ? '已配置 (已脫敏)' : '未設定')) }}
               </span>
             </div>
           </div>
@@ -409,7 +409,7 @@
                   v-model="editApiKey"
                   :type="showApiKeyText ? 'text' : 'password'"
                   class="custom-input"
-                  :placeholder="selectedProviderData.apiKey ? selectedProviderData.apiKey : '請輸入 API Key (如 sk-...)'"
+                  :placeholder="selectedProviderData.apiKey ? selectedProviderData.apiKey : (selectedProviderData.isKeylessAllowed ? 'Ollama / 本地端點可免填金鑰' : '請輸入 API Key (如 sk-...)')"
                 />
                 <button
                   type="button"
@@ -419,7 +419,10 @@
                   {{ showApiKeyText ? '隱藏' : '檢視' }}
                 </button>
               </div>
-              <small class="hint-muted">系統已實施安全脫敏遮罩，保存時僅傳輸新變更之金鑰。</small>
+              <small class="hint-muted" v-if="selectedProviderData.isKeylessAllowed">
+                🦙 本地或區域網路 Ollama 免填 API Key 即可直接呼叫連線。
+              </small>
+              <small class="hint-muted" v-else>系統已實施安全脫敏遮罩，保存時僅傳輸新變更之金鑰。</small>
             </div>
 
             <div class="input-item" v-if="llmConfig.activeProvider !== 'builtin'">
@@ -1675,7 +1678,7 @@ const saveLlmSettings = async () => {
       providers: {
         [llmConfig.value.activeProvider]: {
           ...selectedProviderData.value,
-          apiKey: editApiKey.value || undefined
+          apiKey: editApiKey.value !== '' ? editApiKey.value : (selectedProviderData.value.isKeylessAllowed ? '' : undefined)
         }
       }
     };

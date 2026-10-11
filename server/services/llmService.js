@@ -1,12 +1,55 @@
 /**
  * server/services/llmService.js
- * LLM 統一呼叫服務層 (支援內建離線引擎、Gemini、OpenAI、Claude，具備金鑰脫敏、連線測試與平滑退避)
+ * LLM 統一呼叫服務層 (支援內建離線引擎、Gemini、OpenAI、Claude、以及免金鑰之 Ollama 本地/內網服務)
+ * 具備金鑰脫敏、連線測試、免金鑰判定與平滑退避
  */
 const { DEFAULT_LLM_CONFIG } = require('../data/llmConfig');
+
+let insecureAgent = null;
+try {
+  const { Agent } = require('undici');
+  insecureAgent = new Agent({ connect: { rejectUnauthorized: false } });
+} catch (e) {
+  // undici fallback
+}
 
 class LlmService {
   constructor() {
     this.config = JSON.parse(JSON.stringify(DEFAULT_LLM_CONFIG));
+    this.insecureAgent = insecureAgent;
+  }
+
+  /**
+   * 判斷指定提供商是否支援無金鑰呼叫 (例如 Ollama、內建引擎、本地自建端點)
+   */
+  isKeylessAllowed(provider) {
+    if (!provider) return false;
+    if (provider.id === 'builtin' || provider.id === 'ollama') return true;
+    if (provider.id === 'openai') {
+      const url = (provider.baseUrl || '').toLowerCase();
+      // 若為 Ollama 埠號 (11434)、本地 IP、localhost、或明確不需金鑰之自建端點
+      if (url.includes(':11434') || url.includes('localhost') || url.includes('127.0.0.1') ||
+          url.includes('192.168.') || url.includes('10.') || url.includes('172.') || url.includes('ollama')) {
+        return true;
+      }
+      // 若為自定義非官方 OpenAI 網址且未填 key
+      if (!url.includes('api.openai.com') && (!provider.apiKey || provider.apiKey.trim() === '')) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * 解析 Base URL 備選清單 (若使用者誤填 https 於純 http 之 Ollama 埠號，提供自動降級容錯)
+   */
+  getUrlCandidates(baseUrl) {
+    const clean = (baseUrl || '').trim().replace(/\/+$/, '');
+    const candidates = [clean];
+    if (clean.startsWith('https://') && (clean.includes(':11434') || clean.includes('192.168.') || clean.includes('10.') || clean.includes('localhost') || clean.includes('127.0.0.1'))) {
+      candidates.push(clean.replace(/^https:\/\//, 'http://'));
+    }
+    return candidates;
   }
 
   /**
@@ -18,7 +61,8 @@ class LlmService {
       maskedProviders[key] = {
         ...p,
         apiKey: this.maskApiKey(p.apiKey),
-        hasApiKey: Boolean(p.apiKey && p.apiKey.trim() !== '')
+        hasApiKey: Boolean(p.apiKey && p.apiKey.trim() !== ''),
+        isKeylessAllowed: this.isKeylessAllowed(p)
       };
     }
 
@@ -51,18 +95,19 @@ class LlmService {
     if (newConfig.providers && typeof newConfig.providers === 'object') {
       for (const [key, p] of Object.entries(newConfig.providers)) {
         if (this.config.providers[key]) {
-          // 若傳入的金鑰為遮罩字串 (包含 •••)，則保留原金鑰不覆蓋
           let updatedApiKey = this.config.providers[key].apiKey;
           if (p.apiKey !== undefined && !p.apiKey.includes('•••')) {
             updatedApiKey = p.apiKey.trim();
           }
+
+          const isKeyless = key === 'builtin' || key === 'ollama' || this.isKeylessAllowed({ ...this.config.providers[key], ...p, apiKey: updatedApiKey });
 
           this.config.providers[key] = {
             ...this.config.providers[key],
             model: p.model || this.config.providers[key].model,
             baseUrl: p.baseUrl || this.config.providers[key].baseUrl,
             apiKey: updatedApiKey,
-            isConfigured: key === 'builtin' ? true : Boolean(updatedApiKey && updatedApiKey !== '')
+            isConfigured: isKeyless ? true : Boolean(updatedApiKey && updatedApiKey !== '')
           };
         }
       }
@@ -86,7 +131,7 @@ class LlmService {
 
     // 1. 內建離線引擎測試
     if (targetId === 'builtin') {
-      const latencyMs = Math.floor(Math.random() * 3) + 1; // 1-3ms 離線速度
+      const latencyMs = Math.floor(Math.random() * 3) + 1;
       return {
         providerId: 'builtin',
         providerName: provider.name,
@@ -98,8 +143,9 @@ class LlmService {
       };
     }
 
-    // 2. 外部 API 連線測試 (需要 API Key)
-    if (!provider.apiKey || provider.apiKey.trim() === '') {
+    // 2. 判斷是否需要金鑰
+    const keyless = this.isKeylessAllowed(provider);
+    if (!keyless && (!provider.apiKey || provider.apiKey.trim() === '')) {
       return {
         providerId: targetId,
         providerName: provider.name,
@@ -111,10 +157,86 @@ class LlmService {
       };
     }
 
-    // 模擬或真實 Ping 檢測
     try {
+      // 3. Ollama (或 OpenAI 指向 Ollama / 11434 埠號) 測試
+      if (targetId === 'ollama' || (targetId === 'openai' && (keyless || (provider.baseUrl || '').includes(':11434')))) {
+        const baseCandidates = this.getUrlCandidates(provider.baseUrl);
+        let onlineInfo = null;
+        let lastErr = null;
+
+        for (const base of baseCandidates) {
+          const isV1 = base.endsWith('/v1');
+          const testEndpoints = isV1
+            ? [`${base}/models`, `${base.replace(/\/v1$/, '')}/api/tags`, `${base.replace(/\/v1$/, '')}/api/version`]
+            : [`${base}/api/tags`, `${base}/api/version`, `${base}/v1/models`];
+
+          for (const testUrl of testEndpoints) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 6000);
+            try {
+              const headers = {};
+              if (provider.apiKey && provider.apiKey.trim() !== '') {
+                headers['Authorization'] = `Bearer ${provider.apiKey}`;
+              }
+              const fetchOpts = { headers, signal: controller.signal };
+              if (this.insecureAgent && base.startsWith('https://')) {
+                fetchOpts.dispatcher = this.insecureAgent;
+              }
+
+              const res = await fetch(testUrl, fetchOpts);
+              clearTimeout(timeoutId);
+
+              if (res.ok) {
+                const latencyMs = Date.now() - startTime;
+                const data = await res.json().catch(() => ({}));
+                let modelList = '';
+                if (Array.isArray(data.models)) {
+                  modelList = data.models.map(m => m.name || m.model).slice(0, 3).join(', ');
+                } else if (Array.isArray(data.data)) {
+                  modelList = data.data.map(m => m.id).slice(0, 3).join(', ');
+                }
+
+                if (base !== provider.baseUrl) {
+                  provider.baseUrl = base;
+                }
+
+                onlineInfo = {
+                  providerId: targetId,
+                  providerName: provider.name,
+                  status: 'online',
+                  latencyMs,
+                  message: `Ollama 連線成功 (免金鑰)！模型「${provider.model}」就緒${modelList ? `（偵測到可用模型：${modelList}...）` : ''}。`,
+                  model: provider.model,
+                  timestamp: new Date().toISOString()
+                };
+                break;
+              }
+            } catch (err) {
+              clearTimeout(timeoutId);
+              lastErr = err;
+            }
+          }
+          if (onlineInfo) break;
+        }
+
+        if (onlineInfo) {
+          return onlineInfo;
+        }
+
+        const latencyMs = Date.now() - startTime;
+        return {
+          providerId: targetId,
+          providerName: provider.name,
+          status: 'unreachable',
+          latencyMs,
+          message: `Ollama 連線超時或伺服器未開啟 (${lastErr ? lastErr.message : '無回應'})。請確認 Ollama 服務是否正於 ${provider.baseUrl} 運行。`,
+          model: provider.model,
+          timestamp: new Date().toISOString()
+        };
+      }
+
+      // 4. Google Gemini 測試
       if (targetId === 'gemini') {
-        // Gemini Ping 端點
         const pingUrl = `${provider.baseUrl.replace(/\/+$/, '')}/v1beta/models/${provider.model}?key=${encodeURIComponent(provider.apiKey)}`;
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 6000);
@@ -161,17 +283,18 @@ class LlmService {
         }
       }
 
-      // OpenAI 或相容協定測試
+      // 5. OpenAI 標準相容協定測試
       if (targetId === 'openai') {
         const pingUrl = `${provider.baseUrl.replace(/\/+$/, '')}/models`;
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 6000);
 
         try {
-          const res = await fetch(pingUrl, {
-            headers: { 'Authorization': `Bearer ${provider.apiKey}` },
-            signal: controller.signal
-          });
+          const headers = {};
+          if (provider.apiKey && provider.apiKey.trim() !== '') {
+            headers['Authorization'] = `Bearer ${provider.apiKey}`;
+          }
+          const res = await fetch(pingUrl, { headers, signal: controller.signal });
           clearTimeout(timeoutId);
           const latencyMs = Date.now() - startTime;
 
@@ -211,7 +334,7 @@ class LlmService {
         }
       }
 
-      // Claude 測試
+      // 6. Claude 測試
       if (targetId === 'claude') {
         const latencyMs = Date.now() - startTime;
         return {
@@ -234,6 +357,250 @@ class LlmService {
         model: provider.model,
         timestamp: new Date().toISOString()
       };
+    }
+  }
+
+  /**
+   * 統一呼叫指定 LLM 提供商 (支援無金鑰 Ollama、OpenAI 相容、Gemini、Claude)
+   */
+  async callLlm({ prompt, systemPrompt = '', providerId, temperature, maxTokens }) {
+    const targetId = providerId || this.config.activeProvider;
+    const provider = this.config.providers[targetId];
+
+    if (!provider) {
+      throw new Error(`找不到提供商「${targetId}」之設定`);
+    }
+
+    if (targetId === 'builtin') {
+      return null;
+    }
+
+    const keyless = this.isKeylessAllowed(provider);
+    if (!keyless && (!provider.apiKey || provider.apiKey.trim() === '')) {
+      throw new Error(`未提供 ${provider.name} 之有效 API 金鑰`);
+    }
+
+    const temp = temperature !== undefined ? temperature : this.config.temperature;
+    const tokens = maxTokens !== undefined ? maxTokens : this.config.maxTokens;
+
+    if (targetId === 'ollama' || (targetId === 'openai' && (provider.baseUrl.includes(':11434') || provider.baseUrl.includes('ollama')))) {
+      return this.callOllama({ provider, prompt, systemPrompt, temperature: temp, maxTokens: tokens });
+    }
+
+    if (targetId === 'openai') {
+      return this.callOpenAiCompatible({ provider, prompt, systemPrompt, temperature: temp, maxTokens: tokens });
+    }
+
+    if (targetId === 'gemini') {
+      return this.callGemini({ provider, prompt, systemPrompt, temperature: temp, maxTokens: tokens });
+    }
+
+    if (targetId === 'claude') {
+      return this.callClaude({ provider, prompt, systemPrompt, temperature: temp, maxTokens: tokens });
+    }
+
+    throw new Error(`不支援的提供商類型：${targetId}`);
+  }
+
+  /**
+   * Ollama 原生或相容端點呼叫 (免金鑰)
+   */
+  async callOllama({ provider, prompt, systemPrompt, temperature, maxTokens }) {
+    const baseCandidates = this.getUrlCandidates(provider.baseUrl);
+    let lastErr = null;
+
+    for (const base of baseCandidates) {
+      const isV1 = base.endsWith('/v1');
+      const endpoint = isV1 ? `${base}/chat/completions` : `${base}/api/chat`;
+
+      const headers = { 'Content-Type': 'application/json' };
+      if (provider.apiKey && provider.apiKey.trim() !== '') {
+        headers['Authorization'] = `Bearer ${provider.apiKey}`;
+      }
+
+      const payload = isV1 ? {
+        model: provider.model,
+        messages: [
+          ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+          { role: 'user', content: prompt }
+        ],
+        temperature: temperature || 0.7,
+        max_tokens: maxTokens || 2000
+      } : {
+        model: provider.model,
+        messages: [
+          ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+          { role: 'user', content: prompt }
+        ],
+        stream: false,
+        options: {
+          temperature: temperature || 0.7,
+          num_predict: maxTokens || 2000
+        }
+      };
+
+      const fetchOptions = {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload)
+      };
+
+      if (this.insecureAgent && base.startsWith('https://')) {
+        fetchOptions.dispatcher = this.insecureAgent;
+      }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutMs || 35000);
+      fetchOptions.signal = controller.signal;
+
+      try {
+        const res = await fetch(endpoint, fetchOptions);
+        clearTimeout(timeoutId);
+
+        if (!res.ok) {
+          const errText = await res.text().catch(() => '');
+          throw new Error(`Ollama 回應狀態碼 ${res.status}: ${errText.slice(0, 200)}`);
+        }
+
+        const data = await res.json();
+        const content = data.message?.content || data.choices?.[0]?.message?.content || '';
+        if (content) {
+          return content.trim();
+        }
+      } catch (err) {
+        clearTimeout(timeoutId);
+        lastErr = err;
+      }
+    }
+
+    throw new Error(`Ollama 呼叫失敗：${lastErr ? lastErr.message : '未知錯誤'}`);
+  }
+
+  /**
+   * OpenAI / 相容端點呼叫
+   */
+  async callOpenAiCompatible({ provider, prompt, systemPrompt, temperature, maxTokens }) {
+    let url = provider.baseUrl.replace(/\/+$/, '');
+    if (!url.endsWith('/chat/completions')) {
+      url = `${url}/chat/completions`;
+    }
+
+    const headers = { 'Content-Type': 'application/json' };
+    if (provider.apiKey && provider.apiKey.trim() !== '') {
+      headers['Authorization'] = `Bearer ${provider.apiKey}`;
+    }
+
+    const fetchOptions = {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        model: provider.model,
+        messages: [
+          ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+          { role: 'user', content: prompt }
+        ],
+        temperature: temperature || 0.7,
+        max_tokens: maxTokens || 2000
+      })
+    };
+
+    if (this.insecureAgent && url.startsWith('https://')) {
+      fetchOptions.dispatcher = this.insecureAgent;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutMs || 35000);
+    fetchOptions.signal = controller.signal;
+
+    try {
+      const res = await fetch(url, fetchOptions);
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        const errText = await res.text().catch(() => '');
+        throw new Error(`OpenAI 相容端點回應錯誤 (${res.status}): ${errText.slice(0, 200)}`);
+      }
+
+      const data = await res.json();
+      return (data.choices?.[0]?.message?.content || data.message?.content || '').trim();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      throw err;
+    }
+  }
+
+  /**
+   * Google Gemini 呼叫
+   */
+  async callGemini({ provider, prompt, systemPrompt, temperature, maxTokens }) {
+    const url = `${provider.baseUrl.replace(/\/+$/, '')}/v1beta/models/${provider.model}:generateContent?key=${encodeURIComponent(provider.apiKey)}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutMs || 35000);
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: temperature || 0.7,
+            maxOutputTokens: maxTokens || 2500
+          }
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        throw new Error(`Gemini API 呼叫失敗 (${res.status})`);
+      }
+
+      const data = await res.json();
+      return (data.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      throw err;
+    }
+  }
+
+  /**
+   * Anthropic Claude 呼叫
+   */
+  async callClaude({ provider, prompt, systemPrompt, temperature, maxTokens }) {
+    const url = `${provider.baseUrl.replace(/\/+$/, '')}/messages`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.config.timeoutMs || 35000);
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': provider.apiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: provider.model,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: temperature || 0.7,
+          max_tokens: maxTokens || 2500
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        throw new Error(`Claude API 呼叫失敗 (${res.status})`);
+      }
+
+      const data = await res.json();
+      return (data.content?.[0]?.text || '').trim();
+    } catch (err) {
+      clearTimeout(timeoutId);
+      throw err;
     }
   }
 

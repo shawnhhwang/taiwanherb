@@ -355,7 +355,7 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
   // ========================================================
   // 2. LLM API 來源與權限管理驗證
   // ========================================================
-  test('LLM: 取得提供商配置、安全金鑰脫敏與即時連線 Ping 測試', async () => {
+  test('LLM: 取得提供商配置、安全金鑰脫敏、Ollama 免金鑰與即時連線 Ping 測試', async () => {
     // 2.1 取得配置
     const { status, body } = await fetchJson('/api/admin/llm/config');
     assert.equal(status, 200);
@@ -363,7 +363,10 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.ok(body.data.providers.builtin);
     assert.ok(body.data.providers.gemini);
     assert.ok(body.data.providers.openai);
+    assert.ok(body.data.providers.ollama);
     assert.ok(body.data.providers.claude);
+    assert.equal(body.data.providers.ollama.isKeylessAllowed, true);
+    assert.equal(body.data.providers.builtin.isKeylessAllowed, true);
 
     // 2.2 測試內建離線引擎 Ping
     const pingRes = await fetchJson('/api/admin/llm/test', {
@@ -375,7 +378,16 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.equal(pingRes.body.data.status, 'online');
     assert.ok(pingRes.body.data.latencyMs >= 0);
 
-    // 2.3 super_admin 更新參數
+    // 2.3 測試 Ollama 免金鑰連線 Ping
+    const ollamaPingRes = await fetchJson('/api/admin/llm/test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ providerId: 'ollama' })
+    });
+    assert.equal(ollamaPingRes.status, 200);
+    assert.ok(ollamaPingRes.body.data.status === 'online' || ollamaPingRes.body.data.status === 'unreachable');
+
+    // 2.4 super_admin 更新參數
     const updateRes = await fetchJson('/api/admin/llm/config', {
       method: 'PUT',
       headers: {

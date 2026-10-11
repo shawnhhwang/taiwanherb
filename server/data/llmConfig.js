@@ -19,6 +19,16 @@ const DEFAULT_LLM_CONFIG = {
       baseUrl: 'local://embedded',
       apiKey: ''
     },
+    ollama: {
+      id: 'ollama',
+      name: 'Ollama 本地 / 內網模型服務 (免金鑰)',
+      vendor: 'Ollama (Local / Self-Hosted)',
+      description: '支援本地 (localhost:11434) 或區域網路 Ollama 執行之開源大模型 (如 Llama 3, Gemma, Qwen, Taiwan-LLM)，原生支援無金鑰直接呼叫。',
+      isConfigured: true,
+      model: process.env.OLLAMA_MODEL || 'gemma4:e2b',
+      baseUrl: process.env.OLLAMA_BASE_URL || 'http://192.168.1.3:11434',
+      apiKey: ''
+    },
     gemini: {
       id: 'gemini',
       name: 'Google Gemini',
@@ -33,10 +43,10 @@ const DEFAULT_LLM_CONFIG = {
       id: 'openai',
       name: 'OpenAI / 相容架構 (DeepSeek / Ollama)',
       vendor: 'OpenAI / Self-Hosted',
-      description: '支援標準 OpenAI ChatCompletions 協定，可無縫切換 DeepSeek、Local Ollama 或自建 vLLM 端點。',
-      isConfigured: !!process.env.OPENAI_API_KEY,
+      description: '支援標準 OpenAI ChatCompletions 協定，可無縫切換 DeepSeek、Local Ollama 或自建 vLLM 端點。本地或自建端點支援免金鑰呼叫。',
+      isConfigured: true,
       model: process.env.OPENAI_MODEL || 'gemma4:e2b',
-      baseUrl: process.env.OPENAI_BASE_URL || 'https://192.168.1.3:11434',
+      baseUrl: process.env.OPENAI_BASE_URL || 'http://192.168.1.3:11434',
       apiKey: process.env.OPENAI_API_KEY || ''
     },
     claude: {

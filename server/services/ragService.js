@@ -3,6 +3,7 @@
  * 台灣本草知識庫 RAG (Retrieval-Augmented Generation) 語意檢索與特定專家語意生成服務
  */
 const herbRepository = require('../repositories/herbRepository');
+const llmService = require('./llmService');
 
 // 四大特色本草專家 Persona 設定
 const EXPERTS = {
@@ -335,7 +336,41 @@ class RagService {
     }));
 
     // 專家風格回答合成 (Persona-Driven Grounded Synthesis)
-    const replyMarkdown = this.synthesizeExpertReply(expert, message, retrieved);
+    let replyMarkdown = '';
+    const llmCfg = llmService.config;
+
+    // 若啟用外部 LLM (例如 Ollama 或其他提供商)，優先嘗試即時 LLM 推理生成
+    if (llmCfg && llmCfg.activeProvider !== 'builtin') {
+      try {
+        const prompt = this.buildConsultPrompt(expert, message, retrieved);
+        const externalResult = await llmService.callLlm({
+          providerId: llmCfg.activeProvider,
+          prompt,
+          systemPrompt: `你是一位深諳臺灣本土草藥文化的本草耆老，請完全融入以下專家 Persona 口吻回覆：${expert.name}（${expert.title}）。請嚴守不宣稱任何醫療效果，純粹分享民間傳統古早知識。`
+        });
+        if (externalResult && externalResult.trim() !== '') {
+          replyMarkdown = externalResult;
+        }
+      } catch (err) {
+        console.warn('[RagService] External LLM consult failed, fallback to builtin synthesis:', err.message);
+      }
+    }
+
+    if (!replyMarkdown) {
+      replyMarkdown = this.synthesizeExpertReply(expert, message, retrieved);
+    }
+
+    // 確保附帶免責聲明
+    const complianceDisclaimer = `
+---
+
+> ### 📜 【臺灣本草知識庫 · 民間古早知識分享與醫療免責告示】
+> 本次諮詢內容純屬臺灣民間傳統草木文化考證、鄉土常民智慧及生活茶飲風味分享，**非屬醫療意見，不具任何醫療效果、診斷、治療或預防疾病之功能**。本草性味記載源自古籍傳承與文獻梳理，個人體質各異，若有身體不適或病症，請務必諮詢合格之中西醫專業醫療機構。
+    `.trim();
+
+    if (!replyMarkdown.includes('民間古早知識分享與醫療免責告示') && !replyMarkdown.includes('非屬醫療意見')) {
+      replyMarkdown += '\n\n' + complianceDisclaimer;
+    }
 
     // 動態推薦追問問題
     const suggestedQuestions = this.generateSuggestedQuestions(expert, retrieved);
@@ -355,6 +390,44 @@ class RagService {
       citations,
       suggestedQuestions
     };
+  }
+
+  /**
+   * 建構 RAG 外部 LLM 諮詢 Prompt
+   */
+  buildConsultPrompt(expert, query, retrieved) {
+    const citationsText = retrieved.map(({ herb, reason }) => `
+- 草藥名稱：${herb.name} (${herb.scientificName || '臺灣草本'})
+  科屬產區：${herb.family || ''} / ${herb.region || ''}
+  性味歸經：性${herb.nature}，味${(herb.taste || []).join('、')}，入${(herb.channels || []).join('、')}經
+  民間傳統應用：${herb.folkApplication || ''}
+  古籍文獻描述：${herb.efficacy || ''}
+  風土記述：${herb.taiwanHeritage || herb.terroir || ''}
+  安全指引：${herb.safetyLevel || '無毒常服'}
+  禁忌注意：${herb.contraindications || '無特別禁忌'}
+  檢索關聯理由：${reason}
+`).join('\n');
+
+    return `
+請以「${expert.name}」（${expert.title}）的獨特口吻，針對使用者的提問進行回答。
+
+【專家 Persona 特徵】
+* 稱號與風土背景：${expert.title}（${expert.region}）
+* 說話口氣特徵：${expert.tone}
+* 代表性口頭禪：${expert.catchphrase}
+* 問候語風格：${expert.greeting}
+
+【使用者提問】
+${query}
+
+【檢索出的臺灣本土草藥真實依據 (Grounded Citations)】
+${citationsText}
+
+【法律合規要求（極重要）】
+1. 本系統為純粹民間古早傳統知識文化分享，**嚴禁聲稱任何醫療效果、療效、治癒、診斷疾病或開立處方**。
+2. 遇到嚴重病痛或不適，必須明確提醒尋求合格中西醫專業醫療院所診治。
+3. 語氣務必完全符合專家的性格與生活感，回答結構需包含問候引言、草木風土故事、家常茶飲生活應用及體質注意叮嚀。
+    `.trim();
   }
 
   /**
