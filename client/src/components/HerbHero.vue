@@ -52,7 +52,7 @@
             @click="$emit('switch-tab', 'catalog')"
           >
             <span>🌿</span>
-            <span>典藏圖鑑</span>
+            <span>本草知識庫 (資料庫查詢)</span>
           </button>
           <button
             class="hero-nav-pill"

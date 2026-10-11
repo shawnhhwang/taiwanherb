@@ -1342,4 +1342,95 @@ button {
   transform: none;
 }
 
+/* 首頁精選導覽與引導進入本草知識庫 */
+.home-featured-wrapper {
+  margin-top: 8px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.home-section-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.home-section-seal {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  background: rgba(180, 83, 9, 0.12);
+  color: var(--amber-deep, #b45309);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.home-section-title {
+  font-size: 26px;
+  font-family: var(--font-serif);
+  color: var(--primary-deep);
+  margin: 0 0 8px 0;
+  letter-spacing: 1px;
+}
+
+.home-section-desc {
+  font-size: 14px;
+  color: var(--ink-muted);
+  max-width: 640px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.home-cta-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 36px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  background-image: radial-gradient(circle at 100% 0%, rgba(45, 106, 79, 0.05) 0%, transparent 70%);
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+.home-cta-text h3 {
+  font-size: 20px;
+  font-family: var(--font-serif);
+  color: var(--ink-heavy);
+  margin: 0 0 6px 0;
+}
+
+.home-cta-text h3 strong {
+  color: var(--primary-deep);
+}
+
+.home-cta-text p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink-muted);
+}
+
+.btn-cta-knowledge {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.3);
+  transition: all 0.25s ease;
+}
+
+.btn-cta-knowledge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(45, 106, 79, 0.4);
+}
+
 

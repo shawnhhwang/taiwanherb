@@ -87,6 +87,28 @@
           <span>{{ healthInfo?.database?.isMemoryMode ? '正常 (Memory)' : `正常 (${healthInfo?.database?.activeNode})` }}</span>
         </button>
 
+        <!-- 首頁 -->
+        <button
+          class="btn-pill"
+          :class="activeTab === 'home' ? 'btn-pill-primary' : 'btn-pill-subtle'"
+          title="回首頁探索風土與島嶼節氣敘事"
+          @click="$emit('switch-tab', 'home')"
+        >
+          <span>🏡</span>
+          <span>首頁</span>
+        </button>
+
+        <!-- 本草知識庫 (資料庫查詢) -->
+        <button
+          class="btn-pill"
+          :class="activeTab === 'catalog' ? 'btn-pill-primary' : 'btn-pill-subtle'"
+          title="進入本草知識庫查詢與多維度圖鑑篩選"
+          @click="$emit('switch-tab', 'catalog')"
+        >
+          <span>🌿</span>
+          <span>本草知識庫</span>
+        </button>
+
         <!-- 諮詢茶堂 (RAG 專家問答) -->
         <button
           class="btn-pill"

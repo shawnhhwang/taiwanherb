@@ -22,9 +22,9 @@
       @switch-tab="switchMainTab"
     />
 
-    <!-- Awwwards 殿堂級 Hero 敘事區 (僅在首頁/目錄頁展示) -->
+    <!-- Awwwards 殿堂級 Hero 敘事區 (僅在首頁展示「草木有靈，人間有情」) -->
     <HerbHero
-      v-if="!selectedHerbId"
+      v-if="!selectedHerbId && activeTab === 'home'"
       :featured-herb="featuredHerb"
       :total-herbs="pagination.total"
       :favorites-count="favoriteHerbs.length"
@@ -36,27 +36,63 @@
 
     <!-- 主體內容區塊 -->
     <div class="main-wrapper">
-      <!-- 標籤頁一：專家諮詢茶堂 (RAG Consultation Lab) -->
-      <div v-if="!selectedHerbId && activeTab === 'consult'" style="grid-column: 1 / -1;">
+      <!-- 標籤頁零：首頁精選與快速導覽 (Home 模式，維持首頁美學與精選卡片) -->
+      <div v-if="!selectedHerbId && activeTab === 'home'" style="grid-column: 1 / -1;" class="home-featured-wrapper">
+        <div class="home-section-header">
+          <div class="home-section-seal">本草精選</div>
+          <h2 class="home-section-title">島嶼經典本草 · 採擷天地四時風土</h2>
+          <p class="home-section-desc">
+            依山傍海的臺灣島嶼孕育多樣微氣候，每一株野生草木皆蘊藏先民百年生活智慧。
+          </p>
+        </div>
+
+        <!-- 6 味精選推薦草藥卡片 -->
+        <div class="herbs-grid" style="margin-bottom: 36px;">
+          <HerbCard
+            v-for="herb in herbs.slice(0, 6)"
+            :key="'home-' + herb.id"
+            :herb="herb"
+            :is-comparing="isInCompare(herb.id)"
+            :is-favorite="isHerbFavorite(herb.id)"
+            @click="openHerbDetail(herb.id)"
+            @toggle-compare="toggleCompare"
+            @toggle-favorite="toggleFavorite"
+          />
+        </div>
+
+        <!-- 進入本草知識庫的大按鈕引導橫幅 -->
+        <div class="home-cta-card">
+          <div class="home-cta-text">
+            <h3>探索完整臺灣島嶼 <strong>{{ pagination.total }}</strong> 味本草植物知識庫</h3>
+            <p>包含多維度風土產區、性味歸經、民間情境、四氣五味精準檢索與全島地圖探索</p>
+          </div>
+          <button class="btn-cta-knowledge" @click="switchMainTab('catalog')">
+            <span>🌿 進入本草知識庫（資料庫查詢）➔</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 標籤頁一：專家諮詢茶堂 (RAG Consultation Lab) - 純淨整潔，無首頁資訊 -->
+      <div v-else-if="!selectedHerbId && activeTab === 'consult'" style="grid-column: 1 / -1;">
         <HerbConsultationLab @select-herb-id="openHerbDetail" />
       </div>
 
-      <!-- 標籤頁二：典藏後台與數據中心 (Admin Dashboard) -->
+      <!-- 標籤頁二：典藏後台與數據中心 (Admin Dashboard) - 純淨整潔，無首頁資訊 -->
       <div v-else-if="!selectedHerbId && activeTab === 'admin'" style="grid-column: 1 / -1;">
         <HerbAdminDashboard />
       </div>
 
-      <!-- 標籤頁三：青草茶方劑調配研製所 (Alchemy Lab) -->
+      <!-- 標籤頁三：青草茶方劑調配研製所 (Alchemy Lab) - 純淨整潔，無首頁資訊 -->
       <div v-else-if="!selectedHerbId && activeTab === 'alchemy'" style="grid-column: 1 / -1;">
         <HerbAlchemyLab :all-herbs="allHerbsFullList" />
       </div>
 
-      <!-- 標籤頁四：五行經絡引導圖 (Meridian Body Map) -->
+      <!-- 標籤頁四：五行經絡引導圖 (Meridian Body Map) - 純淨整潔，無首頁資訊 -->
       <div v-else-if="!selectedHerbId && activeTab === 'meridian'" style="grid-column: 1 / -1;">
         <HerbMeridianMap :herbs="allHerbsFullList" @select-herb="openHerbDetail" />
       </div>
 
-      <!-- 標籤頁五：藏書票收藏冊 (Favorites Cabinet) -->
+      <!-- 標籤頁五：藏書票收藏冊 (Favorites Cabinet) - 純淨整潔，無首頁資訊 -->
       <div v-else-if="!selectedHerbId && activeTab === 'favorites'" style="grid-column: 1 / -1;">
         <FavoritesCabinet
           :favorite-herbs="favoriteHerbs"
@@ -66,8 +102,8 @@
         />
       </div>
 
-      <!-- 標籤頁六：典藏圖鑑目錄 (Catalog) 包含側邊欄 -->
-      <template v-else-if="!selectedHerbId">
+      <!-- 標籤頁六：本草知識庫 (Catalog 資料庫查詢模式) - 純淨整潔，無首頁資訊 -->
+      <template v-else-if="!selectedHerbId && activeTab === 'catalog'">
         <!-- 側邊多維度篩選欄 -->
         <HerbSidebar
           :categories="categories"
@@ -437,7 +473,7 @@ const currentSafetyLevel = ref('全部');
 const searchQuery = ref('');
 const sortOption = ref('id_asc');
 const viewMode = ref('grid'); // 'grid' | 'list'
-const activeTab = ref('catalog'); // 'catalog' | 'consult' | 'admin' | 'alchemy' | 'meridian' | 'favorites'
+const activeTab = ref('home'); // 'home' | 'catalog' | 'consult' | 'admin' | 'alchemy' | 'meridian' | 'favorites'
 
 const selectedHerbId = ref(null);
 const herbDetail = ref(null);
@@ -524,6 +560,7 @@ const setTheme = (theme) => {
 const switchMainTab = (tab) => {
   audio.playClick();
   activeTab.value = tab;
+  window.location.hash = `#/${tab}`;
   if (selectedHerbId.value) {
     backToCatalog();
   }
@@ -618,8 +655,9 @@ const backToCatalog = () => {
 
 const goCatalog = () => {
   audio.playClick();
-  activeTab.value = 'catalog';
+  activeTab.value = 'home';
   backToCatalog();
+  window.location.hash = '#/home';
 };
 
 // 隨機推薦
@@ -766,19 +804,49 @@ watch(searchQuery, () => {
   if (selectedHerbId.value) {
     backToCatalog();
   }
+  // 若使用者在首頁輸入搜尋，自動導向本草知識庫查詢模式
+  if (searchQuery.value && activeTab.value === 'home') {
+    activeTab.value = 'catalog';
+    window.location.hash = '#/catalog';
+  }
   loadHerbs();
 });
 
-// URL Hash 路由監控 (支援 #/herb/:id)
+// URL Hash 路由監控 (支援 #/home, #/catalog, #/consult, #/admin, #/herb/:id)
 const handleHashRouting = () => {
   const hash = window.location.hash;
   const match = hash.match(/^#\/herb\/(\d+)$/);
   if (match) {
     const id = parseInt(match[1], 10);
     openHerbDetail(id);
-  } else if (!hash || hash === '#/' || hash === '#/catalog') {
+  } else if (hash === '#/catalog') {
     selectedHerbId.value = null;
     herbDetail.value = null;
+    activeTab.value = 'catalog';
+  } else if (hash === '#/consult') {
+    selectedHerbId.value = null;
+    herbDetail.value = null;
+    activeTab.value = 'consult';
+  } else if (hash === '#/admin') {
+    selectedHerbId.value = null;
+    herbDetail.value = null;
+    activeTab.value = 'admin';
+  } else if (hash === '#/alchemy') {
+    selectedHerbId.value = null;
+    herbDetail.value = null;
+    activeTab.value = 'alchemy';
+  } else if (hash === '#/meridian') {
+    selectedHerbId.value = null;
+    herbDetail.value = null;
+    activeTab.value = 'meridian';
+  } else if (hash === '#/favorites') {
+    selectedHerbId.value = null;
+    herbDetail.value = null;
+    activeTab.value = 'favorites';
+  } else if (!hash || hash === '#/' || hash === '#/home') {
+    selectedHerbId.value = null;
+    herbDetail.value = null;
+    activeTab.value = 'home';
   }
 };
 
