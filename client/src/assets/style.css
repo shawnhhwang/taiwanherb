@@ -232,6 +232,9 @@ button {
   align-items: center;
   gap: 6px;
   transition: all 0.2s ease;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  word-break: keep-all !important;
 }
 
 .btn-pill-primary {
@@ -268,6 +271,9 @@ button {
   background: #ecfdf5;
   color: #065f46;
   border: 1px solid #a7f3d0;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  word-break: keep-all !important;
   cursor: pointer;
 }
 
