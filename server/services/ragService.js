@@ -517,15 +517,20 @@ ${secondaryHerbs.length > 0 ? `* **佐使配伍好草**：${secondaryHerbs.map(h
 1. **日常運用**：${mainHerb.folkApplication || '建議採乾燥草本 10-15g，以熱水悶泡或慢火細煎 15 分鐘溫服。'}
 2. **風格心法**：${expert.tone || '順應四時節氣，以草木清香涵養身心。'}
 
----
-
 ### ⚠️ 【安全與體質注意事項】
 > **安全等級**：${mainHerb.safetyLevel || '無毒常服'}
 > **禁忌提醒**：${mainHerb.contraindications || '依體質適量使用，孕婦或體質虛寒者請諮詢專業醫師。'}
       `.trim();
     }
 
-    return reply;
+    // 全專家通用法定文化知識免責宣告
+    const legalDisclaimer = `
+---
+> 📜 **【臺灣本草知識庫 · 民間古早知識分享與醫療免責告示】**  
+> 本諮詢內容純屬臺灣傳統民間風土經驗、古早青草智慧與生活文化記錄分享，**本系統嚴格遵循法規，絕無任何醫療效果宣稱，亦不可替代任何專業醫療診斷、處方或治療**。個人體質與健康狀況各異，若有任何身體不適、慢性疾病或正接受治療，請務必諮詢合格中西醫專科醫師診治。
+`.trim();
+
+    return reply + '\n\n' + legalDisclaimer;
   }
 
   /**

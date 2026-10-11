@@ -35,8 +35,8 @@ const DEFAULT_LLM_CONFIG = {
       vendor: 'OpenAI / Self-Hosted',
       description: '支援標準 OpenAI ChatCompletions 協定，可無縫切換 DeepSeek、Local Ollama 或自建 vLLM 端點。',
       isConfigured: !!process.env.OPENAI_API_KEY,
-      model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-      baseUrl: process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
+      model: process.env.OPENAI_MODEL || 'gemma4:e2b',
+      baseUrl: process.env.OPENAI_BASE_URL || 'https://192.168.1.3:11434',
       apiKey: process.env.OPENAI_API_KEY || ''
     },
     claude: {

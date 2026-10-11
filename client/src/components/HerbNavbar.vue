@@ -91,7 +91,7 @@
         <button
           class="btn-pill"
           :class="activeTab === 'consult' ? 'btn-pill-primary' : 'btn-pill-subtle'"
-          title="請益本草名醫與風土達人 (RAG 語意問答)"
+          title="請益本草耆老與風土達人 (RAG 語意問答)"
           @click="$emit('switch-tab', 'consult')"
         >
           <span>🍵</span>
@@ -107,6 +107,16 @@
         >
           <span>⚙️</span>
           <span>管理後台</span>
+        </button>
+
+        <!-- 免責聲明 -->
+        <button
+          class="btn-pill btn-pill-subtle"
+          title="閱讀民間知識分享與非醫療宣告"
+          @click="$emit('open-disclaimer')"
+        >
+          <span>⚖️</span>
+          <span>知識免責聲明</span>
         </button>
 
         <!-- 隨機推薦藥材 -->
@@ -148,6 +158,7 @@ const emit = defineEmits([
   'open-compare',
   'open-health',
   'open-cmd',
+  'open-disclaimer',
   'change-theme',
   'switch-tab'
 ]);

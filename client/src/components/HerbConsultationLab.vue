@@ -9,11 +9,20 @@
         </div>
         <h2 class="consult-main-title">
           <span>坐聽山嵐風土，</span>
-          <em>請益本草名醫與山林達人</em>
+          <em>請益本草耆老與風土達人</em>
         </h2>
         <p class="consult-subtitle">
-          結合在地草藥知識庫與檢索增強生成（RAG），依循台灣四百年青草風土與現代生藥學驗證，為您的體質與日常茶飲提供深度對策。
+          結合在地草藥知識庫與檢索增強生成（RAG），依循台灣四百年青草風土民俗記錄，純粹說明古早民間智慧與生活茶飲文化分享，不具備任何醫療效果宣稱。
         </p>
+      </div>
+    </div>
+
+    <!-- 古早知識分享與醫療免責告示牌匾 -->
+    <div class="consult-legal-disclaimer-strip">
+      <div class="strip-icon">⚖️</div>
+      <div class="strip-text">
+        <strong>【民間文化知識分享與非醫療宣告】</strong>
+        本諮詢茶堂純屬臺灣常民傳統青草生活經驗、古早本草記載與風土民俗知識之交流分享，<strong>嚴禁且絕無宣稱任何醫療效果，亦非醫療行為或處方診斷</strong>。個人體質各異，若有疾病、身體不適或正接受治療，請務必尋求合格專業中西醫師診治。
       </div>
     </div>
 
@@ -831,5 +840,32 @@ const submitConsultation = async () => {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.consult-legal-disclaimer-strip {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--amber-deep);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.strip-icon {
+  font-size: 20px;
+}
+
+.strip-text {
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+.strip-text strong {
+  color: var(--primary-deep);
 }
 </style>

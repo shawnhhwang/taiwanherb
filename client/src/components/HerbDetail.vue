@@ -144,11 +144,12 @@
           </div>
         </div>
 
-        <!-- 功效主治 -->
+        <!-- 傳統古早記載與常民智慧 -->
         <div class="section-block">
           <div class="section-block-title">
-            <span>✨</span>
-            <span>【功效與主治】</span>
+            <span>📜</span>
+            <span>【傳統古早記載與常民智慧】</span>
+            <span class="non-medical-pill">古籍風土記錄 · 非醫療效果宣稱</span>
           </div>
           <p class="section-block-content">{{ herb.efficacy }}</p>
         </div>
@@ -182,6 +183,17 @@
           </div>
           <p style="font-size: 14px; color: #991b1b; line-height: 1.6;">
             {{ herb.contraindications }}
+          </p>
+        </div>
+
+        <!-- 古早文化知識分享與醫療免責告示卡 -->
+        <div class="detail-disclaimer-card">
+          <div class="disclaimer-title-row">
+            <span>⚖️</span>
+            <strong>【民間風土知識分享與醫療免責告示】</strong>
+          </div>
+          <p class="disclaimer-content-p">
+            本條目所載之植物性味、十二經絡與民間常民用法，純粹為臺灣傳統文化、青草古籍與地方風土歷史經驗之整理說明，<strong>本系統嚴格遵守規範，絕無宣稱或暗示任何醫療效果</strong>，亦不可作為醫療診斷或處方依據。若身體有任何不適、慢性疾病或特殊體質，請務必尋求合格專業中西醫專科醫師協助。
           </p>
         </div>
 
@@ -365,5 +377,41 @@ const onImageError = (e) => {
   color: var(--amber-deep);
   border-top: 1px dashed rgba(45, 106, 79, 0.2);
   padding-top: 8px;
+}
+
+.non-medical-pill {
+  font-size: 11px;
+  font-weight: normal;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  color: var(--ink-muted);
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+.detail-disclaimer-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--amber-deep);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-top: 16px;
+}
+
+.disclaimer-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--primary-deep);
+  margin-bottom: 6px;
+}
+
+.disclaimer-content-p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+  line-height: 1.6;
 }
 </style>

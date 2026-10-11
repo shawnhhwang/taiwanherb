@@ -5,6 +5,9 @@
       <div>
         <h2 class="alchemy-title">青草茶方劑調配研製所 · Tea Alchemy Lab</h2>
         <p class="alchemy-subtitle">依循「君臣佐使」傳統法度，自由調配草藥，即時演算寒熱陰陽平衡、滋味圖譜與歸經共鳴。</p>
+        <div style="font-size: 11.5px; color: var(--amber-deep); margin-top: 4px;">
+          ⚠️ <strong>生活文化茶飲宣告</strong>：本茶釜純為臺灣古早常民生活茶飲風味與配伍文化模擬，非醫療處方，絕無任何疾病治療宣稱。
+        </div>
       </div>
     </div>
 

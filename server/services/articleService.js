@@ -126,6 +126,18 @@ class ArticleService {
       engineUsed = '臺灣本草內建語意敘事引擎 (Zero-Dependency Offline)';
     }
 
+    // 確保所有生成文章均附帶醫療法規免責宣告
+    const legalDisclaimerNotice = `
+---
+
+> ### 📜 【臺灣本草知識庫 · 民間古早知識分享與醫療法規宣告】
+> 本文內容純屬臺灣民間傳統草木文化考證、鄉土常民智慧及生活茶飲風味分享，**非屬醫療意見，不具任何醫療效果、診斷、治療或預防疾病之功能**。本草性味記載源自古籍傳承與文獻梳理，個人體質各異，若有身體不適或病症，請務必諮詢合格之中西醫專業醫療機構。
+`.trim();
+
+    if (!articleMarkdown.includes('民間古早知識分享與醫療法規宣告') && !articleMarkdown.includes('非屬醫療意見')) {
+      articleMarkdown += '\n\n' + legalDisclaimerNotice;
+    }
+
     // 提煉文章標題
     const titleMatch = articleMarkdown.match(/^#\s+(.+)$/m);
     const title = titleMatch ? titleMatch[1].trim() : `【${expert.name}說本草】${herbs.map(h => h.name).join('與')}之島嶼生活誌`;
@@ -243,7 +255,7 @@ ${expert.greeting || '各位朋友，大家好！'}
 
 ${secondaryHerbs.length > 0 ? `
 #### 🌿 【佐使配伍草木】
-${secondaryHerbs.map(h => `* **${h.name}** (*${h.scientificName || ''}*)：性${h.nature}，歸${(h.channels || []).join('、')}經，主導功效為「${h.efficacy}」，與主草配伍可達相輔相成之妙。`).join('\n')}
+${secondaryHerbs.map(h => `* **${h.name}** (*${h.scientificName || ''}*)：性${h.nature}，歸${(h.channels || []).join('、')}經，古籍記載描述為「${h.efficacy}」，與主草配伍可達相輔相成之妙。`).join('\n')}
 ` : ''}
     `.trim();
 
@@ -251,8 +263,8 @@ ${secondaryHerbs.map(h => `* **${h.name}** (*${h.scientificName || ''}*)：性${
     bodySection2 = `
 ---
 
-### 🍵 【功效機轉與生活智慧：為什麼它能調和身心？】
-${mainHerb.efficacy || '清熱調和、生津止渴、舒緩身心緊繃。'}
+### 🍵 【古早智慧與生活應用：古人如何以草木調和身心？】
+${mainHerb.efficacy || '傳統文獻多載其清熱調和、生津止渴、舒緩身心緊繃。'}
 
 在傳統本草記載中，${mainHerb.name}以「**${mainHerb.nature || '性平'}**」著稱，能入**${(mainHerb.channels || []).join('、')}**。若從現代生藥觀點觀察，其所蘊含的多酚類、類黃酮與揮發性芬芳分子，在熱水浸提的過程中能溫和溶出，既不傷脾胃元氣，又能迅速透過嗅覺與味蕾平撫交感神經。
     `.trim();
@@ -269,6 +281,11 @@ ${mainHerb.efficacy || '清熱調和、生津止渴、舒緩身心緊繃。'}
 > **日常禁忌注意**：${mainHerb.contraindications || '性味平和，唯體質偏虛寒者建議溫服或加入少量枸杞紅棗調和。'}  
 ${customNotes ? `> **特別客製備註**：${customNotes}\n` : ''}
 > **專家心法總結**：草藥不是神藥，它是大自然送給臺灣島嶼兒女的生活良伴。學會辨認、學會慢下來喝一杯草木清茶，身體與心靈自能重新找回與大地共振的節奏！
+
+---
+
+> ### 📜 【臺灣本草知識庫 · 民間古早知識分享與醫療法規宣告】
+> 本文內容純屬臺灣民間傳統草木文化考證、鄉土常民智慧及生活茶飲風味分享，**非屬醫療意見，不具任何醫療效果、診斷、治療或預防疾病之功能**。本草性味記載源自古籍傳承與文獻梳理，個人體質各異，若有身體不適或病症，請務必諮詢合格之中西醫專業醫療機構。
     `.trim();
 
     return [
@@ -384,7 +401,10 @@ ${herbs.map(h => `
 - 使用禁忌：${h.contraindications}
 `).join('\n')}
 
-${customNotes ? `【自訂附加需求】：${customNotes}` : ''}
+【法律與醫療法規合規規範（極重要，必須嚴格遵守）】
+* 本系統為民間古早青草智慧與風土文化分享平台，**嚴禁聲稱或暗示任何醫療效果、療效、治癒、診斷或替代正規醫學處方**。
+* 詞彙應使用「傳統民間智慧」、「古早生活經驗」、「古籍風土記載」、「草木生活茶飲」，避免使用「主治」、「療效」、「處方」等臨床醫療字眼。
+* 文末必須附帶民間知識分享與醫療法規免責告示。
 
 【格式要求】
 請使用精美 GitHub 格式 Markdown 輸出，包含：
@@ -393,6 +413,7 @@ ${customNotes ? `【自訂附加需求】：${customNotes}` : ''}
 3. 本草風土特寫與植物學性味考證（引用上述資料庫數據）
 4. 針對「${audience.name}」量身打造的日常生活實踐指引或食療指南
 5. 專家的安全提醒與使用禁忌
+6. 文末的民間知識分享與醫療免責告示
     `.trim();
   }
 

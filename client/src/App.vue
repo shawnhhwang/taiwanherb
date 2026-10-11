@@ -15,6 +15,7 @@
       @open-compare="isCompareModalOpen = true"
       @open-health="openHealthModal"
       @open-cmd="isCmdPaletteOpen = true"
+      @open-disclaimer="isDisclaimerModalOpen = true"
       @change-theme="setTheme"
       @switch-tab="switchMainTab"
     />
@@ -271,13 +272,86 @@
       @trigger-failover="handleFailoverDrill"
     />
 
+    <!-- 全域傳統古早文化知識分享宣告欄 -->
+    <div class="global-disclaimer-strip">
+      <div class="disclaimer-strip-inner">
+        <span class="strip-seal">告</span>
+        <span class="strip-text">
+          <strong>【民間文化與古早知識分享宣告】</strong>
+          本系統所記載之性味、經絡歸屬、民俗應用及風土配伍，純粹說明臺灣傳統民間生活知識與文獻記錄分享，<strong>絕非醫療建議，亦無宣稱任何療效</strong>。身體有疾痛請務必尋求合格醫師診治。
+        </span>
+        <button class="strip-link-btn" @click="isDisclaimerModalOpen = true">
+          完整免責條款 ➔
+        </button>
+      </div>
+    </div>
+
     <!-- 頁尾宣告 -->
     <footer class="footer-bar">
       <div>台灣本草植物 Wiki 資料庫系統 · Taiwan Herb Wiki</div>
       <div style="margin-top: 4px; font-size: 11.5px; color: var(--ink-muted);">
-        榮獲數位美學與植物學知識庫設計標準 · 沉澱四百年風土草木智慧 · RAG 專家語意系統
+        榮獲數位美學與植物學知識庫設計標準 · 沉澱四百年風土草木智慧 · 純粹古早民俗文化分享 · 非醫療宣稱平台
       </div>
     </footer>
+
+    <!-- 民間古早文化知識分享與法律免責聲明彈窗 -->
+    <div v-if="isDisclaimerModalOpen" class="modal-backdrop" @click.self="isDisclaimerModalOpen = false">
+      <div class="disclaimer-modal-card">
+        <div class="disclaimer-modal-header">
+          <div class="header-seal-wrap">
+            <span class="modal-seal">法</span>
+            <div>
+              <h3 class="modal-title">民間古早知識分享 · 醫療免責條款聲明</h3>
+              <div class="modal-subtitle">Legal & Medical Compliance Disclaimer</div>
+            </div>
+          </div>
+          <button class="modal-close" @click="isDisclaimerModalOpen = false">✕</button>
+        </div>
+
+        <div class="disclaimer-modal-body">
+          <div class="disclaimer-callout">
+            <span class="callout-icon">⚠️</span>
+            <div class="callout-text">
+              <strong>重要宣告：本系統嚴格遵循法規，絕不宣稱任何醫療效果，純粹是說明臺灣古早民俗文化與本草知識分享。</strong>
+            </div>
+          </div>
+
+          <div class="disclaimer-section">
+            <h4>一、文化傳承與歷史教育性質定位</h4>
+            <p>
+              本「台灣本草植物誌 (Taiwan Herb Wiki)」為一聚焦於臺灣四百年常民生活風土、客家與原住民族野草採集歷史、傳統民間青草茶舖文獻之<strong>文化教育與植物學普及展示平台</strong>。本網站所有內容（包含草藥性味、十二經絡、功效記述、民俗用途、RAG 專家諮詢回答、文章專題及方劑研製），均源自古代典籍考據與民間鄉野傳承記錄，純供常民文化認知與生活生活茶飲探索參考。
+            </p>
+          </div>
+
+          <div class="disclaimer-section">
+            <h4>二、絕無醫療效果宣稱與非醫療行為宣告</h4>
+            <p>
+              本系統所提及之任何植物性味、民間傳統茶飲或古早草本應用，<strong>均不得視為藥品療效，亦不具備預防、改善、減輕或治療任何人類疾病或病徵之醫療宣稱</strong>。本系統亦不提供任何形式之線上看診、醫療諮詢、病理判斷、臨床診斷或處方開立。
+            </p>
+          </div>
+
+          <div class="disclaimer-section">
+            <h4>三、尋求專業合格醫師之義務</h4>
+            <p>
+              草藥受產地微氣候、個人體質（如虛寒、燥熱、過敏、孕哺期或慢性病史）及沖泡方式影響甚鉅。若使用者有任何身體不適、疑似病徵或正在服用常規西藥，<strong>請務必立即尋求政府合格立案之中醫師或西醫專科醫師進行正規診斷與治療</strong>，切勿依賴本網站任何資訊自行診斷或延誤正規就醫。
+            </p>
+          </div>
+
+          <div class="disclaimer-section">
+            <h4>四、野外採集倫理與生物安全防護</h4>
+            <p>
+              野外野生草本常有形態相似之劇毒雜草（如大花曼陀羅、毛地黃、毒芹等），切勿於野外隨意採摘或生食未經植物學專家確證之植物。
+            </p>
+          </div>
+        </div>
+
+        <div class="disclaimer-modal-footer">
+          <button class="btn-ack" @click="isDisclaimerModalOpen = false">
+            我已清楚理解並同意純屬文化知識分享 ➔
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -329,6 +403,7 @@ const isLoading = ref(false);
 
 const compareList = ref([]);
 const isCompareModalOpen = ref(false);
+const isDisclaimerModalOpen = ref(false);
 
 const healthInfo = ref(null);
 const isHealthModalOpen = ref(false);

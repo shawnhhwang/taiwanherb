@@ -53,7 +53,7 @@
               </td>
             </tr>
             <tr>
-              <th>核心功效</th>
+              <th>古籍記載描述</th>
               <td v-for="h in herbs" :key="'eff-' + h.id">{{ h.efficacy }}</td>
             </tr>
             <tr>
@@ -70,6 +70,9 @@
             </tr>
           </tbody>
         </table>
+        <div style="font-size: 11.5px; color: var(--ink-muted); padding: 12px 16px; background: var(--bg-primary); border-top: 1px solid var(--border-light);">
+          ⚖️ <strong>非醫療宣告</strong>：本草比對所列資料純為臺灣傳統民間生活知識與植物古籍整理分享，絕無任何醫療效果宣稱，身體不適請務必就醫診治。
+        </div>
       </div>
     </div>
   </div>

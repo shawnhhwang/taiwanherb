@@ -16,8 +16,12 @@
         <p class="hero-intro-text">
           從台北萬華西昌街百年青草巷，到中央山脈潮濕林緣與苗栗客家丘陵。
           台灣先民依循四時節氣，採擷天地草木以調和體內陰陽。
-          在此探索 <strong>{{ totalHerbs }}</strong> 味經典島嶼本草，體驗傳統方劑調配與現代植物學智慧。
+          在此探索 <strong>{{ totalHerbs }}</strong> 味經典島嶼本草，體驗傳統古早常民智慧與現代植物學文化分享。
         </p>
+
+        <div style="font-size: 11.5px; color: var(--ink-muted); margin-bottom: 16px; background: var(--bg-hover); padding: 5px 12px; border-radius: 8px; border-left: 3px solid var(--amber-deep);">
+          ⚖️ <strong>文化分享聲明</strong>：本站純屬臺灣古早民俗文化與本草知識分享，絕無任何醫療效果宣稱。
+        </div>
 
         <!-- 節氣青草即時推薦方 -->
         <div class="solar-wisdom-card">

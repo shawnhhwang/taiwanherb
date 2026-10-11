@@ -66,8 +66,11 @@
         <span v-else-if="herb.activeCompounds && herb.activeCompounds[0]" class="compound-pill">🔬 {{ herb.activeCompounds[0].split(' ')[0] }}</span>
       </div>
 
-      <!-- 功效摘要 -->
-      <p class="herb-card-efficacy">{{ herb.summaryEfficacy || herb.efficacy }}</p>
+      <!-- 古籍與民間記載摘要 -->
+      <p class="herb-card-efficacy">
+        <span class="folklore-pill">古籍記載</span>
+        {{ herb.summaryEfficacy || herb.efficacy }}
+      </p>
 
       <div class="herb-card-footer" @click.stop>
         <span class="btn-card-action" @click="onCardClick">
@@ -254,5 +257,16 @@ const onImageError = (e) => {
 .compound-pill {
   color: var(--primary);
   border-color: rgba(45, 106, 79, 0.25);
+}
+
+.folklore-pill {
+  font-size: 10px;
+  background: var(--bg-parchment);
+  color: var(--amber-deep);
+  border: 1px solid var(--border-light);
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-right: 4px;
+  font-weight: 500;
 }
 </style>
