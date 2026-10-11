@@ -114,8 +114,13 @@
                 <div class="result-expert-title">{{ lastResult.expert.title }}</div>
               </div>
             </div>
-            <div class="result-query-tag">
-              「{{ lastResult.query }}」
+            <div class="result-header-right">
+              <span v-if="lastResult.engineUsed" class="consult-engine-pill" :class="{ 'live-llm': !lastResult.engineUsed.includes('內建') }">
+                {{ lastResult.engineUsed.includes('內建') ? '🌿 離線風土知識庫' : '⚡ ' + lastResult.engineUsed }}
+              </span>
+              <div class="result-query-tag">
+                「{{ lastResult.query }}」
+              </div>
             </div>
           </div>
 
@@ -637,6 +642,32 @@ const submitConsultation = async () => {
 .result-expert-title {
   font-size: 12.5px;
   color: var(--ink-muted);
+}
+
+.result-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.consult-engine-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11.5px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: rgba(43, 76, 59, 0.08);
+  color: var(--primary-deep);
+  border: 1px solid rgba(43, 76, 59, 0.2);
+  font-family: var(--font-sans);
+}
+
+.consult-engine-pill.live-llm {
+  background: rgba(184, 80, 66, 0.1);
+  color: #b85042;
+  border-color: rgba(184, 80, 66, 0.3);
+  font-weight: 600;
 }
 
 .result-query-tag {

@@ -7,7 +7,7 @@ const DEFAULT_LLM_CONFIG = {
   activeProvider: 'builtin', // 'builtin' | 'gemini' | 'openai' | 'claude'
   temperature: 0.7,
   maxTokens: 2000,
-  timeoutMs: 15000,
+  timeoutMs: 60000,
   providers: {
     builtin: {
       id: 'builtin',

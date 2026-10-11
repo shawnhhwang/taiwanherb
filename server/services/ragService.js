@@ -337,6 +337,7 @@ class RagService {
 
     // 專家風格回答合成 (Persona-Driven Grounded Synthesis)
     let replyMarkdown = '';
+    let engineUsed = '臺灣本草內建語意特徵引擎 (Zero-Dependency Grounded)';
     const llmCfg = llmService.config;
 
     // 若啟用外部 LLM (例如 Ollama 或其他提供商)，優先嘗試即時 LLM 推理生成
@@ -350,6 +351,8 @@ class RagService {
         });
         if (externalResult && externalResult.trim() !== '') {
           replyMarkdown = externalResult;
+          const prov = llmCfg.providers[llmCfg.activeProvider];
+          engineUsed = `${prov ? prov.name : llmCfg.activeProvider} (${prov ? prov.model : 'Live LLM'}) 即時推理`;
         }
       } catch (err) {
         console.warn('[RagService] External LLM consult failed, fallback to builtin synthesis:', err.message);
@@ -388,7 +391,8 @@ class RagService {
       query: message,
       reply: replyMarkdown,
       citations,
-      suggestedQuestions
+      suggestedQuestions,
+      engineUsed
     };
   }
 
