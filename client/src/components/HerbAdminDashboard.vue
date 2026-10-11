@@ -1489,7 +1489,7 @@
                 <span class="plate-number">NO. {{ herbForm.id || 'NEW' }}</span>
               </div>
               <div class="plate-img-wrap">
-                <img :src="herbForm.thumbnailUrl || 'https://images.unsplash.com/photo-1596726915017-91a566ce0aa7?auto=format&fit=crop&w=600&q=80'" alt="Preview" class="plate-img" />
+                <img :src="herbForm.thumbnailUrl || '/images/herbs/default_herb.svg'" alt="Preview" class="plate-img" />
                 <span class="plate-nature-badge">{{ herbForm.nature || '平' }}</span>
               </div>
               <div class="plate-info">
@@ -2024,7 +2024,7 @@ const herbForm = ref({
   safetyLevel: '溫和常飲',
   efficacy: '',
   taiwanHeritage: '',
-  thumbnailUrl: 'https://images.unsplash.com/photo-1596726915017-91a566ce0aa7?auto=format&fit=crop&w=800&q=85'
+  thumbnailUrl: '/images/herbs/default_herb.svg'
 });
 
 const filteredAdminHerbs = computed(() => {
@@ -2055,7 +2055,7 @@ const openCreateModal = () => {
     safetyLevel: '無毒常服',
     efficacy: '',
     taiwanHeritage: '',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1596726915017-91a566ce0aa7?auto=format&fit=crop&w=800&q=85'
+    thumbnailUrl: '/images/herbs/default_herb.svg'
   };
   isHerbModalOpen.value = true;
 };

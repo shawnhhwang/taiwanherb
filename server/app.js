@@ -31,6 +31,12 @@ app.use('/api/consult', consultRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', taxonomyRoutes);
 
+// 提供靜態圖片與公共檔案 (無版權植物向量圖檔)
+const publicImagesPath = path.join(__dirname, '../client/public/images');
+if (fs.existsSync(publicImagesPath)) {
+  app.use('/images', express.static(publicImagesPath));
+}
+
 // 提供靜態檔案 (Vue 編譯成品 client/dist)
 const clientDistPath = path.join(__dirname, '../client/dist');
 if (fs.existsSync(clientDistPath)) {

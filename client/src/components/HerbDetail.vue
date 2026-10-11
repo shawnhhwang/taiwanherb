@@ -281,7 +281,7 @@ const natureClass = (nature) => {
 };
 
 const onImageError = (e) => {
-  e.target.src = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=600&q=80';
+  e.target.src = '/images/herbs/default_herb.svg';
 };
 </script>
 

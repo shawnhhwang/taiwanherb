@@ -559,7 +559,7 @@ const featuredHerb = ref({
   nature: '涼',
   terroir: '萬華西昌街青草巷核心',
   efficacy: '清熱解毒、利尿散瘀、消腫止瀉。台灣最富代表性的民間青草茶主原料之一。',
-  thumbnailUrl: 'https://images.unsplash.com/photo-1596726915017-91a566ce0aa7?auto=format&fit=crop&w=800&q=85'
+  thumbnailUrl: '/images/herbs/herb_1.svg'
 });
 
 const pagination = ref({

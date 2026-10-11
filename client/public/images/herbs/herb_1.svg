@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <!-- 古卷宣紙米色漸層背景 -->
+    <linearGradient id="paperGrad_1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCFAF5"/>
+      <stop offset="50%" stop-color="#F5EFE4"/>
+      <stop offset="100%" stop-color="#EBE3D3"/>
+    </linearGradient>
+
+    <!-- 標本古典標籤漸層 -->
+    <linearGradient id="cartoucheGrad_1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F9F6EE" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#F0E8D7" stop-opacity="0.95"/>
+    </linearGradient>
+
+    <!-- 朱紅印泥質感漸層 -->
+    <linearGradient id="sealGrad_1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B83828"/>
+      <stop offset="100%" stop-color="#96281B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 1. 背景宣紙底圖 -->
+  <rect width="800" height="600" fill="url(#paperGrad_1)"/>
+
+  <!-- 2. 古典雙框細線條與四角回紋綴飾 -->
+  <rect x="24" y="24" width="752" height="552" fill="none" stroke="#C2B299" stroke-width="1.5"/>
+  <rect x="30" y="30" width="740" height="540" fill="none" stroke="#A89477" stroke-width="0.8"/>
+  <!-- 四角折角飾花 -->
+  <path d="M 24 40 L 40 40 L 40 24" fill="none" stroke="#8C775A" stroke-width="1.8"/>
+  <path d="M 776 40 L 760 40 L 760 24" fill="none" stroke="#8C775A" stroke-width="1.8"/>
+  <path d="M 24 560 L 40 560 L 40 576" fill="none" stroke="#8C775A" stroke-width="1.8"/>
+  <path d="M 776 560 L 760 560 L 760 576" fill="none" stroke="#8C775A" stroke-width="1.8"/>
+
+  <!-- 3. 背景巨幅水墨篆體文字水印 (淡雅半透明) -->
+  <text x="400" y="380" font-family="'Noto Serif TC', 'Songti TC', 'STSong', serif" font-size="280" font-weight="900" text-anchor="middle" fill="#806D53" opacity="0.04" user-select="none">
+    大
+  </text>
+
+  <!-- 4. 頂部植物誌卷標與標本編號 -->
+  <g font-family="'Noto Serif TC', 'Songti TC', serif" fill="#756247">
+    <text x="48" y="56" font-size="12" letter-spacing="2">臺灣本草植物標本圖譜 · 典藏正卷</text>
+    <text x="48" y="74" font-size="10" font-family="monospace" letter-spacing="1" fill="#998366">HERBARIUM FORMOSA · SPECIMEN NO. 001</text>
+  </g>
+
+  <!-- 5. 東方朱紅印章 (右上印) -->
+  <g transform="translate(710, 50)">
+    <rect x="0" y="0" width="42" height="42" rx="4" fill="url(#sealGrad_1)" stroke="#7D1E12" stroke-width="1.5"/>
+    <rect x="3" y="3" width="36" height="36" rx="2" fill="none" stroke="#FCECE8" stroke-width="0.8" opacity="0.85"/>
+    <text x="21" y="27" font-family="'Noto Serif TC', 'Songti TC', 'Kaiti TC', serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#FFF4F0" letter-spacing="2">
+      青草
+    </text>
+  </g>
+
+  <!-- 6. 植物本體植物學線條與工筆水彩插圖 -->
+  <g class="botanical-illustration">
+    
+        <!-- 根部 -->
+        <path d="M 400 480 Q 402 520 395 550 M 400 490 Q 380 525 365 545 M 401 500 Q 425 530 435 550" stroke="#455A46" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.65"/>
+        <!-- 主莖 -->
+        <path d="M 400 480 Q 402 380 395 280 T 390 180" stroke="#455A46" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <path d="M 395 320 Q 340 280 310 220" stroke="#455A46" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <path d="M 398 260 Q 450 230 480 180" stroke="#455A46" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+
+        <!-- 側生葉片 -->
+        <!-- 左下葉 -->
+        <path d="M 398 390 Q 310 390 270 340 Q 330 320 398 370 Z" fill="#4D8067" stroke="#1C3829" stroke-width="1.5" opacity="0.9"/>
+        <path d="M 398 390 Q 335 355 270 340" stroke="#88B89C" stroke-width="1.5" fill="none"/>
+        <!-- 右下葉 -->
+        <path d="M 400 360 Q 480 365 525 315 Q 465 295 398 340 Z" fill="#2E5A44" stroke="#1C3829" stroke-width="1.5" opacity="0.9"/>
+        <path d="M 400 360 Q 465 330 525 315" stroke="#88B89C" stroke-width="1.5" fill="none"/>
+        <!-- 中間葉 -->
+        <path d="M 395 300 Q 320 285 290 240 Q 350 230 395 285 Z" fill="#4D8067" stroke="#1C3829" stroke-width="1.5"/>
+        <path d="M 398 250 Q 470 240 500 195 Q 445 185 396 235 Z" fill="#2E5A44" stroke="#1C3829" stroke-width="1.5"/>
+
+        <!-- 花朵 1: 左花 -->
+        <g transform="translate(310, 220)">
+          <!-- 綠色花萼 -->
+          <ellipse cx="0" cy="8" rx="14" ry="7" fill="#2E5A44" stroke="#1C3829" stroke-width="1"/>
+          <!-- 舌狀白色/黃色花瓣 -->
+          <g fill="#FFF8E7" stroke="#E6A15C" stroke-width="1">
+            <ellipse cx="0" cy="-22" rx="7" ry="16"/>
+            <ellipse cx="16" cy="-16" rx="7" ry="16" transform="rotate(35 16 -16)"/>
+            <ellipse cx="22" cy="0" rx="7" ry="16" transform="rotate(70 22 0)"/>
+            <ellipse cx="16" cy="16" rx="7" ry="16" transform="rotate(110 16 16)"/>
+            <ellipse cx="-16" cy="16" rx="7" ry="16" transform="rotate(-110 -16 16)"/>
+            <ellipse cx="-22" cy="0" rx="7" ry="16" transform="rotate(-70 -22 0)"/>
+            <ellipse cx="-16" cy="-16" rx="7" ry="16" transform="rotate(-35 -16 -16)"/>
+          </g>
+          <!-- 黃金管狀花心 -->
+          <circle cx="0" cy="0" r="13" fill="#E6A15C" stroke="#1C3829" stroke-width="1.2"/>
+          <circle cx="0" cy="0" r="9" fill="#F49D1A" stroke="#B86E00" stroke-width="0.8" stroke-dasharray="2 2"/>
+        </g>
+
+        <!-- 花朵 2: 主花頂生 -->
+        <g transform="translate(390, 175) scale(1.15)">
+          <ellipse cx="0" cy="8" rx="16" ry="8" fill="#2E5A44" stroke="#1C3829" stroke-width="1"/>
+          <g fill="#FFF8E7" stroke="#E6A15C" stroke-width="1">
+            <ellipse cx="0" cy="-24" rx="7.5" ry="17"/>
+            <ellipse cx="17" cy="-17" rx="7.5" ry="17" transform="rotate(35 17 -17)"/>
+            <ellipse cx="24" cy="0" rx="7.5" ry="17" transform="rotate(75 24 0)"/>
+            <ellipse cx="17" cy="17" rx="7.5" ry="17" transform="rotate(115 17 17)"/>
+            <ellipse cx="-17" cy="17" rx="7.5" ry="17" transform="rotate(-115 -17 17)"/>
+            <ellipse cx="-24" cy="0" rx="7.5" ry="17" transform="rotate(-75 -24 0)"/>
+            <ellipse cx="-17" cy="-17" rx="7.5" ry="17" transform="rotate(-35 -17 -17)"/>
+          </g>
+          <circle cx="0" cy="0" r="14" fill="#E6A15C" stroke="#1C3829" stroke-width="1.2"/>
+          <circle cx="0" cy="0" r="10" fill="#F49D1A" stroke="#B86E00" stroke-width="0.8" stroke-dasharray="2 2"/>
+        </g>
+
+        <!-- 花朵 3: 右側小花苞 -->
+        <g transform="translate(480, 180) scale(0.85)">
+          <ellipse cx="0" cy="8" rx="12" ry="6" fill="#2E5A44" stroke="#1C3829" stroke-width="1"/>
+          <g fill="#FFF8E7" stroke="#E6A15C" stroke-width="1">
+            <ellipse cx="0" cy="-20" rx="6" ry="14"/>
+            <ellipse cx="14" cy="-14" rx="6" ry="14" transform="rotate(40 14 -14)"/>
+            <ellipse cx="20" cy="0" rx="6" ry="14" transform="rotate(80 20 0)"/>
+            <ellipse cx="-20" cy="0" rx="6" ry="14" transform="rotate(-80 -20 0)"/>
+            <ellipse cx="-14" cy="-14" rx="6" ry="14" transform="rotate(-40 -14 -14)"/>
+          </g>
+          <circle cx="0" cy="0" r="11" fill="#E6A15C" stroke="#1C3829" stroke-width="1"/>
+        </g>
+      
+  </g>
+
+  <!-- 7. 底部植物學古典名錄籤條 (Cartouche) -->
+  <g transform="translate(48, 470)">
+    <!-- 標籤背底框 -->
+    <rect x="0" y="0" width="704" height="84" rx="6" fill="url(#cartoucheGrad_1)" stroke="#B8A58A" stroke-width="1.2"/>
+    <rect x="4" y="4" width="696" height="76" rx="4" fill="none" stroke="#D1C3AD" stroke-width="0.8"/>
+
+    <!-- 藥材大名 -->
+    <text x="24" y="38" font-family="'Noto Serif TC', 'Songti TC', serif" font-size="28" font-weight="bold" fill="#2C241B" letter-spacing="3">
+      大花咸豐草
+    </text>
+
+    <!-- 典藏分類標籤 -->
+    <rect x="24" y="50" width="100" height="20" rx="3" fill="#2E5A44" opacity="0.15"/>
+    <text x="74" y="64" font-family="'Noto Sans TC', sans-serif" font-size="10.5" font-weight="600" text-anchor="middle" fill="#1C3829">
+      台灣青草茶經典
+    </text>
+
+    <!-- 科屬與學名 -->
+    <text x="140" y="64" font-family="'Noto Serif TC', Georgia, serif" font-size="12" fill="#5E4E3A">
+      <tspan font-style="italic" font-weight="600">Bidens pilosa var. radiata Sch. Bip.</tspan>
+      <tspan fill="#8C775A"> · 菊科 (Asteraceae) 鬼針草屬</tspan>
+    </text>
+
+    <!-- 風土產地銘文 (右側) -->
+    <text x="680" y="38" font-family="'Noto Serif TC', serif" font-size="12" text-anchor="end" fill="#6E5C47">
+      道地產區：北部
+    </text>
+    <text x="680" y="60" font-family="'Noto Serif TC', serif" font-size="10.5" text-anchor="end" fill="#998366">
+      國家植物標本館 · 數位原創無版權典藏
+    </text>
+  </g>
+</svg>

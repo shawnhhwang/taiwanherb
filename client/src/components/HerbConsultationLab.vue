@@ -302,8 +302,8 @@ const submitConsultation = async () => {
 
 /* 頂部牌匾 */
 .consult-banner {
-  background: linear-gradient(135deg, rgba(27, 67, 50, 0.95), rgba(45, 106, 79, 0.9)),
-              url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1600&q=80') center/cover;
+  background: linear-gradient(135deg, rgba(27, 67, 50, 0.96), rgba(45, 106, 79, 0.92)),
+              radial-gradient(circle at 80% 20%, rgba(201, 162, 39, 0.25) 0%, transparent 60%);
   border-radius: 18px;
   padding: 40px 32px;
   color: #fff;

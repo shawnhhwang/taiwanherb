@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <!-- 古卷宣紙米色漸層背景 -->
+    <linearGradient id="paperGrad_6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCFAF5"/>
+      <stop offset="50%" stop-color="#F5EFE4"/>
+      <stop offset="100%" stop-color="#EBE3D3"/>
+    </linearGradient>
+
+    <!-- 標本古典標籤漸層 -->
+    <linearGradient id="cartoucheGrad_6" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F9F6EE" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#F0E8D7" stop-opacity="0.95"/>
+    </linearGradient>
+
+    <!-- 朱紅印泥質感漸層 -->
+    <linearGradient id="sealGrad_6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B83828"/>
+      <stop offset="100%" stop-color="#96281B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 1. 背景宣紙底圖 -->
+  <rect width="800" height="600" fill="url(#paperGrad_6)"/>
+
+  <!-- 2. 古典雙框細線條與四角回紋綴飾 -->
+  <rect x="24" y="24" width="752" height="552" fill="none" stroke="#C2B299" stroke-width="1.5"/>
+  <rect x="30" y="30" width="740" height="540" fill="none" stroke="#A89477" stroke-width="0.8"/>
+  <!-- 四角折角飾花 -->
+  <path d="M 24 40 L 40 40 L 40 24" fill="none" stroke="#8C775A" stroke-width="1.8"/>
+  <path d="M 776 40 L 760 40 L 760 24" fill="none" stroke="#8C775A" stroke-width="1.8"/>
+  <path d="M 24 560 L 40 560 L 40 576" fill="none" stroke="#8C775A" stroke-width="1.8"/>
+  <path d="M 776 560 L 760 560 L 760 576" fill="none" stroke="#8C775A" stroke-width="1.8"/>
+
+  <!-- 3. 背景巨幅水墨篆體文字水印 (淡雅半透明) -->
+  <text x="400" y="380" font-family="'Noto Serif TC', 'Songti TC', 'STSong', serif" font-size="280" font-weight="900" text-anchor="middle" fill="#806D53" opacity="0.04" user-select="none">
+    雷
+  </text>
+
+  <!-- 4. 頂部植物誌卷標與標本編號 -->
+  <g font-family="'Noto Serif TC', 'Songti TC', serif" fill="#756247">
+    <text x="48" y="56" font-size="12" letter-spacing="2">臺灣本草植物標本圖譜 · 典藏正卷</text>
+    <text x="48" y="74" font-size="10" font-family="monospace" letter-spacing="1" fill="#998366">HERBARIUM FORMOSA · SPECIMEN NO. 006</text>
+  </g>
+
+  <!-- 5. 東方朱紅印章 (右上印) -->
+  <g transform="translate(710, 50)">
+    <rect x="0" y="0" width="42" height="42" rx="4" fill="url(#sealGrad_6)" stroke="#7D1E12" stroke-width="1.5"/>
+    <rect x="3" y="3" width="36" height="36" rx="2" fill="none" stroke="#FCECE8" stroke-width="0.8" opacity="0.85"/>
+    <text x="21" y="27" font-family="'Noto Serif TC', 'Songti TC', 'Kaiti TC', serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#FFF4F0" letter-spacing="2">
+      生肌
+    </text>
+  </g>
+
+  <!-- 6. 植物本體植物學線條與工筆水彩插圖 -->
+  <g class="botanical-illustration">
+    
+        <!-- 地下匍匐莖與鬚根 -->
+        <path d="M 320 480 Q 400 495 480 485" stroke="#355357" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <path d="M 360 490 Q 355 530 350 550 M 420 490 Q 425 535 420 555 M 460 485 Q 465 520 470 545" stroke="#355357" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <!-- 直立花莖 -->
+        <path d="M 400 480 Q 395 380 405 280 T 400 170" stroke="#355357" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+        
+        <!-- 葉柄與典型心型互生葉片 -->
+        <!-- 葉片 1 (底層大心型) -->
+        <g transform="translate(330, 390)">
+          <path d="M 70 -10 Q 30 10 0 50 Q -30 20 -20 -20 Q -10 -50 20 -50 Q 50 -50 70 -10 Z" fill="#2B5E63" stroke="#183B3E" stroke-width="1.8"/>
+          <path d="M 70 -10 Q 30 -5 0 50" stroke="#72A8AF" stroke-width="1.5" fill="none"/>
+          <path d="M 30 -5 Q 10 -25 -10 -20 M 35 -5 Q 15 20 0 35" stroke="#72A8AF" stroke-width="1" fill="none" opacity="0.8"/>
+        </g>
+        <!-- 葉片 2 (右側中心型) -->
+        <g transform="translate(410, 330)">
+          <path d="M -10 -10 Q 30 10 70 50 Q 100 20 90 -20 Q 80 -50 50 -50 Q 20 -50 -10 -10 Z" fill="#417E85" stroke="#183B3E" stroke-width="1.8"/>
+          <path d="M -10 -10 Q 30 -5 70 50" stroke="#72A8AF" stroke-width="1.5" fill="none"/>
+          <path d="M 30 -5 Q 50 -25 75 -20 M 35 -5 Q 45 20 60 35" stroke="#72A8AF" stroke-width="1" fill="none" opacity="0.8"/>
+        </g>
+        <!-- 葉片 3 (頂生幼心葉) -->
+        <g transform="translate(360, 260) scale(0.8)">
+          <path d="M 50 -10 Q 20 10 0 50 Q -20 20 -15 -20 Q -5 -40 20 -40 Q 40 -40 50 -10 Z" fill="#72A8AF" stroke="#183B3E" stroke-width="1.5"/>
+          <path d="M 50 -10 Q 20 -5 0 50" stroke="#FFF" stroke-width="1.2" fill="none"/>
+        </g>
+
+        <!-- 頂生白色四瓣花序與圓錐穗 (魚腥草標誌) -->
+        <g transform="translate(402, 170)">
+          <!-- 四枚白色花瓣狀總苞片 -->
+          <ellipse cx="0" cy="-22" rx="13" ry="20" fill="#FCFAF2" stroke="#72A8AF" stroke-width="1.2"/>
+          <ellipse cx="22" cy="0" rx="13" ry="20" transform="rotate(90 22 0)" fill="#FCFAF2" stroke="#72A8AF" stroke-width="1.2"/>
+          <ellipse cx="0" cy="22" rx="13" ry="20" fill="#FCFAF2" stroke="#72A8AF" stroke-width="1.2"/>
+          <ellipse cx="-22" cy="0" rx="13" ry="20" transform="rotate(-90 -22 0)" fill="#FCFAF2" stroke="#72A8AF" stroke-width="1.2"/>
+          <!-- 淡黃色圓柱花穗 -->
+          <path d="M -6 10 L -4 -25 Q 0 -35 4 -25 L 6 10 Z" fill="#E0924A" stroke="#183B3E" stroke-width="1.2"/>
+          <line x1="-3" y1="-15" x2="3" y2="-15" stroke="#FFF" stroke-width="1" opacity="0.8"/>
+          <line x1="-4" y1="-5" x2="4" y2="-5" stroke="#FFF" stroke-width="1" opacity="0.8"/>
+          <line x1="-4" y1="5" x2="4" y2="5" stroke="#FFF" stroke-width="1" opacity="0.8"/>
+        </g>
+      
+  </g>
+
+  <!-- 7. 底部植物學古典名錄籤條 (Cartouche) -->
+  <g transform="translate(48, 470)">
+    <!-- 標籤背底框 -->
+    <rect x="0" y="0" width="704" height="84" rx="6" fill="url(#cartoucheGrad_6)" stroke="#B8A58A" stroke-width="1.2"/>
+    <rect x="4" y="4" width="696" height="76" rx="4" fill="none" stroke="#D1C3AD" stroke-width="0.8"/>
+
+    <!-- 藥材大名 -->
+    <text x="24" y="38" font-family="'Noto Serif TC', 'Songti TC', serif" font-size="28" font-weight="bold" fill="#2C241B" letter-spacing="3">
+      雷公根
+    </text>
+
+    <!-- 典藏分類標籤 -->
+    <rect x="24" y="50" width="100" height="20" rx="3" fill="#2B5E63" opacity="0.15"/>
+    <text x="74" y="64" font-family="'Noto Sans TC', sans-serif" font-size="10.5" font-weight="600" text-anchor="middle" fill="#183B3E">
+      清熱利濕藥
+    </text>
+
+    <!-- 科屬與學名 -->
+    <text x="140" y="64" font-family="'Noto Serif TC', Georgia, serif" font-size="12" fill="#5E4E3A">
+      <tspan font-style="italic" font-weight="600">Centella asiatica (L.) Urban</tspan>
+      <tspan fill="#8C775A"> · 繖形科 (Apiaceae) 積雪草屬</tspan>
+    </text>
+
+    <!-- 風土產地銘文 (右側) -->
+    <text x="680" y="38" font-family="'Noto Serif TC', serif" font-size="12" text-anchor="end" fill="#6E5C47">
+      道地產區：東部
+    </text>
+    <text x="680" y="60" font-family="'Noto Serif TC', serif" font-size="10.5" text-anchor="end" fill="#998366">
+      國家植物標本館 · 數位原創無版權典藏
+    </text>
+  </g>
+</svg>

@@ -13,7 +13,7 @@ class HerbRepository {
         timestamp: new Date().toISOString(),
         action: 'SYSTEM_INIT',
         entity: 'Database',
-        details: '系統啟動，載入台灣本土草藥種子資料庫 (25味典藏本草)'
+        details: '系統啟動，載入台灣本土草藥種子資料庫 (70味典藏本草)'
       }
     ];
   }
