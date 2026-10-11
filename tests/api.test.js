@@ -287,5 +287,278 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     const html = await res.text();
     assert.ok(html.includes('<div id="app"></div>'));
   });
+
+  // ========================================================
+  // 1. 使用者管理與前後台權限 (RBAC) 驗證
+  // ========================================================
+  test('RBAC: 支援多角色登入與權限隔離驗證 (super_admin vs curator vs auditor)', async () => {
+    // 1.1 admin 登入
+    const adminRes = await fetchJson('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: 'admin', password: 'taiwanherb2026' })
+    });
+    assert.equal(adminRes.status, 200);
+    assert.equal(adminRes.body.data.role, 'super_admin');
+    const adminToken = adminRes.body.data.token;
+    assert.ok(adminToken);
+
+    // 1.2 curator 登入
+    const curatorRes = await fetchJson('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: 'curator_lin', password: 'curator2026' })
+    });
+    assert.equal(curatorRes.status, 200);
+    assert.equal(curatorRes.body.data.role, 'curator');
+    const curatorToken = curatorRes.body.data.token;
+
+    // 1.3 auditor 登入
+    const auditorRes = await fetchJson('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: 'auditor_wang', password: 'auditor2026' })
+    });
+    assert.equal(auditorRes.status, 200);
+    assert.equal(auditorRes.body.data.role, 'auditor');
+
+    // 1.4 super_admin 建立新使用者
+    const testNewUser = {
+      username: `test_user_${Date.now()}`,
+      name: '測試本草專員',
+      password: 'password123',
+      role: 'curator'
+    };
+    const createUserRes = await fetchJson('/api/admin/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${adminToken}`
+      },
+      body: JSON.stringify(testNewUser)
+    });
+    assert.equal(createUserRes.status, 201);
+    assert.equal(createUserRes.body.data.name, '測試本草專員');
+
+    // 1.5 curator 嘗試建立使用者應被拒絕 (403 Forbidden)
+    const unauthorizedCreate = await fetchJson('/api/admin/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${curatorToken}`
+      },
+      body: JSON.stringify({ username: 'hacker', name: '駭客', password: '123' })
+    });
+    assert.equal(unauthorizedCreate.status, 403);
+  });
+
+  // ========================================================
+  // 2. LLM API 來源與權限管理驗證
+  // ========================================================
+  test('LLM: 取得提供商配置、安全金鑰脫敏與即時連線 Ping 測試', async () => {
+    // 2.1 取得配置
+    const { status, body } = await fetchJson('/api/admin/llm/config');
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    assert.ok(body.data.providers.builtin);
+    assert.ok(body.data.providers.gemini);
+    assert.ok(body.data.providers.openai);
+    assert.ok(body.data.providers.claude);
+
+    // 2.2 測試內建離線引擎 Ping
+    const pingRes = await fetchJson('/api/admin/llm/test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ providerId: 'builtin' })
+    });
+    assert.equal(pingRes.status, 200);
+    assert.equal(pingRes.body.data.status, 'online');
+    assert.ok(pingRes.body.data.latencyMs >= 0);
+
+    // 2.3 super_admin 更新參數
+    const updateRes = await fetchJson('/api/admin/llm/config', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      },
+      body: JSON.stringify({ temperature: 0.85, maxTokens: 1800 })
+    });
+    assert.equal(updateRes.status, 200);
+    assert.equal(updateRes.body.data.temperature, 0.85);
+  });
+
+  // ========================================================
+  // 3. 專家 RAG 管理與測試沙盒驗證
+  // ========================================================
+  test('Expert RAG: 新增自訂專家 Persona 與執行沙盒測試 (Playground)', async () => {
+    // 3.1 取得專家列表
+    const expRes = await fetchJson('/api/admin/experts');
+    assert.equal(expRes.status, 200);
+    assert.ok(expRes.body.data.length >= 4);
+
+    // 3.2 建立自訂專家
+    const customExpert = {
+      id: `custom_herb_tea_master_${Date.now()}`,
+      name: '坪林包種茶伯',
+      title: '坪林百年茶山草木調和師',
+      avatar: '🍃',
+      seal: '山林茶席',
+      region: '新北坪林翡翠水庫水源保護區',
+      catchphrase: '「水甜茶甘，山裡的草木自帶清氣。」',
+      greeting: '歡迎來到坪林茶山！'
+    };
+    const createExpRes = await fetchJson('/api/admin/experts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      },
+      body: JSON.stringify(customExpert)
+    });
+    assert.equal(createExpRes.status, 201);
+    assert.equal(createExpRes.body.data.name, '坪林包種茶伯');
+
+    // 3.3 沙盒測試
+    const pgRes = await fetchJson('/api/admin/experts/playground', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        expertId: customExpert.id,
+        query: '夏天炎熱口渴，有什麼解熱解燥的茶飲？',
+        topK: 2
+      })
+    });
+    assert.equal(pgRes.status, 200);
+    assert.ok(pgRes.body.data.retrievedHerbs.length > 0);
+    assert.ok(pgRes.body.data.reply.includes('坪林包種茶伯'));
+
+    // 3.4 刪除自訂專家
+    const delExpRes = await fetchJson(`/api/admin/experts/${customExpRes = customExpert.id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer taiwanherb-admin-session-active' }
+    });
+    assert.equal(delExpRes.status, 200);
+  });
+
+  // ========================================================
+  // 4. 資料匯入範例、預覽線上編輯與批次入庫驗證
+  // ========================================================
+  test('Data Import: 下載範例資料、解析預覽與批次寫入本草庫', async () => {
+    // 4.1 取得 JSON 範例
+    const sampleJsonRes = await fetchJson('/api/admin/import/sample?format=json');
+    assert.equal(sampleJsonRes.status, 200);
+    assert.ok(Array.isArray(sampleJsonRes.body.data.content));
+    assert.ok(sampleJsonRes.body.data.content.length >= 3);
+
+    // 4.2 取得 CSV 範例
+    const sampleCsvRes = await fetchJson('/api/admin/import/sample?format=csv');
+    assert.equal(sampleCsvRes.status, 200);
+    assert.ok(sampleCsvRes.body.data.content.includes('名稱'));
+
+    // 4.3 解析預覽
+    const previewRes = await fetchJson('/api/admin/import/preview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: sampleJsonRes.body.data.content.slice(0, 2),
+        format: 'json'
+      })
+    });
+    assert.equal(previewRes.status, 200);
+    assert.equal(previewRes.body.data.total, 2);
+    assert.equal(previewRes.body.data.validCount, 2);
+
+    // 4.4 批次入庫
+    const commitRes = await fetchJson('/api/admin/import/commit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      },
+      body: JSON.stringify({
+        items: previewRes.body.data.items
+      })
+    });
+    assert.equal(commitRes.status, 200);
+    assert.equal(commitRes.body.data.insertedCount, 2);
+  });
+
+  // ========================================================
+  // 5. 條件篩選資料匯出 (JSON / CSV / Markdown) 驗證
+  // ========================================================
+  test('Data Export: 支援按產區篩選匯出 JSON、含 BOM 之 CSV 與 Markdown 植物誌手冊', async () => {
+    // 5.1 JSON 匯出
+    const jsonRes = await fetchJson('/api/admin/export?format=json');
+    assert.equal(jsonRes.status, 200);
+    assert.ok(Array.isArray(jsonRes.body));
+
+    // 5.2 CSV 匯出 (檢查 UTF-8 BOM 位元組 0xEF, 0xBB, 0xBF)
+    const csvRaw = await fetch(`${baseUrl}/api/admin/export?format=csv`);
+    assert.equal(csvRaw.status, 200);
+    const csvBuf = Buffer.from(await csvRaw.arrayBuffer());
+    assert.equal(csvBuf[0], 0xEF);
+    assert.equal(csvBuf[1], 0xBB);
+    assert.equal(csvBuf[2], 0xBF);
+    const csvText = csvBuf.toString('utf-8');
+    assert.ok(csvText.includes('學名'));
+
+    // 5.3 Markdown 標本手冊匯出
+    const mdRaw = await fetch(`${baseUrl}/api/admin/export?format=markdown`);
+    assert.equal(mdRaw.status, 200);
+    const mdText = await mdRaw.text();
+    assert.ok(mdText.includes('# 🌿 臺灣本草植物誌 · 典藏標本手冊'));
+    assert.ok(mdText.includes('本草標本典藏詳細條目'));
+  });
+
+  // ========================================================
+  // 6. LLM 本草專題文章生成實驗室驗證
+  // ========================================================
+  test('Article Studio: 根據資料庫本草 Grounding 生成特定專家口吻與指定受眾之專題文章', async () => {
+    // 6.1 取得選項
+    const optsRes = await fetchJson('/api/admin/articles/options');
+    assert.equal(optsRes.status, 200);
+    assert.ok(optsRes.body.data.audiences.length >= 4);
+    assert.ok(optsRes.body.data.articleTypes.length >= 4);
+
+    // 6.2 萬華老茶師口吻 + 久坐上班族受眾
+    const genRes1 = await fetchJson('/api/admin/articles/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      },
+      body: JSON.stringify({
+        herbIds: [1, 2],
+        expertId: 'wanhua_uncle',
+        targetAudience: 'office',
+        articleType: 'story'
+      })
+    });
+    assert.equal(genRes1.status, 200);
+    assert.equal(genRes1.body.success, true);
+    assert.ok(genRes1.body.data.title);
+    assert.ok(genRes1.body.data.markdownContent.includes('萬華') || genRes1.body.data.markdownContent.includes('老茶師'));
+    assert.ok(genRes1.body.data.markdownContent.includes('上班族') || genRes1.body.data.markdownContent.includes('辦公桌') || genRes1.body.data.markdownContent.includes('保溫瓶'));
+
+    // 6.3 客庄阿婆口吻 + 國小學童親子受眾
+    const genRes2 = await fetchJson('/api/admin/articles/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      },
+      body: JSON.stringify({
+        herbIds: [3],
+        expertId: 'hakka_grandmother',
+        targetAudience: 'children',
+        articleType: 'guide'
+      })
+    });
+    assert.equal(genRes2.status, 200);
+    assert.ok(genRes2.body.data.markdownContent.includes('阿婆') || genRes2.body.data.markdownContent.includes('阿妹阿弟'));
+    assert.ok(genRes2.body.data.markdownContent.includes('小朋友') || genRes2.body.data.markdownContent.includes('小草'));
+  });
 });
+
 

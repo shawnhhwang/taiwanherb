@@ -76,6 +76,35 @@ class RagService {
   }
 
   /**
+   * 新增自訂專家 Persona (供後台管理)
+   */
+  createExpert(data) {
+    const id = data.id || `custom_expert_${Date.now()}`;
+    if (this.experts[id]) {
+      throw new Error(`專家 ID「${id}」已存在`);
+    }
+
+    const newExpert = {
+      id,
+      name: data.name || '新進本草顧問',
+      title: data.title || '臺灣本草生活觀察家',
+      avatar: data.avatar || '🍃',
+      seal: data.seal || '草木新篇',
+      region: data.region || '臺灣全島自然境域',
+      tone: data.tone || '溫和親切、深入淺出、尊重天地草木',
+      catchphrase: data.catchphrase || '「天地有大美而不言，一草一木皆有其滋味。」',
+      greeting: data.greeting || '您好！歡迎來到本草茶席，讓我們一同探尋草木智慧。',
+      expertise: Array.isArray(data.expertise) ? data.expertise : (data.expertise ? data.expertise.split(/[,、]/) : ['家常青草應用', '四季養生茶']),
+      systemPrompt: data.systemPrompt || '',
+      topK: parseInt(data.topK, 10) || 3,
+      isCustom: true
+    };
+
+    this.experts[id] = newExpert;
+    return newExpert;
+  }
+
+  /**
    * 更新特定專家設定 (供後台管理)
    */
   updateExpert(expertId, data) {
@@ -86,6 +115,80 @@ class RagService {
       id: expertId
     };
     return this.experts[expertId];
+  }
+
+  /**
+   * 刪除自訂專家 (內建 4 大專家保護不可刪除)
+   */
+  deleteExpert(expertId) {
+    if (!this.experts[expertId]) {
+      throw new Error(`找不到 ID 為 ${expertId} 的專家`);
+    }
+
+    const builtInIds = ['wanhua_uncle', 'hakka_grandmother', 'pharmacist_phd', 'indigenous_forager'];
+    if (builtInIds.includes(expertId)) {
+      throw new Error('系統內建四大核心風土專家不可刪除，僅可微調設定');
+    }
+
+    delete this.experts[expertId];
+    return true;
+  }
+
+  /**
+   * 重設專家列表為預設種子狀態
+   */
+  resetExperts() {
+    this.experts = { ...EXPERTS };
+    return Object.values(this.experts);
+  }
+
+  /**
+   * 專家 RAG 測試沙盒 (Playground)
+   */
+  async testPlayground({ expertId = 'wanhua_uncle', query, systemPromptOverride, topK = 3 }) {
+    if (!query || query.trim() === '') {
+      throw new Error('請輸入欲測試之本草諮詢提問');
+    }
+
+    const expert = { ...this.getExpert(expertId) };
+    if (systemPromptOverride) {
+      expert.systemPrompt = systemPromptOverride;
+    }
+
+    const retrieved = await this.retrieveContext(query);
+    const sliced = retrieved.slice(0, Math.min(topK || 3, retrieved.length));
+
+    const citations = sliced.map(({ herb, reason, score }) => ({
+      id: herb.id,
+      name: herb.name,
+      scientificName: herb.scientificName,
+      category: herb.category,
+      nature: herb.nature,
+      channels: herb.channels,
+      folkApplication: herb.folkApplication,
+      safetyLevel: herb.safetyLevel,
+      relevanceScore: score,
+      relevanceReason: reason
+    }));
+
+    const reply = this.synthesizeExpertReply(expert, query, sliced);
+    const suggestedQuestions = this.generateSuggestedQuestions(expert, sliced);
+
+    // 建立 Context 提示詞除錯預覽
+    const contextPromptPreview = sliced.map((item, idx) => 
+      `[知識條目 ${idx + 1}] ${item.herb.name} (${item.herb.scientificName}) | 產區: ${item.herb.region} | 性味: ${item.herb.nature} | 功效: ${item.herb.efficacy}`
+    ).join('\n');
+
+    return {
+      expert,
+      query,
+      topK: sliced.length,
+      retrievedHerbs: citations,
+      contextPromptPreview,
+      reply,
+      suggestedQuestions,
+      generatedAt: new Date().toISOString()
+    };
   }
 
   /**
@@ -361,7 +464,7 @@ ${secondaryHerbs.length > 0 ? `### 🧪 【協同作用配伍 (Synergistic Phyto
 > **禁忌證 (Contraindications)**：${mainHerb.contraindications}
 > **藥物交互作用 (DDI)**：若您目前正在服用抗凝血劑（如 Warfarin）、免疫抑制劑或降血糖藥物，天然多酚類可能影響肝臟 CYP450 酵素代謝，建議間隔 2 小時以上，並務必諮詢專科醫師或藥師。
       `.trim();
-    } else {
+    } else if (expert.id === 'indigenous_forager') {
       // 阿美族山林野菜獵人風格
       reply = `
 ${expert.greeting}
@@ -389,6 +492,36 @@ ${expert.greeting}
 ### 🏹 【獵人給平地朋友的誠懇提醒】
 > **大地的規則**：${mainHerb.contraindications}
 > 自然的力量很剛強，順著節奏吃是補，貪多暴飲是負擔。吃進乾淨的草木，心也要像山嵐一樣放鬆喔！
+      `.trim();
+    } else {
+      // 自訂專家 Persona 通用生成模式
+      reply = `
+${expert.greeting || '您好！歡迎交流臺灣本草草木心得。'}
+
+關於您所關切的「**${query.trim()}**」，我秉持著${expert.catchphrase || '「草木有靈，順應自然」'}之核心視角，為您推薦臺灣在地代表草藥：${herbNames}。
+
+---
+
+### 🍃 【${expert.name} 特選本草：${mainHerb.name}】
+* **本草名稱**：**${mainHerb.name}** (*${mainHerb.scientificName || '臺灣草本'}*)
+* **風土產區**：${mainHerb.region || expert.region || '臺灣全島'}
+* **四氣五味**：性**${mainHerb.nature}**，味**${(mainHerb.taste || []).join('、')}**，入**${(mainHerb.channels || []).join('、')}**經。
+* **藥性功效**：${mainHerb.efficacy}
+* **風土文獻**：${mainHerb.taiwanHeritage || mainHerb.terroir || '臺灣島嶼溫暖濕潤環境孕育之特色生藥。'}
+
+${secondaryHerbs.length > 0 ? `* **佐使配伍好草**：${secondaryHerbs.map(h => `**${h.name}**（${(h.efficacy || '').slice(0, 30)}）`).join('；')}。` : ''}
+
+---
+
+### 🫖 【專家專屬生活實踐叮嚀】
+1. **日常運用**：${mainHerb.folkApplication || '建議採乾燥草本 10-15g，以熱水悶泡或慢火細煎 15 分鐘溫服。'}
+2. **風格心法**：${expert.tone || '順應四時節氣，以草木清香涵養身心。'}
+
+---
+
+### ⚠️ 【安全與體質注意事項】
+> **安全等級**：${mainHerb.safetyLevel || '無毒常服'}
+> **禁忌提醒**：${mainHerb.contraindications || '依體質適量使用，孕婦或體質虛寒者請諮詢專業醫師。'}
       `.trim();
     }
 

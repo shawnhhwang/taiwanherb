@@ -177,15 +177,23 @@ export const HerbApi = {
   /**
    * 後台管理模組
    */
-  async adminLogin(password) {
+  async adminLogin(credentials) {
+    const payload = typeof credentials === 'string'
+      ? { password: credentials }
+      : credentials;
+
     const res = await this.request('/admin/login', {
       method: 'POST',
-      body: JSON.stringify({ password })
+      body: JSON.stringify(payload)
     });
     if (res.data?.token) {
       this.setAuthToken(res.data.token);
     }
     return res.data;
+  },
+
+  async adminLogout() {
+    this.setAuthToken('');
   },
 
   async getAdminStatus() {
@@ -238,14 +246,6 @@ export const HerbApi = {
     return res.data;
   },
 
-  async updateExpert(id, data) {
-    const res = await this.request(`/admin/experts/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    });
-    return res.data;
-  },
-
   async getAdminLogs() {
     const res = await this.request('/admin/logs');
     return res.data || [];
@@ -254,6 +254,137 @@ export const HerbApi = {
   async resetDatabase() {
     const res = await this.request('/admin/reset', {
       method: 'POST'
+    });
+    return res.data;
+  },
+
+  // 1. 使用者管理與前後台權限 (RBAC)
+  async getAdminUsers() {
+    const res = await this.request('/admin/users');
+    return res.data;
+  },
+
+  async createAdminUser(data) {
+    const res = await this.request('/admin/users', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  async updateAdminUser(id, data) {
+    const res = await this.request(`/admin/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  async deleteAdminUser(id) {
+    const res = await this.request(`/admin/users/${id}`, {
+      method: 'DELETE'
+    });
+    return res.data;
+  },
+
+  // 2. LLM 提供商與 API 來源管理
+  async getLlmConfig() {
+    const res = await this.request('/admin/llm/config');
+    return res.data;
+  },
+
+  async updateLlmConfig(data) {
+    const res = await this.request('/admin/llm/config', {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  async testLlmConnection(providerId) {
+    const res = await this.request('/admin/llm/test', {
+      method: 'POST',
+      body: JSON.stringify({ providerId })
+    });
+    return res.data;
+  },
+
+  // 3. 專家 RAG Persona 管理與測試沙盒
+  async getAdminExperts() {
+    const res = await this.request('/admin/experts');
+    return res.data || [];
+  },
+
+  async createAdminExpert(data) {
+    const res = await this.request('/admin/experts', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  async updateExpert(id, data) {
+    const res = await this.request(`/admin/experts/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  async deleteAdminExpert(id) {
+    const res = await this.request(`/admin/experts/${id}`, {
+      method: 'DELETE'
+    });
+    return res.data;
+  },
+
+  async resetAdminExperts() {
+    const res = await this.request('/admin/experts/reset', {
+      method: 'POST'
+    });
+    return res.data;
+  },
+
+  async testExpertPlayground(data) {
+    const res = await this.request('/admin/experts/playground', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  // 4. 資料匯入 (範例、文字/CSV預覽編輯與批次存檔)
+  async getImportSample(format = 'json') {
+    const res = await this.request(`/admin/import/sample?format=${format}`);
+    return res.data;
+  },
+
+  async previewImport(content, format = 'json') {
+    const res = await this.request('/admin/import/preview', {
+      method: 'POST',
+      body: JSON.stringify({ content, format })
+    });
+    return res.data;
+  },
+
+  async commitImport(items) {
+    const res = await this.request('/admin/import/commit', {
+      method: 'POST',
+      body: JSON.stringify({ items })
+    });
+    return res.data;
+  },
+
+  // 5. LLM 本草專題文章生成實驗室
+  async getArticleOptions() {
+    const res = await this.request('/admin/articles/options');
+    return res.data;
+  },
+
+  async generateArticle(data) {
+    const res = await this.request('/admin/articles/generate', {
+      method: 'POST',
+      body: JSON.stringify(data)
     });
     return res.data;
   }
