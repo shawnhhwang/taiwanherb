@@ -1439,4 +1439,70 @@ button {
   box-shadow: 0 6px 20px rgba(45, 106, 79, 0.4);
 }
 
+/* 當令節氣推薦 Toast 古卷橫條 */
+.seasonal-recommendation-toast {
+  position: sticky;
+  top: 58px;
+  z-index: 95;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-bottom: 1px solid #f59e0b;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.18);
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.toast-seal {
+  background: #b45309;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.toast-text {
+  font-size: 13.5px;
+  color: #78350f;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  color: #92400e;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.toast-close:hover {
+  background: rgba(180, 83, 9, 0.15);
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 

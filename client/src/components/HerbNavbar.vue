@@ -94,22 +94,22 @@
           </span>
         </button>
 
-        <!-- 隨機推薦藥材 -->
-        <button class="nav-tool-btn btn-pill-accent" title="隨機推薦今日精選本草" @click="$emit('random-pick')">
+        <!-- 今日推薦 (與當令節氣一致) -->
+        <button class="nav-tool-btn btn-pill-accent" title="推薦當令節氣契合之島嶼本草" @click="$emit('random-pick')">
           <span>✨</span>
           <span>今日推薦</span>
         </button>
 
-        <!-- 藥材對照比對 -->
+        <!-- 藥材對照比對 (無障礙點擊，支援一鍵載入比對組合) -->
         <button
           class="nav-tool-btn"
-          :class="{ 'has-badge': compareList.length > 0 }"
-          :disabled="compareList.length === 0"
-          title="開啟藥材比對清單"
+          :class="{ 'has-badge': compareList.length > 0, 'btn-tool-active': compareList.length > 0 }"
+          :title="compareList.length > 0 ? `開啟 ${compareList.length} 味藥材多方對照比對` : '開啟藥材對照比對視窗 (支援一鍵載入經典對照)'"
           @click="$emit('open-compare')"
         >
           <span>⚖️</span>
-          <span>比對 ({{ compareList.length }})</span>
+          <span>比對</span>
+          <span v-if="compareList.length > 0" class="compare-badge-num">{{ compareList.length }}</span>
         </button>
 
         <!-- 免責聲明 -->
@@ -164,10 +164,13 @@
           </button>
         </div>
 
-        <!-- 使用者身分與登入 (RBAC) -->
+        <!-- 獨立分隔線 -->
+        <div class="nav-auth-divider"></div>
+
+        <!-- 使用者身分與登入 (RBAC) 移至最右側 -->
         <button
           class="btn-user-auth"
-          :class="currentUser ? 'btn-pill-auth-active' : 'btn-pill-subtle'"
+          :class="currentUser ? 'btn-pill-auth-active' : 'btn-pill-auth-guest'"
           :title="currentUser ? `目前身分: ${currentUser.name} (${currentUser.roleTitle || currentUser.role}) - 點擊切換或管理權限` : '登入 / 切換使用者與檢視前後台權限'"
           @click="$emit('open-auth')"
         >
@@ -657,6 +660,31 @@ const toggleAmbientSound = () => {
   font-weight: 700;
   letter-spacing: 0.5px;
   white-space: nowrap;
+}
+
+.nav-auth-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-light);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+.compare-badge-num {
+  background: var(--primary-deep);
+  color: #fff;
+  border-radius: 10px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.btn-tool-active {
+  background: var(--primary-pale) !important;
+  border-color: var(--primary) !important;
+  color: var(--primary-deep) !important;
+  font-weight: 600;
 }
 
 /* 響應式優化：避免任何小螢幕時文字變直 */

@@ -22,6 +22,17 @@
       @switch-tab="switchMainTab"
     />
 
+    <!-- 當令節氣今日推薦古卷橫條 Toast -->
+    <transition name="fade">
+      <div v-if="isSeasonalToastVisible" class="seasonal-recommendation-toast">
+        <div class="toast-content">
+          <span class="toast-seal">時序</span>
+          <span class="toast-text">{{ seasonalToastMessage }}</span>
+        </div>
+        <button class="toast-close" title="關閉提示" @click="isSeasonalToastVisible = false">✕</button>
+      </div>
+    </transition>
+
     <!-- Awwwards 殿堂級 Hero 敘事區 (僅在首頁展示「草木有靈，人間有情」) -->
     <HerbHero
       v-if="!selectedHerbId && activeTab === 'home'"
@@ -297,9 +308,13 @@
     <HerbCompareModal
       v-if="isCompareModalOpen"
       :herbs="compareList"
+      :all-herbs="allHerbsFullList"
       @close="isCompareModalOpen = false"
       @remove-herb="removeFromCompare"
+      @add-herb="toggleCompare"
+      @load-preset="loadComparePreset"
       @clear-all="compareList = []"
+      @view-herb="openHerbDetailFromCompare"
     />
 
     <!-- 系統健康監控彈窗 -->
@@ -452,6 +467,7 @@ import CommandPalette from './components/CommandPalette.vue';
 import HerbCompareModal from './components/HerbCompareModal.vue';
 import HealthModal from './components/HealthModal.vue';
 import AuthModal from './components/AuthModal.vue';
+import { getSeasonalHerbRecommendation } from './services/solarTerms';
 
 // 狀態定義
 const herbs = ref([]);
@@ -462,6 +478,10 @@ const natures = ref([]);
 const regions = ref([]);
 const folkApplications = ref([]);
 const safetyLevels = ref([]);
+
+// 當令節氣推薦橫條 Toast 狀態
+const seasonalToastMessage = ref('');
+const isSeasonalToastVisible = ref(false);
 
 const currentCategory = ref('全部');
 const currentChannel = ref('全部');
@@ -660,16 +680,29 @@ const goCatalog = () => {
   window.location.hash = '#/home';
 };
 
-// 隨機推薦
+// 今日推薦 (依據現實當前時間計算最接近之 24 節氣對應當令草藥)
 const fetchRandomHerb = async () => {
   try {
     audio.playChime(528);
-    const random = await HerbApi.getRandomHerb();
-    if (random && random.id) {
-      await openHerbDetail(random.id);
+    // 依據當前現實日期計算節氣與當令草藥
+    const recommendation = getSeasonalHerbRecommendation(allHerbsFullList.value, new Date());
+    const { term, herb, reason } = recommendation;
+    
+    if (herb && herb.id) {
+      await openHerbDetail(herb.id);
+      seasonalToastMessage.value = `🍂【當令節氣 · ${term.name}（${term.dateRange}）今日推薦本草】：${herb.name} —— ${reason}`;
+      isSeasonalToastVisible.value = true;
+      setTimeout(() => {
+        isSeasonalToastVisible.value = false;
+      }, 7000);
+    } else {
+      const random = await HerbApi.getRandomHerb();
+      if (random && random.id) {
+        await openHerbDetail(random.id);
+      }
     }
   } catch (err) {
-    console.error('隨機推薦失敗:', err);
+    console.error('今日節氣推薦失敗:', err);
   }
 };
 
@@ -755,12 +788,13 @@ const toggleFavorite = (herb) => {
   localStorage.setItem('taiwanherb_favorites', JSON.stringify(favoriteHerbs.value));
 };
 
-// 比對管理
+// 比對管理 (最多同時比對 4 味本草)
 const isInCompare = (id) => {
   return compareList.value.some(h => h.id === id);
 };
 
 const toggleCompare = async (herb) => {
+  audio.playClick();
   const index = compareList.value.findIndex(h => h.id === herb.id);
   if (index !== -1) {
     compareList.value.splice(index, 1);
@@ -769,13 +803,36 @@ const toggleCompare = async (herb) => {
       alert('最多同時比對 4 味藥材');
       return;
     }
+    let targetHerb = herb;
     if (!herb.efficacy || !herb.contraindications) {
-      const full = await HerbApi.getHerbById(herb.id);
-      compareList.value.push(full);
-    } else {
-      compareList.value.push(herb);
+      targetHerb = await HerbApi.getHerbById(herb.id);
+    }
+    compareList.value.push(targetHerb);
+  }
+};
+
+// 一鍵載入經典對照組合
+const loadComparePreset = async (preset) => {
+  audio.playStamp();
+  const matchedHerbs = [];
+  for (const name of preset.targetNames) {
+    const found = allHerbsFullList.value.find(h => h.name === name);
+    if (found) {
+      let fullHerb = found;
+      if (!found.efficacy || !found.contraindications) {
+        fullHerb = await HerbApi.getHerbById(found.id);
+      }
+      matchedHerbs.push(fullHerb);
     }
   }
+  if (matchedHerbs.length > 0) {
+    compareList.value = matchedHerbs;
+  }
+};
+
+const openHerbDetailFromCompare = (id) => {
+  isCompareModalOpen.value = false;
+  openHerbDetail(id);
 };
 
 const removeFromCompare = (id) => {
