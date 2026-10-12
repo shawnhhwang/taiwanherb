@@ -174,6 +174,63 @@ export const HerbApi = {
     return res.data;
   },
 
+  async consultFormulate(data) {
+    const res = await this.request('/consult/formulate', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  /**
+   * 結盟青草店與購買指引模組
+   */
+  async getShops(params = {}) {
+    const queryParts = [];
+    if (params.region && params.region !== '全部') queryParts.push(`region=${encodeURIComponent(params.region)}`);
+    if (params.city && params.city !== '全部') queryParts.push(`city=${encodeURIComponent(params.city)}`);
+    if (params.query) queryParts.push(`query=${encodeURIComponent(params.query)}`);
+    const qs = queryParts.length ? `?${queryParts.join('&')}` : '';
+    const res = await this.request(`/shops${qs}`);
+    return res.data || [];
+  },
+
+  async getShopGuides() {
+    const res = await this.request('/shops/guides');
+    return res.data || [];
+  },
+
+  async getShopsByHerb(herbName) {
+    const res = await this.request(`/shops/by-herb/${encodeURIComponent(herbName)}`);
+    return res.data || [];
+  },
+
+  /**
+   * 角色經典配方與 AI 神來一配實驗室模組
+   */
+  async getFormulas(params = {}) {
+    const queryParts = [];
+    if (params.expertId && params.expertId !== '全部') queryParts.push(`expertId=${encodeURIComponent(params.expertId)}`);
+    if (params.type && params.type !== '全部') queryParts.push(`type=${encodeURIComponent(params.type)}`);
+    if (params.query) queryParts.push(`query=${encodeURIComponent(params.query)}`);
+    const qs = queryParts.length ? `?${queryParts.join('&')}` : '';
+    const res = await this.request(`/formulas${qs}`);
+    return res.data || [];
+  },
+
+  async getFormulaById(id) {
+    const res = await this.request(`/formulas/${id}`);
+    return res.data;
+  },
+
+  async blendFormula(payload) {
+    const res = await this.request('/formulas/blend', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return res.data;
+  },
+
   /**
    * 後台管理模組
    */

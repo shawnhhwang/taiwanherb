@@ -573,6 +573,108 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.ok(genRes2.body.data.markdownContent.includes('阿婆') || genRes2.body.data.markdownContent.includes('阿妹阿弟'));
     assert.ok(genRes2.body.data.markdownContent.includes('小朋友') || genRes2.body.data.markdownContent.includes('小草'));
   });
+
+  // 7. 結盟青草店與採買指引測試
+  test('Allied Shops: 結盟青草店檢索、分區篩選、採買指南與依草藥反查', async () => {
+    // 7.1 取得全台 12 家結盟青草店
+    const allShopsRes = await fetchJson('/api/shops');
+    assert.equal(allShopsRes.status, 200);
+    assert.equal(allShopsRes.body.success, true);
+    assert.ok(Array.isArray(allShopsRes.body.data));
+    assert.equal(allShopsRes.body.data.length, 12);
+
+    // 7.2 依產區篩選 (北部)
+    const northShopsRes = await fetchJson('/api/shops?region=北部');
+    assert.equal(northShopsRes.status, 200);
+    assert.ok(northShopsRes.body.data.length >= 3);
+    assert.ok(northShopsRes.body.data.every(s => s.region.includes('北部')));
+
+    // 7.3 取得採買避坑四大指南
+    const guidesRes = await fetchJson('/api/shops/guides');
+    assert.equal(guidesRes.status, 200);
+    assert.equal(guidesRes.body.success, true);
+    assert.equal(guidesRes.body.data.length, 4);
+    assert.ok(guidesRes.body.data.some(g => g.id === 'fresh'));
+    assert.ok(guidesRes.body.data.some(g => g.id === 'dry'));
+
+    // 7.4 依草藥名稱反查販售店家 (大花咸豐草)
+    const byHerbRes = await fetchJson('/api/shops/by-herb/大花咸豐草');
+    assert.equal(byHerbRes.status, 200);
+    assert.equal(byHerbRes.body.success, true);
+    assert.ok(Array.isArray(byHerbRes.body.data));
+    assert.ok(byHerbRes.body.data.length > 0);
+    assert.ok(byHerbRes.body.data.some(s => s.name.includes('安立') || s.name.includes('德安')));
+  });
+
+  // 8. 角色經典配方庫與 AI 神來一配實驗室測試
+  test('Formulas & Divine Blend: 角色傳承名方庫與 AI 神來一配實驗室演算法', async () => {
+    // 8.1 取得 11 道角色經典傳承配方
+    const formulasRes = await fetchJson('/api/formulas');
+    assert.equal(formulasRes.status, 200);
+    assert.equal(formulasRes.body.success, true);
+    assert.ok(Array.isArray(formulasRes.body.data));
+    assert.equal(formulasRes.body.data.length, 11);
+
+    // 8.2 依傳承專家篩選 (彭秀妹老藥師客庄藥浴與敷膏)
+    const hakkaFormulasRes = await fetchJson('/api/formulas?expertId=hakka_grandma');
+    assert.equal(hakkaFormulasRes.status, 200);
+    assert.ok(hakkaFormulasRes.body.data.length >= 3);
+    assert.ok(hakkaFormulasRes.body.data.some(f => f.type.includes('bath')));
+
+    // 8.3 依配方 ID 取得單一配方
+    const singleFormulaRes = await fetchJson('/api/formulas/formula_wanhua_classic_tea');
+    assert.equal(singleFormulaRes.status, 200);
+    assert.equal(singleFormulaRes.body.success, true);
+    assert.ok(singleFormulaRes.body.data.name.includes('百年退火青草茶'));
+    assert.ok(singleFormulaRes.body.data.composition.some(c => c.role === '君'));
+
+    // 8.4 🎲 AI 神來一配 (Divine Blend) 演算法演算測試
+    const blendRes = await fetchJson('/api/formulas/blend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        targetIntent: '清熱退火',
+        customName: '夏日炎炎清涼籤'
+      })
+    });
+    assert.equal(blendRes.status, 200);
+    assert.equal(blendRes.body.success, true);
+    assert.ok(blendRes.body.data.decreeName);
+    assert.ok(blendRes.body.data.composition.length >= 2);
+    assert.ok(typeof blendRes.body.data.balanceScore === 'number');
+    assert.ok(blendRes.body.data.channelsCovered);
+  });
+
+  // 9. 專家 LLM AI 客製配方建議測試
+  test('Consult Formulate: 專家 LLM AI 結合 RAG 生成道地客製方劑建議', async () => {
+    // 9.1 林萬吉老茶師生成熬夜日常青草茶
+    const formulateRes = await fetchJson('/api/consult/formulate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userNeeds: '天天熬夜加班火氣大，口乾舌燥想要退火，但容易胃寒',
+        expertId: 'wanhua_uncle',
+        targetType: 'herbal_tea'
+      })
+    });
+    assert.equal(formulateRes.status, 200);
+    assert.equal(formulateRes.body.success, true);
+    assert.ok(formulateRes.body.data.recipeName);
+    assert.ok(formulateRes.body.data.expertAdvice);
+    assert.ok(Array.isArray(formulateRes.body.data.composition));
+    assert.ok(formulateRes.body.data.composition.length > 0);
+    assert.ok(formulateRes.body.data.preparationGuide);
+
+    // 9.2 未提供需求時應回傳 400
+    const errRes = await fetchJson('/api/consult/formulate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userNeeds: '   ' })
+    });
+    assert.equal(errRes.status, 400);
+    assert.equal(errRes.body.success, false);
+  });
 });
+
 
 

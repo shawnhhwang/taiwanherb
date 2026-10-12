@@ -73,7 +73,13 @@ class RagService {
    * 取得特定專家詳情
    */
   getExpert(expertId) {
-    return this.experts[expertId] || this.experts.wanhua_uncle;
+    const aliasMap = {
+      'hakka_grandma': 'hakka_grandmother',
+      'biotech_dr_yen': 'pharmacist_phd',
+      'bunun_hunter': 'indigenous_forager'
+    };
+    const resolvedId = aliasMap[expertId] || expertId;
+    return this.experts[resolvedId] || this.experts.wanhua_uncle;
   }
 
   /**
@@ -658,6 +664,199 @@ ${secondaryHerbs.length > 0 ? `* **佐使配伍好草**：${secondaryHerbs.map(h
         `阿美族老人家常喝的山苦瓜茶，真的能調節體力嗎？`
       ];
     }
+  }
+
+  /**
+   * 專家 LLM AI 配方建議功能 (Expert Formulation Recommendation)
+   */
+  async formulateRecipe({ userNeeds, expertId = 'wanhua_uncle', targetType = 'herbal_tea' }) {
+    if (!userNeeds || userNeeds.trim() === '') {
+      throw new Error('請輸入欲諮詢的配方生活需求或體質症狀');
+    }
+
+    const expert = this.getExpert(expertId);
+    const retrieved = await this.retrieveContext(userNeeds);
+    const topHerbs = retrieved.slice(0, 4);
+
+    const citations = topHerbs.map(({ herb, reason }) => ({
+      id: herb.id,
+      name: herb.name,
+      scientificName: herb.scientificName,
+      category: herb.category,
+      nature: herb.nature,
+      channels: herb.channels,
+      partsUsed: herb.partsUsed,
+      folkApplication: herb.folkApplication,
+      safetyLevel: herb.safetyLevel,
+      thumbnailUrl: herb.thumbnailUrl,
+      relevanceReason: reason,
+      taiwanHeritage: herb.taiwanHeritage
+    }));
+
+    const roles = ['君', '臣', '佐', '使'];
+    const composition = topHerbs.map(({ herb }, idx) => ({
+      herbId: herb.id,
+      herbName: herb.name,
+      scientificName: herb.scientificName,
+      nature: herb.nature,
+      channels: herb.channels,
+      role: roles[idx] || '佐',
+      amount: idx === 0 ? '15 - 20g' : idx === 1 ? '10 - 15g' : '5 - 10g',
+      reason: idx === 0
+        ? `君藥。以 ${herb.name} 主攻需求，發揮 ${herb.efficacy.slice(0, 24)} 核心效用。`
+        : idx === 1
+        ? `臣藥。輔助增強 ${herb.name} 之調理力道。`
+        : idx === topHerbs.length - 1
+        ? `使藥。調和諸藥氣味，引經入絡。`
+        : `佐藥。佐助制約寒熱偏頗，兼顧滋味。`,
+      thumbnailUrl: herb.thumbnailUrl
+    }));
+
+    let formulaName = '';
+    const mainName = topHerbs[0]?.herb.name || '本土青草';
+    if (expert.id === 'wanhua_uncle') {
+      formulaName = `林萬吉傳承 · ${mainName}清寧甘露茶`;
+    } else if (expert.id === 'hakka_grandmother') {
+      formulaName = targetType === 'bath_soak'
+        ? `獅潭阿婆親傳 · ${mainName}辟邪安神浴湯`
+        : `客庄長老親傳 · ${mainName}溫經潤胃飲`;
+    } else if (expert.id === 'pharmacist_phd') {
+      formulaName = `嚴博士生藥研訂 · ${mainName}科學防護方`;
+    } else {
+      formulaName = `部落獵人古傳 · ${mainName}山林元氣精力方`;
+    }
+
+    // Persona-driven formulation synthesis
+    const detailedAdviceMarkdown = this.synthesizeExpertFormulation(expert, userNeeds, targetType, topHerbs, formulaName);
+
+    return {
+      expert: {
+        id: expert.id,
+        name: expert.name,
+        title: expert.title,
+        avatar: expert.avatar,
+        seal: expert.seal,
+        tone: expert.tone
+      },
+      expertName: expert.name,
+      userNeeds,
+      targetType,
+      formulaName,
+      recipeName: formulaName,
+      expertAdvice: detailedAdviceMarkdown,
+      preparationGuide: '大火煮沸後轉文火慢熬 20-30 分鐘，關火悶香 5 分鐘即可濾渣享用。',
+      suggestedHerbs: composition.map(c => c.herbName),
+      composition,
+      citations,
+      detailedAdviceMarkdown,
+      generatedAt: new Date().toISOString()
+    };
+  }
+
+  /**
+   * 合成專家專屬配方建議口吻與指導
+   */
+  synthesizeExpertFormulation(expert, userNeeds, targetType, retrieved, formulaName) {
+    const mainHerb = retrieved[0].herb;
+    const secondaryHerb = retrieved[1] ? retrieved[1].herb : mainHerb;
+    const thirdHerb = retrieved[2] ? retrieved[2].herb : null;
+
+    let greeting = '';
+    let explanation = '';
+    let craftsmanship = '';
+    let shopAdvice = '';
+    let caution = '';
+
+    if (expert.id === 'wanhua_uncle') {
+      greeting = `「少年家！看到你講這句『${userNeeds}』，老萬華青草巷第三代的耳朵就豎起來了！我們西昌街老祖宗熬了七十幾年草藥，這種身體的鬱火濁熱，急不得，要用天地草木慢慢順。」`;
+      explanation = `
+這次伯仔幫你量身定做的這帖**【${formulaName}】**，講究的是萬華百年老茶席的規矩：
+1. **君藥：${mainHerb.name}** —— 取它的 **${mainHerb.nature}性**，走 **${(mainHerb.channels || []).join('、')}經**，先把體內悶燒的暗火從水道排解出去。
+2. **臣藥：${secondaryHerb.name}** —— 在旁邊幫忙顧著，補強生津止渴、清心潤肺的力道。
+${thirdHerb ? `3. **佐使藥：${thirdHerb.name}** —— 抓一把在後頭調和，讓這壺茶入口順喉，不刮胃、不苦澀。` : ''}
+`.trim();
+      craftsmanship = `
+*   **水量火候**：抓乾草約 40-50g，注清水 2,500 mL。大火大滾 5 分鐘後，**轉文火微滾慢熬 20 分鐘**。青草的甘露味是慢火逼出來的，火太猛反而逼出苦渣味。
+*   **飲用時機**：熄火放涼至溫涼即可飲用。伯仔提醒你，千萬不要加滿整杯冰塊狂飲！溫溫地喝，喉嚨跟胃腸才舒服。
+`.trim();
+      shopAdvice = `到萬華西昌街青草巷（像安立青草店、德安青草行），跟店家講要抓「${mainHerb.name}」跟「${secondaryHerb.name}」，指名要乾度夠、聞起來有天然青草草香的真品，不要買到受潮發霉的陳草。`;
+      caution = `「性味偏涼，如果你這兩天肚子受寒拉肚子，或者女生生理期剛來，先放慢腳步別喝太濃。」`;
+    } else if (expert.id === 'hakka_grandmother') {
+      greeting = `「阿妹阿弟！聽阿婆一句話。你提到『${userNeeds}』，客家人講『土生土長，草木有靈』，人吃五穀雜糧，順應四時節氣，身體哪裡不順，山林裡的草葉就是最好的依靠。」`;
+      explanation = `
+阿婆從苗栗獅潭客庄老家，為你挑了這帖**【${formulaName}】**：
+1. **${mainHerb.name}**：客家庄最珍貴的山林草木，**${mainHerb.nature}性**，溫和調理，幫你把身體裡滯留的濕濁給化開。
+2. **${secondaryHerb.name}**：配伍在旁相生相助，香氣通透，安撫心神。
+${thirdHerb ? `3. **${thirdHerb.name}**：性平溫潤，調和全鍋草料，喝起來或洗起來都溫暖舒服。` : ''}
+`.trim();
+      craftsmanship = `
+*   **熬煮方法**：${targetType === 'bath_soak' ? '大鍋注水 5,000 mL，大火燒滾 20 分鐘，煮成濃金黃色藥湯倒入浴桶，調至 40°C 擦澡或浸泡 15 分鐘，洗完趕緊穿暖，切防受風！' : '注水 2,000 mL，文火慢煮 20 分鐘，茶香飄滿屋子就能起鍋。阿婆建議可以丟兩枚紅棗，滋味更甘潤。'}
+`.trim();
+      shopAdvice = `採購時可到客庄老字號青草舖（如苗栗獅潭老藥舖、新竹竹蓮青草行），選購無硫磺低溫乾燥的純淨客庄本草包。`;
+      caution = `「洗浴或喝茶後，記得不要吹電風扇或冷氣強風，讓毛細孔自然收汗，元氣才固得住。」`;
+    } else if (expert.id === 'pharmacist_phd') {
+      greeting = `「您好，我是嚴敏華藥師。針對您所諮詢的臨床調理需求：『${userNeeds}』，我們從現代生藥學 (Pharmacognosy) 與天然物化學角度，為您建立符合文獻證據的客製化本草配方。」`;
+      explanation = `
+本方**【${formulaName}】**遵循天然植物化學成分之相乘與協同效應 (Synergy)：
+1. **主要活性靶點 (君)：${mainHerb.name}** (${mainHerb.scientificName}) —— 含有 **${(mainHerb.activeCompounds || ['多酚類', '黃酮苷']).join('、')}**，能發揮抗氧化、抗發炎及調節生理機能之核心效用。
+2. **協同輔助組分 (臣)：${secondaryHerb.name}** (${secondaryHerb.scientificName}) —— 提供天然植物多醣與微量元素，增強黏膜屏障與防護活性。
+${thirdHerb ? `3. **緩釋與生物利用度調控 (佐/使)：${thirdHerb.name}** —— 具備天然皂苷或有機酸，增進有效成分之腸道吸收率並降低單味藥物之胃腸道刺激。` : ''}
+`.trim();
+      craftsmanship = `
+*   **萃取規格**：建議水藥比例為 1:20 (約 30g 藥材對 1,500 mL 去離子水或純淨水)。
+*   **煎煮溫度控制**：沸騰後維持微沸 (90-95°C) 煎煮 15-20 分鐘，避免高溫長時間沸騰導致揮發性萜類精油熱降解。
+`.trim();
+      shopAdvice = `建議前往通過檢驗合格、具備產銷履歷之結盟青草店或農會合作門市（如名間鄉草藥產銷門市、吉安鄉青草產銷中心）選購通過農殘重金屬檢驗之合格乾燥品。`;
+      caution = `「本配方純屬日常機能性草本飲品，若有長期慢性病正在服用抗凝血劑、降血壓西藥者，建議與常規西藥間隔 2 小時以上分開服用。」`;
+    } else {
+      greeting = `「Masalu！朋友，來自山林的問候。你說遇到『${userNeeds}』，部落獵人常在山裡走，風吹雨淋、涉溪過澗，身體有任何疲累，山林裡的草木就是最真誠的解方。」`;
+      explanation = `
+為你採集調配的這帖**【${formulaName}】**，凝聚了部落千百年與森林共生的生存記憶：
+1. **山林主力：${mainHerb.name}** —— 吸收東台灣深山泥土與陽光精華，滋味野性強烈，幫你強固筋骨、喚醒身體沉睡的元氣。
+2. **森林之翼：${secondaryHerb.name}** —— 散發大山芬多精香氣，舒展胸口沉悶濁氣。
+${thirdHerb ? `3. **部落溫厚之根：${thirdHerb.name}** —— 顧好脾胃底氣，讓體力持久耐操。` : ''}
+`.trim();
+      craftsmanship = `
+*   **山林野烹法**：${targetType === 'tonic_soup' ? '先用草木煮出甘香底湯，再投入鮮魚塊或排骨慢火滾熟，起鍋前撒入鮮葉，加一點天然海鹽，野香四溢！' : '冷水慢熬 20 分鐘，茶色如山中紅酒，溫熱大口喝下，暖流直通全身手腳。'}
+`.trim();
+      shopAdvice = `若想尋覓純正原鄉野生草藥，推薦聯絡花蓮吉安青草產銷中心或台東太麻里原鄉本草合作社，挑選部落小農友善耕作之自然珍品。`;
+      caution = `「山林草藥力量剛烈，體質燥熱口舌發炎時請放慢節奏慢慢喝，感受土地順時節奏。」`;
+    }
+
+    const legalDisclaimer = `
+---
+> 📜 **【臺灣本草知識庫 · 專家 AI 客製配方非醫療宣稱告示】**  
+> 本專家配方建議係根據臺灣民間傳統風土古籍、常民生活文化及生藥學特徵合成分享，**絕無任何醫療效果宣稱，亦不可取代合格醫師之診斷與處方**。若有慢性病、孕期或身體持續不適，請務必尋求合格中西醫師診治。
+`.trim();
+
+    return `
+### 🌿 ${formulaName}
+> **推薦專家**：${expert.name}（${expert.title}） · **調理類型**：${targetType === 'bath_soak' ? '🛁 外洗藥浴' : targetType === 'ointment_paste' ? '🧴 外用敷膏' : targetType === 'tonic_soup' ? '🍲 藥膳燉湯' : '🍵 民俗青草茶'}
+
+${greeting}
+
+---
+
+#### ⚖️ 一、君臣佐使配伍心法
+${explanation}
+
+---
+
+#### 🍯 二、傳統工藝熬煮與炮製指導
+${craftsmanship}
+
+---
+
+#### 🏪 三、結盟青草店選購避坑指引
+${shopAdvice}
+
+---
+
+#### ⚠️ 四、生活節制與體質禁忌
+${caution}
+
+${legalDisclaimer}
+`.trim();
   }
 }
 

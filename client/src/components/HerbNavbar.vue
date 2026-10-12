@@ -12,6 +12,7 @@
         </div>
 
         <!-- 核心四大頁面導航 -->
+        <!-- 核心導航選單 -->
         <nav class="nav-tabs-group">
           <button
             class="nav-tab-btn"
@@ -31,6 +32,26 @@
           >
             <span class="tab-icon">🌿</span>
             <span class="tab-label">本草知識庫</span>
+          </button>
+
+          <button
+            class="nav-tab-btn"
+            :class="{ active: activeTab === 'alchemy' }"
+            title="方劑研製所 · 角色傳承名方與 AI 神來一配實驗室"
+            @click="$emit('switch-tab', 'alchemy')"
+          >
+            <span class="tab-icon">🧪</span>
+            <span class="tab-label">方劑實驗室</span>
+          </button>
+
+          <button
+            class="nav-tab-btn"
+            :class="{ active: activeTab === 'shops' }"
+            title="尋訪全臺結盟青草老舖與採買避坑指南"
+            @click="$emit('switch-tab', 'shops')"
+          >
+            <span class="tab-icon">🏪</span>
+            <span class="tab-label">結盟青草店</span>
           </button>
 
           <button

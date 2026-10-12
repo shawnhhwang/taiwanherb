@@ -11,7 +11,17 @@
         <span class="detail-specimen-no">標本編號 NO. {{ String(herb.id).padStart(3, '0') }}</span>
       </div>
 
-      <div style="display: flex; gap: 10px; align-items: center;">
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+        <!-- 投入茶釜調配按鈕 -->
+        <button
+          class="btn-pill btn-pill-accent-tea"
+          title="將此味藥材投入方劑調配研製所進行配方實驗"
+          @click="onAddToCauldron"
+        >
+          <span>🧪</span>
+          <span>投入茶釜調配</span>
+        </button>
+
         <!-- 收藏標本按鈕 -->
         <button
           class="btn-pill btn-pill-subtle"
@@ -186,6 +196,46 @@
           </p>
         </div>
 
+        <!-- 推薦結盟青草店購買指引卡片 -->
+        <div class="allied-shops-recommend-card">
+          <div class="shop-rec-header">
+            <span class="shop-rec-seal">購買指引</span>
+            <div class="shop-rec-title-wrap">
+              <h4 class="shop-rec-title">🏪 推薦結盟青草店購買指引</h4>
+              <p class="shop-rec-subtitle">尋訪老字號道地生鮮採摘、乾燥切片與代客抓配青草茶</p>
+            </div>
+            <button class="btn-view-all-shops" @click="$emit('jump-to-shops')">
+              查看全島結盟店家 ➔
+            </button>
+          </div>
+
+          <div v-if="loadingShops" class="shops-mini-loading">
+            <span>🍃 正在連線查詢供應「{{ herb.name }}」之特約青草舖...</span>
+          </div>
+
+          <div v-else-if="associatedShops.length > 0" class="shops-mini-grid">
+            <div
+              v-for="shop in associatedShops"
+              :key="shop.id"
+              class="shop-mini-card"
+            >
+              <div class="shop-mini-top">
+                <span class="shop-mini-name">{{ shop.name }}</span>
+                <span class="shop-mini-city">{{ shop.city }}</span>
+              </div>
+              <div class="shop-mini-address">📍 {{ shop.address }}</div>
+              <div class="shop-mini-phone">📞 <a :href="`tel:${shop.phone.replace(/[^0-9]/g, '')}`">{{ shop.phone }}</a></div>
+              <div class="shop-mini-advice">💡 <strong>採買建議：</strong>{{ shop.buyingAdvice }}</div>
+            </div>
+          </div>
+
+          <div v-else class="shops-mini-fallback">
+            全島 12 家特約指標性青草老舖皆備有本草生鮮或乾燥切片，可前往
+            <a href="#" @click.prevent="$emit('jump-to-shops')">【結盟青草店目錄】</a>
+            尋訪就近店家詢問客製抓配。
+          </div>
+        </div>
+
         <!-- 古早文化知識分享與醫療免責告示卡 -->
         <div class="detail-disclaimer-card">
           <div class="disclaimer-title-row">
@@ -229,6 +279,8 @@
 </template>
 
 <script setup>
+import { ref, watch } from 'vue';
+import { HerbApi } from '../services/api';
 import { audio } from '../services/audioService';
 
 const props = defineProps({
@@ -241,8 +293,40 @@ const emit = defineEmits([
   'back-to-catalog',
   'select-herb-id',
   'toggle-compare',
-  'toggle-favorite'
+  'toggle-favorite',
+  'add-to-cauldron',
+  'jump-to-shops'
 ]);
+
+const associatedShops = ref([]);
+const loadingShops = ref(false);
+
+const loadAssociatedShops = async () => {
+  if (!props.herb?.name) return;
+  loadingShops.value = true;
+  try {
+    const shops = await HerbApi.getShopsByHerb(props.herb.name);
+    associatedShops.value = shops;
+  } catch (err) {
+    console.warn('Failed to load shops by herb:', err);
+    associatedShops.value = [];
+  } finally {
+    loadingShops.value = false;
+  }
+};
+
+watch(
+  () => props.herb?.name,
+  () => {
+    loadAssociatedShops();
+  },
+  { immediate: true }
+);
+
+const onAddToCauldron = () => {
+  audio.playWaterDrop();
+  emit('add-to-cauldron', props.herb);
+};
 
 const onToggleFavorite = () => {
   audio.playChime(props.isFavorite ? 440 : 880);
@@ -413,5 +497,149 @@ const onImageError = (e) => {
   font-size: 12.5px;
   color: var(--ink-muted);
   line-height: 1.6;
+}
+
+.btn-pill-accent-tea {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+  border-color: #059669;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+.btn-pill-accent-tea:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+
+/* 推薦結盟青草店卡片 */
+.allied-shops-recommend-card {
+  margin-top: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+}
+
+.shop-rec-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.shop-rec-seal {
+  background: var(--primary);
+  color: #fff;
+  font-family: var(--font-serif);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.shop-rec-title-wrap {
+  flex: 1;
+}
+
+.shop-rec-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--primary-deep);
+}
+
+.shop-rec-subtitle {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.btn-view-all-shops {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  background: rgba(45, 106, 79, 0.08);
+  border: 1px solid rgba(45, 106, 79, 0.2);
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-view-all-shops:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.shops-mini-loading,
+.shops-mini-fallback {
+  font-size: 12.5px;
+  color: var(--ink-muted);
+  padding: 8px 0;
+}
+
+.shops-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.shop-mini-card {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px;
+}
+
+.shop-mini-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.shop-mini-name {
+  font-weight: 700;
+  color: var(--primary-deep);
+  font-size: 13.5px;
+}
+
+.shop-mini-city {
+  background: rgba(45, 106, 79, 0.1);
+  color: var(--primary-deep);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.shop-mini-address {
+  color: var(--ink-heavy);
+  margin-bottom: 3px;
+}
+
+.shop-mini-phone {
+  color: var(--ink-heavy);
+  margin-bottom: 6px;
+}
+
+.shop-mini-phone a {
+  color: var(--primary-deep);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.shop-mini-advice {
+  background: #fff;
+  border: 1px dashed var(--border-light);
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: #78350f;
+  line-height: 1.4;
 }
 </style>

@@ -1,191 +1,536 @@
 <template>
   <div class="alchemy-lab-container">
-    <div class="alchemy-header">
-      <div class="alchemy-seal">茶席</div>
-      <div>
-        <h2 class="alchemy-title">青草茶方劑調配研製所 · Tea Alchemy Lab</h2>
-        <p class="alchemy-subtitle">依循「君臣佐使」傳統法度，自由調配草藥，即時演算寒熱陰陽平衡、滋味圖譜與歸經共鳴。</p>
-        <div style="font-size: 11.5px; color: var(--amber-deep); margin-top: 4px;">
-          ⚠️ <strong>生活文化茶飲宣告</strong>：本茶釜純為臺灣古早常民生活茶飲風味與配伍文化模擬，非醫療處方，絕無任何疾病治療宣稱。
+    <!-- 頂部殿堂級茶堂牌匾 -->
+    <div class="alchemy-banner">
+      <div class="alchemy-banner-content">
+        <div class="alchemy-seal-badge">
+          <span class="banner-seal">方劑</span>
+          <span class="banner-badge-text">TAIWAN HERB ALCHEMY LAB · 角色傳承名方與 AI 神來一配實驗室</span>
         </div>
+        <h2 class="alchemy-main-title">
+          <span>格物致知，君臣佐使，</span>
+          <em>草木方劑研製所 · AI 神來一配實驗室</em>
+        </h2>
+        <p class="alchemy-subtitle">
+          收錄 4 大風土專家角色 11 道傳承秘方（茶飲、藥浴、敷膏、藥膳），提供自由茶釜調配、AI 神來一配意圖演算，與道地專家 LLM 客製配方建議。
+        </p>
       </div>
     </div>
 
-    <!-- 經典古法名方快速選單 -->
-    <div class="preset-formulas-bar">
-      <span class="preset-label">傳承經典方：</span>
+    <!-- 古早常民生活茶飲與非醫療宣告 -->
+    <div class="alchemy-legal-strip">
+      <div class="strip-icon">⚖️</div>
+      <div class="strip-text">
+        <strong>【生活茶飲文化與非醫療宣告】</strong>
+        本研製所所載之方劑配比、君臣佐使與 AI 實驗配伍，純粹說明臺灣傳統民間生活茶飲、民俗外敷與藥浴文化記錄，<strong>非屬醫療院所處方，亦無宣稱任何疾病療效</strong>。個人體質虛寒、特殊病徵或孕產婦女，請務必尋求合格醫師辨證。
+      </div>
+    </div>
+
+    <!-- 頂部三大實驗功能導覽分頁 (橫向切換) -->
+    <div class="alchemy-tabs-nav">
       <button
-        v-for="preset in presets"
-        :key="preset.name"
-        class="preset-pill"
-        @click="loadPreset(preset)"
+        class="tab-switch-btn"
+        :class="{ active: currentTab === 'roles' }"
+        @click="switchTab('roles')"
       >
-        🍵 {{ preset.name }}
+        <span class="tab-icon">🍵</span>
+        <span class="tab-title">角色傳承名方庫 (11道)</span>
       </button>
-      <button class="preset-pill reset-pill" @click="clearPot">清空釜中草藥</button>
+
+      <button
+        class="tab-switch-btn"
+        :class="{ active: currentTab === 'kettle' }"
+        @click="switchTab('kettle')"
+      >
+        <span class="tab-icon">🧪</span>
+        <span class="tab-title">茶釜調配與 AI 神來一配</span>
+      </button>
+
+      <button
+        class="tab-switch-btn"
+        :class="{ active: currentTab === 'consult' }"
+        @click="switchTab('consult')"
+      >
+        <span class="tab-icon">🤖</span>
+        <span class="tab-title">專家 LLM AI 客製配方建議</span>
+      </button>
     </div>
 
-    <div class="alchemy-workspace">
-      <!-- 左欄：茶釜調配槽與草藥投入區 -->
-      <div class="kettle-stage-card">
-        <div class="kettle-illustration-box">
-          <div class="steam-vapors" :class="{ boiling: isBoiling }">
-            <span class="vapor v1"></span>
-            <span class="vapor v2"></span>
-            <span class="vapor v3"></span>
-          </div>
-
-          <div class="kettle-graphic">
-            <div class="kettle-lid"></div>
-            <div class="kettle-belly" :class="{ 'kettle-heat': isBoiling }">
-              <div class="kettle-liquid" :style="liquidStyle">
-                <div class="liquid-bubble b1"></div>
-                <div class="liquid-bubble b2"></div>
-                <div class="liquid-bubble b3"></div>
-              </div>
-            </div>
-            <div class="kettle-base"></div>
-          </div>
-
-          <div class="kettle-summary-tag">
-            釜中草藥：<strong>{{ selectedHerbs.length }} / 4</strong> 味
-          </div>
-        </div>
-
-        <!-- 釜中已選草藥清單 -->
-        <div class="selected-herbs-list">
-          <div v-if="selectedHerbs.length === 0" class="empty-kettle-notice">
-            <span>🍃</span>
-            <span>茶釜尚空，請從下方點選 1 至 4 味草藥放入調配。</span>
-          </div>
-
-          <div
-            v-for="(herb, idx) in selectedHerbs"
-            :key="herb.id"
-            class="pot-herb-chip"
-          >
-            <span class="herb-role-badge">{{ roleLabels[idx] || '使' }}</span>
-            <span class="herb-chip-name">{{ herb.name }}</span>
-            <span class="herb-chip-nature">({{ herb.nature }})</span>
-            <button class="remove-chip-btn" @click="removeHerb(herb.id)">✕</button>
-          </div>
-        </div>
-
-        <!-- 待選草藥貨架 (點擊加入) -->
-        <div class="shelf-selection-box">
-          <h4 class="shelf-title">🌿 百草藥櫃 (點擊投入茶釜)</h4>
-          <div class="shelf-grid">
+    <!-- ============================================== -->
+    <!-- 分頁一：角色傳承經典名方庫 (Roles Classic Formulas) -->
+    <!-- ============================================== -->
+    <div v-if="currentTab === 'roles'" class="roles-formulas-section">
+      <!-- 篩選列 -->
+      <div class="roles-filter-bar">
+        <!-- 專家篩選 -->
+        <div class="filter-cluster">
+          <span class="cluster-label">傳承專家：</span>
+          <div class="pills-cluster">
             <button
-              v-for="herb in allHerbs"
-              :key="herb.id"
-              class="shelf-herb-btn"
-              :class="{ 'in-pot': isInPot(herb.id) }"
-              :disabled="isInPot(herb.id) || selectedHerbs.length >= 4"
-              @click="addHerb(herb)"
+              v-for="exp in expertOptions"
+              :key="exp.id"
+              class="filter-pill-btn"
+              :class="{ active: selectedExpertId === exp.id }"
+              @click="setExpertFilter(exp.id)"
             >
-              <span class="shelf-herb-name">{{ herb.name }}</span>
-              <span class="shelf-herb-tag">{{ herb.nature }} · 入{{ herb.channels[0] }}</span>
+              {{ exp.name }}
+            </button>
+          </div>
+        </div>
+
+        <!-- 類型篩選 -->
+        <div class="filter-cluster">
+          <span class="cluster-label">劑型類型：</span>
+          <div class="pills-cluster">
+            <button
+              v-for="t in typeOptions"
+              :key="t.id"
+              class="filter-pill-btn"
+              :class="{ active: selectedType === t.id }"
+              @click="setTypeFilter(t.id)"
+            >
+              {{ t.name }}
             </button>
           </div>
         </div>
       </div>
 
-      <!-- 右欄：陰陽寒熱指針、滋味光譜、經絡激發與熬煮定時器 -->
-      <div class="analysis-stage-card">
-        <!-- 陰陽四氣指針儀表 -->
-        <div class="gauge-section">
-          <h3 class="analysis-heading">⚖️ 四氣陰陽平衡分析</h3>
-          <div class="balance-gauge-wrapper">
-            <div class="balance-labels">
-              <span class="label-cold">大寒涼 (清解排毒)</span>
-              <span class="label-neutral">平性 (中和溫潤)</span>
-              <span class="label-warm">溫熱 (行氣溫陽)</span>
+      <!-- 名方清單網格 -->
+      <div v-if="isLoadingFormulas" class="loading-state">
+        <div class="spinner">🌿</div>
+        <div>翻閱專家傳承方劑秘笈中...</div>
+      </div>
+
+      <div v-else-if="filteredFormulas.length === 0" class="empty-state">
+        <div class="empty-icon">🍃</div>
+        <h4>未找到符合條件的傳承配方</h4>
+        <button class="btn-reset" @click="resetFormulaFilters">顯示全部名方</button>
+      </div>
+
+      <div v-else class="formulas-grid">
+        <div
+          v-for="formula in filteredFormulas"
+          :key="formula.id"
+          class="formula-card"
+        >
+          <div class="formula-card-top">
+            <div class="formula-type-tag" :class="formula.type">
+              {{ formulaTypeLabel(formula.type) }}
             </div>
-            <div class="gauge-track">
-              <div class="gauge-pointer" :style="{ left: `${gaugePercentage}%` }">
-                <div class="pointer-tip"></div>
+            <div class="formula-expert-tag">
+              傳承：<strong>{{ formula.expertName }}</strong> ({{ formula.expertTitle }})
+            </div>
+          </div>
+
+          <h3 class="formula-name">{{ formula.name }}</h3>
+          <p class="formula-story">{{ formula.story }}</p>
+
+          <!-- 草藥組成與比例 (君臣佐使) -->
+          <div class="formula-composition-box">
+            <div class="box-label">🌿 君臣佐使配伍明細：</div>
+            <div class="ingredients-list">
+              <div
+                v-for="(ing, idx) in formula.composition"
+                :key="idx"
+                class="ingredient-item"
+              >
+                <span class="role-badge" :class="ing.role">{{ ing.role }}</span>
+                <span class="ing-name">{{ ing.herbName }}</span>
+                <span class="ing-ratio">{{ ing.ratio }}</span>
+                <span class="ing-action">({{ ing.action }})</span>
               </div>
             </div>
           </div>
-          <div class="balance-verdict-box" :class="balanceTypeClass">
-            <strong>【方劑辨性】{{ balanceVerdict.title }}</strong>
-            <p>{{ balanceVerdict.description }}</p>
+
+          <!-- 熬煮/製作指南 -->
+          <div class="formula-instructions-box">
+            <div class="inst-label">🍵 煎熬製備工藝：</div>
+            <p class="inst-desc">{{ formula.instructions }}</p>
+          </div>
+
+          <!-- 警語 -->
+          <div v-if="formula.cautions" class="formula-caution-box">
+            ⚠️ <strong>叮嚀：</strong>{{ formula.cautions }}
+          </div>
+
+          <!-- 底部操作按鈕 -->
+          <div class="formula-card-footer">
+            <button
+              class="btn-load-into-pot"
+              @click="loadFormulaToPot(formula)"
+            >
+              <span>🧪 倒入茶釜調配研製 ➔</span>
+            </button>
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- 五味滋味圖譜 -->
-        <div class="flavor-section">
-          <h3 class="analysis-heading">🍵 五味滋味預測光譜</h3>
-          <div class="flavor-bars-grid">
-            <div class="flavor-bar-item">
-              <span class="flavor-name">微苦清降</span>
-              <div class="bar-outer"><div class="bar-fill bitter" :style="{ width: `${flavorScore.bitter}%` }"></div></div>
-              <span class="bar-val">{{ flavorScore.bitter }}%</span>
-            </div>
-            <div class="flavor-bar-item">
-              <span class="flavor-name">甘醇回甘</span>
-              <div class="bar-outer"><div class="bar-fill sweet" :style="{ width: `${flavorScore.sweet}%` }"></div></div>
-              <span class="bar-val">{{ flavorScore.sweet }}%</span>
-            </div>
-            <div class="flavor-bar-item">
-              <span class="flavor-name">芳香行氣</span>
-              <div class="bar-outer"><div class="bar-fill pungent" :style="{ width: `${flavorScore.pungent}%` }"></div></div>
-              <span class="bar-val">{{ flavorScore.pungent }}%</span>
-            </div>
-            <div class="flavor-bar-item">
-              <span class="flavor-name">生津清涼</span>
-              <div class="bar-outer"><div class="bar-fill cool" :style="{ width: `${flavorScore.cool}%` }"></div></div>
-              <span class="bar-val">{{ flavorScore.cool }}%</span>
-            </div>
-          </div>
+    <!-- ============================================== -->
+    <!-- 分頁二：茶釜調配與 AI 神來一配 (Cauldron & Divine Blend) -->
+    <!-- ============================================== -->
+    <div v-else-if="currentTab === 'kettle'" class="kettle-alchemy-section">
+      <!-- 經典古法名方快速選單 + AI 神來一配按鈕 -->
+      <div class="preset-formulas-bar">
+        <div class="quick-presets-group">
+          <span class="preset-label">快速名方：</span>
+          <button
+            v-for="preset in quickPresets"
+            :key="preset.name"
+            class="preset-pill"
+            @click="loadQuickPreset(preset)"
+          >
+            🍵 {{ preset.name }}
+          </button>
+          <button class="preset-pill reset-pill" @click="clearPot">清空釜中草藥</button>
         </div>
 
-        <!-- 五行臟腑引經共鳴 -->
-        <div class="meridian-resonance-section">
-          <h3 class="analysis-heading">🫀 五臟經絡受納共鳴</h3>
-          <div class="meridian-pills-row">
+        <!-- 🎲 AI 神來一配特色按鈕群 -->
+        <div class="divine-blend-actions">
+          <button
+            class="btn-divine-blend"
+            :class="{ loading: isBlending }"
+            :disabled="isBlending"
+            @click="triggerDivineBlend"
+          >
+            <span class="dice-icon">{{ isBlending ? '🌀' : '🎲' }}</span>
+            <span>AI 神來一配 (Divine Blend)</span>
+          </button>
+          <select v-model="divineIntent" class="select-intent-dropdown">
+            <option value="清熱退火">🎯 意圖：清熱退火</option>
+            <option value="夏日消暑">🎯 意圖：夏日消暑</option>
+            <option value="除濕利水">🎯 意圖：除濕利水</option>
+            <option value="元氣補氣">🎯 意圖：元氣補氣</option>
+            <option value="安神舒眠">🎯 意圖：安神舒眠</option>
+            <option value="潤喉生津">🎯 意圖：潤喉生津</option>
+            <option value="隨機平衡">🎯 意圖：隨機平衡調和</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- AI 神來一配靈感籤卷 Toast / 提示橫幅 -->
+      <div v-if="blendDecree" class="divine-decree-banner">
+        <div class="decree-header">
+          <span class="decree-seal">籤卷</span>
+          <span class="decree-title">【AI 神來一配靈感籤卷】{{ blendDecree.decreeName }}</span>
+          <button class="decree-close" @click="blendDecree = null">✕</button>
+        </div>
+        <p class="decree-desc">{{ blendDecree.decreeStory }}</p>
+        <div v-if="blendDecree.conflictWarnings?.length" class="decree-warnings">
+          <span v-for="(warn, wIdx) in blendDecree.conflictWarnings" :key="wIdx" class="warn-pill">
+            ⚠️ {{ warn }}
+          </span>
+        </div>
+      </div>
+
+      <div class="alchemy-workspace">
+        <!-- 左欄：茶釜調配槽與草藥投入區 -->
+        <div class="kettle-stage-card">
+          <div class="kettle-illustration-box">
+            <div class="steam-vapors" :class="{ boiling: isBoiling }">
+              <span class="vapor v1"></span>
+              <span class="vapor v2"></span>
+              <span class="vapor v3"></span>
+            </div>
+
+            <div class="kettle-graphic">
+              <div class="kettle-lid"></div>
+              <div class="kettle-belly" :class="{ 'kettle-heat': isBoiling }">
+                <div class="kettle-liquid" :style="liquidStyle">
+                  <div class="liquid-bubble b1"></div>
+                  <div class="liquid-bubble b2"></div>
+                  <div class="liquid-bubble b3"></div>
+                </div>
+              </div>
+              <div class="kettle-base"></div>
+            </div>
+
+            <div class="kettle-summary-tag">
+              釜中草藥：<strong>{{ selectedHerbs.length }} / 4</strong> 味
+            </div>
+          </div>
+
+          <!-- 釜中已選草藥清單 -->
+          <div class="selected-herbs-list">
+            <div v-if="selectedHerbs.length === 0" class="empty-kettle-notice">
+              <span>🍃</span>
+              <span>茶釜尚空，請點選上方「AI 神來一配」或下方藥櫃投入草藥。</span>
+            </div>
+
             <div
-              v-for="elem in meridianElements"
-              :key="elem.organ"
-              class="resonance-pill"
-              :class="{ active: activatedChannels.includes(elem.organ) }"
+              v-for="(herb, idx) in selectedHerbs"
+              :key="herb.id"
+              class="pot-herb-chip"
             >
-              <span class="elem-seal">{{ elem.element }}</span>
-              <span class="elem-organ">{{ elem.organ }}經</span>
-              <span class="elem-status">{{ activatedChannels.includes(elem.organ) ? '已入經' : '未及' }}</span>
+              <span class="herb-role-badge">{{ roleLabels[idx] || '使' }}</span>
+              <span class="herb-chip-name">{{ herb.name }}</span>
+              <span class="herb-chip-nature">({{ herb.nature }})</span>
+              <button class="remove-chip-btn" title="移出茶釜" @click="removeHerb(herb.id)">✕</button>
+            </div>
+          </div>
+
+          <!-- 待選草藥貨架 (點擊加入) -->
+          <div class="shelf-selection-box">
+            <div class="shelf-header-row">
+              <h4 class="shelf-title">🌿 百草藥櫃 (點擊投入茶釜)</h4>
+              <input
+                v-model="shelfSearch"
+                type="text"
+                placeholder="過濾藥名/性味..."
+                class="shelf-search-input"
+              />
+            </div>
+            <div class="shelf-grid">
+              <button
+                v-for="herb in filteredShelfHerbs"
+                :key="herb.id"
+                class="shelf-herb-btn"
+                :class="{ 'in-pot': isInPot(herb.id) }"
+                :disabled="isInPot(herb.id) || selectedHerbs.length >= 4"
+                @click="addHerb(herb)"
+              >
+                <span class="shelf-herb-name">{{ herb.name }}</span>
+                <span class="shelf-herb-tag">{{ herb.nature }} · 入{{ herb.channels?.[0] || '經' }}</span>
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- 熬煮計時器 -->
-        <div class="boil-timer-section">
-          <div class="timer-top-row">
-            <div>
-              <h3 class="analysis-heading" style="margin-bottom: 2px;">⏱️ 古法煎煮時序導引</h3>
-              <div class="timer-stage-title">{{ currentStage.title }} ({{ currentStage.desc }})</div>
+        <!-- 右欄：陰陽寒熱指針、滋味光譜、經絡激發與熬煮定時器 -->
+        <div class="analysis-stage-card">
+          <!-- 陰陽四氣指針儀表 -->
+          <div class="gauge-section">
+            <h3 class="analysis-heading">⚖️ 四氣陰陽平衡分析</h3>
+            <div class="balance-gauge-wrapper">
+              <div class="balance-labels">
+                <span class="label-cold">大寒涼 (清解排毒)</span>
+                <span class="label-neutral">平性 (中和溫潤)</span>
+                <span class="label-warm">溫熱 (行氣溫陽)</span>
+              </div>
+              <div class="gauge-track">
+                <div class="gauge-pointer" :style="{ left: `${gaugePercentage}%` }">
+                  <div class="pointer-tip"></div>
+                </div>
+              </div>
             </div>
-            <div class="timer-display-box">
-              {{ formatSeconds(timerSeconds) }}
+            <div class="balance-verdict-box" :class="balanceTypeClass">
+              <strong>【方劑辨性】{{ balanceVerdict.title }}</strong>
+              <p>{{ balanceVerdict.description }}</p>
             </div>
           </div>
 
-          <div class="timer-controls">
-            <button
-              class="btn-timer-action"
-              :class="{ running: isBoiling }"
-              @click="toggleBoilTimer"
+          <!-- 五味滋味圖譜 -->
+          <div class="flavor-section">
+            <h3 class="analysis-heading">🍵 五味滋味預測光譜</h3>
+            <div class="flavor-bars-grid">
+              <div class="flavor-bar-item">
+                <span class="flavor-name">微苦清降</span>
+                <div class="bar-outer"><div class="bar-fill bitter" :style="{ width: `${flavorScore.bitter}%` }"></div></div>
+                <span class="bar-val">{{ flavorScore.bitter }}%</span>
+              </div>
+              <div class="flavor-bar-item">
+                <span class="flavor-name">甘醇回甘</span>
+                <div class="bar-outer"><div class="bar-fill sweet" :style="{ width: `${flavorScore.sweet}%` }"></div></div>
+                <span class="bar-val">{{ flavorScore.sweet }}%</span>
+              </div>
+              <div class="flavor-bar-item">
+                <span class="flavor-name">芳香行氣</span>
+                <div class="bar-outer"><div class="bar-fill pungent" :style="{ width: `${flavorScore.pungent}%` }"></div></div>
+                <span class="bar-val">{{ flavorScore.pungent }}%</span>
+              </div>
+              <div class="flavor-bar-item">
+                <span class="flavor-name">生津清涼</span>
+                <div class="bar-outer"><div class="bar-fill cool" :style="{ width: `${flavorScore.cool}%` }"></div></div>
+                <span class="bar-val">{{ flavorScore.cool }}%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 五行臟腑引經共鳴 -->
+          <div class="meridian-resonance-section">
+            <h3 class="analysis-heading">🫀 五臟經絡受納共鳴</h3>
+            <div class="meridian-pills-row">
+              <div
+                v-for="elem in meridianElements"
+                :key="elem.organ"
+                class="resonance-pill"
+                :class="{ active: activatedChannels.includes(elem.organ) }"
+              >
+                <span class="elem-seal">{{ elem.element }}</span>
+                <span class="elem-organ">{{ elem.organ }}經</span>
+                <span class="elem-status">{{ activatedChannels.includes(elem.organ) ? '已入經' : '未及' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 煎煮計時器 -->
+          <div class="boil-timer-section">
+            <div class="timer-top-row">
+              <div>
+                <h3 class="analysis-heading" style="margin-bottom: 2px;">⏱️ 古法煎煮時序導引</h3>
+                <div class="timer-stage-title">{{ currentStage.title }} ({{ currentStage.desc }})</div>
+              </div>
+              <div class="timer-display-box">
+                {{ formatSeconds(timerSeconds) }}
+              </div>
+            </div>
+
+            <div class="timer-controls">
+              <button
+                class="btn-timer-action"
+                :class="{ running: isBoiling }"
+                @click="toggleBoilTimer"
+              >
+                {{ isBoiling ? '⏸ 暫停煎煮' : '🔥 開始煎煮計時' }}
+              </button>
+              <button class="btn-timer-subtle" @click="resetTimer">重置時鐘</button>
+              <button
+                class="btn-timer-subtle"
+                :disabled="selectedHerbs.length === 0"
+                @click="exportFormulaTicket"
+              >
+                📜 保存配方箋
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- 分頁三：專家 LLM AI 客製配方建議 (Expert Consultation) -->
+    <!-- ============================================== -->
+    <div v-else-if="currentTab === 'consult'" class="consult-formulate-section">
+      <div class="consult-intro-card">
+        <h3 class="consult-section-title">🤖 風土專家 LLM 客製配方研議席</h3>
+        <p class="consult-section-subtitle">
+          請依據您的體質症狀、生活情境與預期型態，向道地專家請益。AI 將依循專家視角、結合本草知識庫 RAG 檢索，量身生成客製配方。
+        </p>
+      </div>
+
+      <div class="consult-form-grid">
+        <!-- 步驟 1：選擇請益專家 -->
+        <div class="form-step-card">
+          <div class="step-num">步驟 1</div>
+          <h4 class="step-title">選擇請益專家</h4>
+          <div class="expert-select-cards">
+            <div
+              v-for="exp in expertPersonas"
+              :key="exp.id"
+              class="expert-persona-card"
+              :class="{ active: consultExpertId === exp.id }"
+              @click="consultExpertId = exp.id"
             >
-              {{ isBoiling ? '⏸ 暫停煎煮' : '🔥 開始煎煮計時' }}
-            </button>
-            <button class="btn-timer-subtle" @click="resetTimer">重置時鐘</button>
+              <div class="persona-avatar">{{ exp.avatar }}</div>
+              <div class="persona-name">{{ exp.name }}</div>
+              <div class="persona-role">{{ exp.title }}</div>
+              <div class="persona-tone">風格：{{ exp.tone }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 步驟 2：選擇預期劑型 -->
+        <div class="form-step-card">
+          <div class="step-num">步驟 2</div>
+          <h4 class="step-title">選擇調配型態</h4>
+          <div class="type-select-row">
             <button
-              class="btn-timer-subtle"
-              :disabled="selectedHerbs.length === 0"
-              @click="exportFormula"
+              v-for="opt in targetTypeOptions"
+              :key="opt.id"
+              class="type-choice-btn"
+              :class="{ active: consultTargetType === opt.id }"
+              @click="consultTargetType = opt.id"
             >
-              📜 保存配方箋
+              <span class="type-icon">{{ opt.icon }}</span>
+              <span class="type-name">{{ opt.name }}</span>
             </button>
           </div>
+
+          <!-- 步驟 3：輸入生活調理情境 -->
+          <div class="needs-input-group">
+            <div class="step-num" style="margin-top: 14px;">步驟 3</div>
+            <h4 class="step-title">描述生活調理需求或體質狀態</h4>
+            <textarea
+              v-model="consultUserNeeds"
+              rows="3"
+              class="consult-textarea"
+              placeholder="例如：最近天天加班熬夜，口乾舌燥嘴破，但吹冷氣容易手腳冰冷，想要一款溫潤消火氣的日常青草茶..."
+            ></textarea>
+
+            <div class="quick-prompts-row">
+              <span class="prompt-hint">常見生活情境：</span>
+              <button
+                v-for="p in quickNeedsPrompts"
+                :key="p"
+                class="prompt-chip"
+                @click="consultUserNeeds = p"
+              >
+                {{ p }}
+              </button>
+            </div>
+          </div>
+
+          <button
+            class="btn-generate-recipe"
+            :disabled="isGeneratingRecipe || !consultUserNeeds.trim()"
+            @click="submitConsultFormulate"
+          >
+            <span v-if="isGeneratingRecipe">🌀 專家正調配道地本草方劑中...</span>
+            <span v-else>🔮 請益專家 AI 生成客製配方 ➔</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 專家 AI 客製配方建議產出成果卡 -->
+      <div v-if="recipeResult" class="recipe-result-card">
+        <div class="recipe-result-header">
+          <div class="recipe-seal-stamp">道地傳承</div>
+          <div>
+            <h3 class="recipe-result-title">{{ recipeResult.recipeName }}</h3>
+            <div class="recipe-author-line">
+              由 <strong>{{ recipeResult.expertName }}</strong> 親自辨證指導 · 建議劑型：{{ formulaTypeLabel(recipeResult.targetType) }}
+            </div>
+          </div>
+          <button
+            v-if="recipeResult.suggestedHerbs?.length"
+            class="btn-load-ai-recipe"
+            @click="loadAiRecipeToPot(recipeResult)"
+          >
+            🧪 倒入茶釜調配研製 ➔
+          </button>
+        </div>
+
+        <!-- 專家叮嚀語 -->
+        <div class="recipe-expert-speech">
+          <div class="speech-quote-mark">“</div>
+          <p>{{ recipeResult.expertAdvice }}</p>
+        </div>
+
+        <!-- 配方草藥明細 -->
+        <div class="recipe-ingredients-grid">
+          <div
+            v-for="(herbItem, hIdx) in recipeResult.composition"
+            :key="hIdx"
+            class="recipe-herb-card"
+          >
+            <div class="herb-card-top">
+              <span class="herb-role-pill" :class="herbItem.role">{{ herbItem.role }}</span>
+              <strong class="herb-name-text">{{ herbItem.herbName }}</strong>
+            </div>
+            <div class="herb-ratio-text">份量建議：{{ herbItem.ratio }}</div>
+            <div class="herb-action-text">功效作用：{{ herbItem.action }}</div>
+          </div>
+        </div>
+
+        <!-- 熬煮與使用步驟 -->
+        <div class="recipe-guide-section">
+          <h4>🍵 煎煮與使用指南：</h4>
+          <p>{{ recipeResult.preparationGuide }}</p>
+        </div>
+
+        <!-- 安全警示 -->
+        <div v-if="recipeResult.contraindications" class="recipe-caution-section">
+          ⚠️ <strong>體質安全禁忌：</strong>{{ recipeResult.contraindications }}
         </div>
       </div>
     </div>
@@ -193,35 +538,145 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
+import { HerbApi } from '../services/api';
 import { audio } from '../services/audioService';
 
 const props = defineProps({
-  allHerbs: { type: Array, default: () => [] }
+  allHerbs: { type: Array, default: () => [] },
+  initialHerb: { type: Object, default: null }
 });
 
+// 當前頂部標籤 ('roles' | 'kettle' | 'consult')
+const currentTab = ref('kettle');
+
+const switchTab = (tab) => {
+  audio.playClick();
+  currentTab.value = tab;
+};
+
+// ==============================================
+// 1. 角色傳承名方庫狀態
+// ==============================================
+const formulas = ref([]);
+const isLoadingFormulas = ref(false);
+const selectedExpertId = ref('全部');
+const selectedType = ref('全部');
+
+const expertOptions = [
+  { id: '全部', name: '全部專家' },
+  { id: 'wanhua_uncle', name: '萬華林萬吉老茶師' },
+  { id: 'hakka_grandma', name: '客庄彭秀妹老藥師' },
+  { id: 'biotech_dr_yen', name: '嚴敏華生技博士' },
+  { id: 'bunun_hunter', name: '達亥獵人' }
+];
+
+const typeOptions = [
+  { id: '全部', name: '全部劑型' },
+  { id: 'herbal_tea', name: '🍵 青草茶飲' },
+  { id: 'bath', name: '🛁 民俗藥浴' },
+  { id: 'poultice', name: '🌿 外用敷膏' },
+  { id: 'soup', name: '🍲 精力藥膳' }
+];
+
+const formulaTypeLabel = (type) => {
+  switch (type) {
+    case 'herbal_tea': return '青草茶飲';
+    case 'bath': return '民俗藥浴';
+    case 'poultice': return '外用敷膏';
+    case 'soup': return '精力藥膳';
+    default: return '本草配方';
+  }
+};
+
+const loadFormulas = async () => {
+  isLoadingFormulas.value = true;
+  try {
+    const list = await HerbApi.getFormulas();
+    formulas.value = list;
+  } catch (err) {
+    console.error('Failed to load formulas:', err);
+  } finally {
+    isLoadingFormulas.value = false;
+  }
+};
+
+const setExpertFilter = (id) => {
+  audio.playClick();
+  selectedExpertId.value = id;
+};
+
+const setTypeFilter = (t) => {
+  audio.playClick();
+  selectedType.value = t;
+};
+
+const resetFormulaFilters = () => {
+  audio.playClick();
+  selectedExpertId.value = '全部';
+  selectedType.value = '全部';
+};
+
+const filteredFormulas = computed(() => {
+  let list = formulas.value;
+  if (selectedExpertId.value !== '全部') {
+    list = list.filter(f => f.expertId === selectedExpertId.value);
+  }
+  if (selectedType.value !== '全部') {
+    list = list.filter(f => f.type === selectedType.value);
+  }
+  return list;
+});
+
+const loadFormulaToPot = (formula) => {
+  audio.playChime(580);
+  const herbNames = formula.composition.map(c => c.herbName);
+  const found = herbNames
+    .map(name => props.allHerbs.find(h => h.name === name))
+    .filter(Boolean);
+
+  if (found.length === 0) {
+    // If not found in props.allHerbs directly, construct mock herb objects
+    selectedHerbs.value = formula.composition.slice(0, 4).map((c, i) => ({
+      id: 900 + i,
+      name: c.herbName,
+      nature: '平',
+      channels: ['脾', '胃'],
+      taste: ['甘']
+    }));
+  } else {
+    selectedHerbs.value = [...found.slice(0, 4)];
+  }
+
+  currentTab.value = 'kettle';
+};
+
+// ==============================================
+// 2. 茶釜調配與 AI 神來一配狀態
+// ==============================================
 const selectedHerbs = ref([]);
 const roleLabels = ['君 (主藥)', '臣 (相佐)', '佐 (調和)', '使 (引經)'];
+const shelfSearch = ref('');
+const isBlending = ref(false);
+const divineIntent = ref('清熱退火');
+const blendDecree = ref(null);
 
-// 預設經典名方
-const presets = [
-  {
-    name: '萬華百年退火青草茶',
-    herbNames: ['大花咸豐草', '鳳尾草', '薄荷', '甘草']
-  },
-  {
-    name: '國家中醫清潤防疫茶',
-    herbNames: ['魚腥草', '金銀花', '桑葉', '甘草']
-  },
-  {
-    name: '客家古傳紫蘇暖胃茶',
-    herbNames: ['紫蘇', '艾草', '甘草']
-  },
-  {
-    name: '元氣固表護眼飲',
-    herbNames: ['黃耆', '枸杞子', '桑葉', '甘草']
-  }
+const quickPresets = [
+  { name: '萬華百年退火青草茶', herbNames: ['大花咸豐草', '鳳尾草', '薄荷', '甘草'] },
+  { name: '國家中醫清潤防疫茶', herbNames: ['魚腥草', '金銀花', '桑葉', '甘草'] },
+  { name: '客家古傳紫蘇暖胃茶', herbNames: ['紫蘇', '艾草', '甘草'] },
+  { name: '元氣固表護眼飲', herbNames: ['黃耆', '枸杞子', '桑葉', '甘草'] }
 ];
+
+const filteredShelfHerbs = computed(() => {
+  if (!shelfSearch.value.trim()) return props.allHerbs;
+  const q = shelfSearch.value.trim().toLowerCase();
+  return props.allHerbs.filter(h =>
+    h.name.toLowerCase().includes(q) ||
+    h.nature.toLowerCase().includes(q) ||
+    (h.channels || []).some(c => c.toLowerCase().includes(q))
+  );
+});
 
 const isInPot = (id) => selectedHerbs.value.some(h => h.id === id);
 
@@ -239,10 +694,11 @@ const removeHerb = (id) => {
 const clearPot = () => {
   audio.playClick();
   selectedHerbs.value = [];
+  blendDecree.value = null;
   resetTimer();
 };
 
-const loadPreset = (preset) => {
+const loadQuickPreset = (preset) => {
   audio.playChime(580);
   const found = preset.herbNames
     .map(name => props.allHerbs.find(h => h.name === name))
@@ -250,10 +706,41 @@ const loadPreset = (preset) => {
   selectedHerbs.value = [...found];
 };
 
-// 陰陽寒熱分數演算
+// 🎲 AI 神來一配演算法呼叫
+const triggerDivineBlend = async () => {
+  audio.playChime(770);
+  isBlending.value = true;
+  try {
+    const currentIds = selectedHerbs.value.map(h => h.id);
+    const result = await HerbApi.blendFormula({
+      herbIds: currentIds.length ? currentIds : undefined,
+      targetIntent: divineIntent.value
+    });
+
+    if (result && result.composition) {
+      // populate cauldron with blend herbs
+      const blendHerbNames = result.composition.map(c => c.herbName);
+      const found = blendHerbNames
+        .map(name => props.allHerbs.find(h => h.name === name))
+        .filter(Boolean);
+
+      if (found.length) {
+        selectedHerbs.value = found.slice(0, 4);
+      }
+      blendDecree.value = result;
+      audio.playStamp();
+    }
+  } catch (err) {
+    console.error('Divine Blend error:', err);
+    alert('AI 神來一配運算暫時忙線，請稍後重試！');
+  } finally {
+    isBlending.value = false;
+  }
+};
+
+// 陰陽寒熱指針演算
 const balanceScore = computed(() => {
   if (selectedHerbs.value.length === 0) return 0;
-  // 寒 -2, 微寒 -1, 涼 -0.8, 平 0, 微溫 +1, 溫 +1.8, 熱 +2.5
   let sum = 0;
   selectedHerbs.value.forEach(h => {
     switch (h.nature) {
@@ -271,26 +758,23 @@ const balanceScore = computed(() => {
   return sum / selectedHerbs.value.length;
 });
 
-// 指針位置 (0% ~ 100%, 50% 為中和)
 const gaugePercentage = computed(() => {
-  // score range approx -2.5 ~ +2.5 -> map to 5% ~ 95%
   const clamped = Math.max(-2.5, Math.min(2.5, balanceScore.value));
   return Math.round(50 + (clamped / 2.5) * 42);
 });
 
-// 評語判定
 const balanceVerdict = computed(() => {
   const s = balanceScore.value;
   if (selectedHerbs.value.length === 0) {
     return {
       title: '請放入草藥',
-      description: '茶釜目前無藥性，請選配草藥以啟動陰陽辨析。'
+      description: '茶釜目前無藥性，請選配草藥或點擊「AI 神來一配」以啟動陰陽辨析。'
     };
   }
   if (s < -1.2) {
     return {
       title: '大苦大寒 · 清烈解熱毒',
-      description: '性味極度偏涼，適合急性咽喉腫痛、盛夏深層熱毒、火氣暴衝者；脾胃虛寒容易腹瀉者應短飲即止，不可過量。'
+      description: '性味極度偏涼，適合咽喉腫痛、盛夏深層熱毒、火氣暴衝者；脾胃虛寒容易腹瀉者應短飲即止。'
     };
   }
   if (s < -0.3) {
@@ -302,7 +786,7 @@ const balanceVerdict = computed(() => {
   if (s <= 0.4) {
     return {
       title: '四氣和諧 · 平平溫和老少咸宜',
-      description: '寒熱調和、陰陽相濟，兼具清肺與健脾之效，口感甘醇回味，全年皆宜日常飲用。'
+      description: '寒熱調和、陰陽相濟，兼具清熱與健脾之效，口感甘醇回味，全年皆宜日常飲用。'
     };
   }
   return {
@@ -319,7 +803,7 @@ const balanceTypeClass = computed(() => {
   return 'warm-theme';
 });
 
-// 滋味光譜演算
+// 五味滋味預測光譜
 const flavorScore = computed(() => {
   if (selectedHerbs.value.length === 0) {
     return { bitter: 0, sweet: 0, pungent: 0, cool: 0 };
@@ -340,7 +824,7 @@ const flavorScore = computed(() => {
   };
 });
 
-// 五行經絡激發
+// 五行臟腑引經共鳴
 const meridianElements = [
   { element: '金', organ: '肺' },
   { element: '木', organ: '肝' },
@@ -359,7 +843,7 @@ const activatedChannels = computed(() => {
 
 // 煎煮計時器
 const isBoiling = ref(false);
-const timerSeconds = ref(300); // 5 分鐘預設
+const timerSeconds = ref(300);
 let timerInterval = null;
 
 const currentStage = computed(() => {
@@ -400,25 +884,119 @@ const resetTimer = () => {
   timerSeconds.value = 300;
 };
 
+const exportFormulaTicket = () => {
+  audio.playStamp();
+  const herbNames = selectedHerbs.value.map(h => `${h.name}(${h.nature})`).join('、');
+  const ticketText = `【本草方劑研製箋】\n配伍組成：${herbNames}\n辨性評定：${balanceVerdict.value.title}\n煎熬工法：武火催沸轉文火細燉\n(注意：此為民間生活茶飲文化模擬，非醫療處方)`;
+  navigator.clipboard.writeText(ticketText);
+  alert('已將茶釜配方箋複製至剪貼簿！');
+};
+
 const liquidStyle = computed(() => {
-  if (selectedHerbs.value.length === 0) return { height: '20%', background: '#bbf7d0' };
+  if (selectedHerbs.value.length === 0) {
+    return { background: 'linear-gradient(to top, rgba(200, 220, 200, 0.2), rgba(240, 245, 240, 0.4))' };
+  }
   const s = balanceScore.value;
-  let bg = '#78350f'; // 琥珀深褐
-  if (s < -0.5) bg = '#285e43'; // 青草墨玉綠
-  else if (s > 0.5) bg = '#92400e'; // 薑蜜琥珀紅
-  return {
-    height: `${Math.min(85, 25 + selectedHerbs.value.length * 15)}%`,
-    background: bg
-  };
+  if (s < -0.3) {
+    return { background: 'linear-gradient(to top, #2d6a4f, #52b788)' };
+  }
+  if (s <= 0.4) {
+    return { background: 'linear-gradient(to top, #854d0e, #d97706)' };
+  }
+  return { background: 'linear-gradient(to top, #991b1b, #dc2626)' };
 });
 
-const exportFormula = () => {
-  audio.playChime(700);
-  const names = selectedHerbs.value.map(h => h.name).join(' + ');
-  const text = `【台灣本草茶席 · 配方箋】\n調配藥材：${names}\n方劑辨性：${balanceVerdict.value.title}\n建議用法：武火煮沸 5 分鐘，轉文火慢熬 10 分鐘，熄火悶 3 分鐘濾渣熱飲或常溫飲用。\n—— 台灣本草植物誌 Wiki 監製`;
-  navigator.clipboard?.writeText(text);
-  alert('📜 配方箋已複製至剪貼簿！可貼在筆記或分享給親友。');
+// ==============================================
+// 3. 專家 LLM AI 客製配方建議狀態
+// ==============================================
+const consultExpertId = ref('wanhua_uncle');
+const consultTargetType = ref('herbal_tea');
+const consultUserNeeds = ref('');
+const isGeneratingRecipe = ref(false);
+const recipeResult = ref(null);
+
+const expertPersonas = [
+  { id: 'wanhua_uncle', avatar: '🍵', name: '林萬吉老茶師', title: '萬華西昌街百年青草巷第三代', tone: '道地台語諺語、市井親切傳承' },
+  { id: 'hakka_grandma', avatar: '👵', name: '彭秀妹老藥師', title: '苗栗客庄草藥研究會耆老', tone: '客家阿婆親切叮嚀、野草沐浴' },
+  { id: 'biotech_dr_yen', avatar: '🔬', name: '嚴敏華博士', title: '現代中醫藥研發所首席科學家', tone: '嚴謹數據、成分機轉、藥理交互' },
+  { id: 'bunun_hunter', avatar: '🏹', name: '達亥·拿憲', title: '花東部落高山獵人兼野菜嚮導', tone: '高山原鄉、山林野趣、獵人體力' }
+];
+
+const targetTypeOptions = [
+  { id: 'herbal_tea', name: '日常生活青草茶', icon: '🍵' },
+  { id: 'bath', name: '常民外用藥浴湯', icon: '🛁' },
+  { id: 'poultice', name: '清涼消腫草藥膏', icon: '🌿' },
+  { id: 'soup', name: '原鄉滋補藥膳湯', icon: '🍲' }
+];
+
+const quickNeedsPrompts = [
+  '天天熬夜火氣大、喉嚨乾痛口苦，但吹冷氣易手腳冰冷',
+  '夏日戶外烈日曝曬，汗黏頭昏口渴，想要消暑解熱',
+  '客庄辟邪安神，幫助睡眠與放鬆身心的民俗沐浴包',
+  '登山野外防蟲叮咬、皮膚紅癢消腫的民俗敷膏'
+];
+
+const submitConsultFormulate = async () => {
+  if (!consultUserNeeds.value.trim()) return;
+  audio.playChime(660);
+  isGeneratingRecipe.value = true;
+  recipeResult.value = null;
+
+  try {
+    const res = await HerbApi.consultFormulate({
+      userNeeds: consultUserNeeds.value.trim(),
+      expertId: consultExpertId.value,
+      targetType: consultTargetType.value
+    });
+    recipeResult.value = res;
+    audio.playStamp();
+  } catch (err) {
+    console.error('Failed to formulate recipe:', err);
+    alert('專家配方生成遭遇網路波動，請稍候重試！');
+  } finally {
+    isGeneratingRecipe.value = false;
+  }
 };
+
+const loadAiRecipeToPot = (recipe) => {
+  audio.playChime(580);
+  const herbNames = recipe.composition.map(c => c.herbName);
+  const found = herbNames
+    .map(name => props.allHerbs.find(h => h.name === name))
+    .filter(Boolean);
+
+  if (found.length) {
+    selectedHerbs.value = found.slice(0, 4);
+  } else {
+    selectedHerbs.value = recipe.composition.slice(0, 4).map((c, i) => ({
+      id: 800 + i,
+      name: c.herbName,
+      nature: '涼',
+      channels: ['肺', '胃'],
+      taste: ['甘', '微苦']
+    }));
+  }
+
+  currentTab.value = 'kettle';
+};
+
+// 處理傳入的初始草藥
+watch(
+  () => props.initialHerb,
+  (newHerb) => {
+    if (newHerb && !isInPot(newHerb.id)) {
+      if (selectedHerbs.value.length < 4) {
+        selectedHerbs.value.push(newHerb);
+        currentTab.value = 'kettle';
+      }
+    }
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  loadFormulas();
+});
 
 onBeforeUnmount(() => {
   if (timerInterval) clearInterval(timerInterval);
@@ -427,60 +1005,397 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .alchemy-lab-container {
-  background: var(--bg-card);
-  border: 1px solid var(--border-card);
-  border-radius: 20px;
-  padding: 32px;
-  box-shadow: var(--shadow-md);
-  margin-bottom: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 16px 60px;
 }
 
-.alchemy-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.alchemy-seal {
-  width: 48px;
-  height: 48px;
-  background: var(--amber-deep);
+/* 頂部殿堂級茶堂牌匾 */
+.alchemy-banner {
+  background: linear-gradient(135deg, rgba(45, 106, 79, 0.95), rgba(18, 56, 40, 0.98)),
+              url('data:image/svg+xml;utf8,<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="2"/></svg>');
+  border-radius: 18px;
+  padding: 32px 36px 28px;
+  margin-bottom: 20px;
   color: #fff;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-serif);
-  font-size: 20px;
-  font-weight: 900;
-  box-shadow: 0 4px 12px rgba(143, 83, 31, 0.3);
+  box-shadow: 0 10px 30px rgba(18, 56, 40, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.alchemy-title {
+.alchemy-seal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 4px 14px 4px 6px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 14px;
+}
+
+.banner-seal {
+  background: #d97706;
+  color: #fff;
   font-family: var(--font-serif);
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--primary-deep);
+  font-weight: 900;
+  font-size: 13px;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.banner-badge-text {
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.alchemy-main-title {
+  font-family: var(--font-serif);
+  font-size: 27px;
+  font-weight: 900;
+  margin: 0 0 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.alchemy-main-title span {
+  font-size: 19px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 400;
+}
+
+.alchemy-main-title em {
+  font-style: normal;
+  color: #fde047;
 }
 
 .alchemy-subtitle {
-  font-size: 13.5px;
-  color: var(--ink-muted);
-  margin-top: 2px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.6;
+  max-width: 900px;
+  margin: 0;
 }
 
-/* 預設配方條 */
+/* 法律免責警示條 */
+.alchemy-legal-strip {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-left: 5px solid #d97706;
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: #92400e;
+}
+
+.strip-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.strip-text {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* 頂部三合一導覽分頁 */
+.alchemy-tabs-nav {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--border-light);
+  padding-bottom: 12px;
+  overflow-x: auto;
+}
+
+.tab-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 14.5px;
+  font-weight: 700;
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  color: var(--ink-body);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.tab-switch-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.tab-switch-btn.active {
+  background: var(--primary-deep);
+  color: #fff;
+  border-color: var(--primary-deep);
+  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.2);
+}
+
+.tab-icon {
+  font-size: 17px;
+}
+
+/* ========================================= */
+/* 分頁一：角色名方庫樣式 */
+/* ========================================= */
+.roles-filter-bar {
+  background: var(--bg-card);
+  border-radius: 14px;
+  border: 1px solid var(--border-card);
+  padding: 16px 20px;
+  margin-bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-cluster {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cluster-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-heavy);
+  min-width: 80px;
+}
+
+.pills-cluster {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-pill-btn {
+  padding: 5px 14px;
+  border-radius: 18px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1px solid var(--border-light);
+  background: var(--bg-subtle);
+  color: var(--ink-body);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-pill-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.filter-pill-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.formulas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+@media (max-width: 900px) {
+  .formulas-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formula-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-card);
+  padding: 22px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.formula-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary);
+  box-shadow: 0 8px 24px rgba(45, 106, 79, 0.1);
+}
+
+.formula-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.formula-type-tag {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+.formula-type-tag.herbal_tea { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.formula-type-tag.bath { background: #f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe; }
+.formula-type-tag.poultice { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.formula-type-tag.soup { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+
+.formula-expert-tag {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.formula-name {
+  margin: 0 0 10px;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--primary-deep);
+}
+
+.formula-story {
+  font-size: 13.5px;
+  color: var(--ink-body);
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+
+.formula-composition-box {
+  background: var(--bg-parchment);
+  border-radius: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-light);
+  margin-bottom: 14px;
+}
+
+.box-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--primary-deep);
+  margin-bottom: 8px;
+}
+
+.ingredients-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ingredient-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.role-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.role-badge.君 { background: #fef08a; color: #854d0e; }
+.role-badge.臣 { background: #e0f2fe; color: #075985; }
+.role-badge.佐 { background: #dcfce7; color: #166534; }
+.role-badge.使 { background: #f3e8ff; color: #6b21a8; }
+
+.ing-name {
+  font-weight: 700;
+  color: var(--primary-deep);
+}
+
+.ing-ratio {
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.ing-action {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.formula-instructions-box {
+  margin-bottom: 12px;
+}
+
+.inst-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink-heavy);
+  margin-bottom: 4px;
+}
+
+.inst-desc {
+  font-size: 12.5px;
+  color: var(--ink-body);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.formula-caution-box {
+  background: #fff5f5;
+  border-left: 3px solid #e53e3e;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #742a2a;
+  margin-bottom: 16px;
+}
+
+.formula-card-footer {
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border-light);
+}
+
+.btn-load-into-pot {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 700;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-load-into-pot:hover {
+  background: var(--primary-deep);
+}
+
+/* ========================================= */
+/* 分頁二：茶釜調配與 AI 神來一配樣式 */
+/* ========================================= */
 .preset-formulas-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--bg-card);
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--border-card);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.quick-presets-group {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  padding: 12px 16px;
-  background: var(--bg-parchment);
-  border-radius: 12px;
-  border: 1px solid var(--border-light);
-  margin-bottom: 24px;
 }
 
 .preset-label {
@@ -490,150 +1405,272 @@ onBeforeUnmount(() => {
 }
 
 .preset-pill {
-  font-size: 12.5px;
-  background: #fff;
-  border: 1px solid var(--border-light);
-  color: var(--ink-body);
   padding: 5px 12px;
   border-radius: 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  color: var(--ink-body);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .preset-pill:hover {
-  border-color: var(--amber);
-  color: var(--amber-deep);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .reset-pill {
-  margin-left: auto;
-  color: #ef4444;
-  border-color: #fecaca;
-  background: #fff;
+  color: #b91c1c;
 }
 
 .reset-pill:hover {
-  background: #fee2e2;
+  border-color: #b91c1c;
+  color: #b91c1c;
 }
 
-/* 工作區雙欄 */
+.divine-blend-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-divine-blend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 13.5px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  transition: all 0.25s ease;
+}
+
+.btn-divine-blend:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
+}
+
+.btn-divine-blend:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.select-intent-dropdown {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12.5px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  color: var(--ink-heavy);
+  outline: none;
+}
+
+.divine-decree-banner {
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  border-left: 5px solid #7c3aed;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+
+.decree-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.decree-seal {
+  background: #7c3aed;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.decree-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #5b21b6;
+  flex: 1;
+}
+
+.decree-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.decree-desc {
+  font-size: 13px;
+  color: #4c1d95;
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
+
+.decree-warnings {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.warn-pill {
+  font-size: 11.5px;
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* 雙欄工作區 */
 .alchemy-workspace {
   display: grid;
-  grid-template-columns: 1fr 1.15fr;
-  gap: 28px;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 24px;
 }
 
-/* 茶釜展示台 */
-.kettle-stage-card {
-  background: var(--bg-parchment);
-  border: 1px solid var(--border-light);
+@media (max-width: 992px) {
+  .alchemy-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kettle-stage-card,
+.analysis-stage-card {
+  background: var(--bg-card);
   border-radius: 16px;
+  border: 1px solid var(--border-card);
   padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
 }
 
 .kettle-illustration-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
-  padding-top: 24px;
+  padding: 20px 0 16px;
+  border-bottom: 1px dashed var(--border-light);
+  margin-bottom: 18px;
 }
 
+/* 蒸氣與水壺 */
 .steam-vapors {
   display: flex;
-  gap: 12px;
-  height: 28px;
-  margin-bottom: 4px;
+  gap: 14px;
+  height: 24px;
+  margin-bottom: 6px;
   opacity: 0.3;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s;
 }
 
 .steam-vapors.boiling {
-  opacity: 0.85;
+  opacity: 1;
 }
 
 .vapor {
-  width: 8px;
-  height: 22px;
-  background: linear-gradient(180deg, rgba(200, 200, 200, 0) 0%, rgba(180, 180, 180, 0.7) 100%);
-  border-radius: 10px;
-  animation: floatVapor 1.5s infinite ease-in-out;
+  width: 6px;
+  height: 20px;
+  background: rgba(180, 200, 190, 0.6);
+  border-radius: 50%;
+  animation: vaporRise 1.8s infinite ease-out;
 }
 
-.v2 { animation-delay: 0.3s; }
-.v3 { animation-delay: 0.6s; }
+.vapor.v2 { animation-delay: 0.4s; }
+.vapor.v3 { animation-delay: 0.8s; }
 
-@keyframes floatVapor {
-  0% { transform: translateY(0) scaleY(0.8); opacity: 0.2; }
-  50% { transform: translateY(-8px) scaleY(1.2); opacity: 0.7; }
-  100% { transform: translateY(-16px) scaleY(0.6); opacity: 0; }
+@keyframes vaporRise {
+  0% { transform: translateY(10px) scale(0.6); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-16px) scale(1.4); opacity: 0; }
 }
 
 .kettle-graphic {
   width: 140px;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .kettle-lid {
-  width: 80px;
-  height: 16px;
-  background: #374151;
+  width: 60px;
+  height: 12px;
+  background: #475569;
   border-radius: 8px 8px 0 0;
-  margin: 0 auto;
 }
 
 .kettle-belly {
-  width: 140px;
-  height: 110px;
-  background: #1f2937;
-  border-radius: 20px 20px 30px 30px;
+  width: 120px;
+  height: 90px;
+  background: #334155;
+  border-radius: 16px 16px 24px 24px;
   overflow: hidden;
   position: relative;
-  border: 2px solid #111827;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-  transition: all 0.3s ease;
+  border: 3px solid #1e293b;
+  display: flex;
+  align-items: flex-end;
 }
 
-.kettle-heat {
-  box-shadow: 0 0 25px rgba(239, 68, 68, 0.45);
-  border-color: #ef4444;
+.kettle-belly.kettle-heat {
+  border-color: #dc2626;
+  box-shadow: 0 0 14px rgba(220, 38, 38, 0.35);
 }
 
 .kettle-liquid {
+  width: 100%;
+  height: 70%;
+  position: relative;
+  transition: all 0.5s ease;
+}
+
+.liquid-bubble {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  transition: height 0.5s ease, background 0.5s ease;
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  animation: bubbleFloat 2s infinite ease-in;
+}
+
+.b1 { left: 25%; animation-delay: 0.2s; }
+.b2 { left: 55%; animation-delay: 0.8s; }
+.b3 { left: 75%; animation-delay: 1.4s; }
+
+@keyframes bubbleFloat {
+  0% { bottom: 0; opacity: 0; transform: scale(0.5); }
+  50% { opacity: 0.8; }
+  100% { bottom: 85%; opacity: 0; transform: scale(1.2); }
 }
 
 .kettle-base {
-  width: 110px;
+  width: 100px;
   height: 8px;
-  background: #111827;
-  margin: 0 auto;
-  border-radius: 0 0 4px 4px;
+  background: #1e293b;
+  border-radius: 0 0 6px 6px;
 }
 
 .kettle-summary-tag {
+  margin-top: 12px;
   font-size: 13px;
-  margin-top: 14px;
   color: var(--ink-heavy);
 }
 
-/* 釜中藥材清單 */
+/* 釜中清單 */
 .selected-herbs-list {
+  min-height: 80px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  min-height: 110px;
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid var(--border-light);
-  padding: 12px;
+  margin-bottom: 20px;
 }
 
 .empty-kettle-notice {
@@ -641,7 +1678,10 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 86px;
+  padding: 24px;
+  background: var(--bg-subtle);
+  border-radius: 10px;
+  border: 1px dashed var(--border-light);
   color: var(--ink-muted);
   font-size: 13px;
 }
@@ -650,17 +1690,17 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 8px 12px;
   background: var(--bg-parchment);
   border: 1px solid var(--border-light);
   border-radius: 8px;
-  padding: 6px 12px;
   font-size: 13px;
 }
 
 .herb-role-badge {
   background: var(--primary);
   color: #fff;
-  font-size: 10.5px;
+  font-size: 11px;
   padding: 2px 6px;
   border-radius: 4px;
   font-weight: 700;
@@ -670,191 +1710,189 @@ onBeforeUnmount(() => {
   font-weight: 700;
   color: var(--primary-deep);
   flex: 1;
-  margin-left: 10px;
+  margin: 0 8px;
 }
 
 .herb-chip-nature {
   color: var(--ink-muted);
   font-size: 12px;
-  margin-right: 8px;
 }
 
 .remove-chip-btn {
-  color: #ef4444;
-  font-weight: bold;
+  background: none;
+  border: none;
+  color: var(--ink-muted);
+  font-size: 14px;
+  cursor: pointer;
   padding: 2px 6px;
 }
 
-/* 百草藥櫃選單 */
-.shelf-selection-box {
-  background: #fff;
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 14px;
+.remove-chip-btn:hover {
+  color: #b91c1c;
+}
+
+/* 待選貨架 */
+.shelf-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
 .shelf-title {
-  font-size: 13px;
+  margin: 0;
+  font-size: 14px;
   font-weight: 700;
   color: var(--primary-deep);
-  margin-bottom: 10px;
+}
+
+.shelf-search-input {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-subtle);
+  outline: none;
+  width: 140px;
 }
 
 .shelf-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-  max-height: 200px;
+  gap: 8px;
+  max-height: 280px;
   overflow-y: auto;
+  padding-right: 4px;
 }
 
 .shelf-herb-btn {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
   border: 1px solid var(--border-light);
-  background: var(--bg-parchment);
+  background: var(--bg-subtle);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
   text-align: left;
 }
 
 .shelf-herb-btn:hover:not(:disabled) {
   border-color: var(--primary);
-  background: var(--primary-pale);
+  background: #fff;
 }
 
 .shelf-herb-btn.in-pot {
-  opacity: 0.4;
-  background: #f3f4f6;
+  opacity: 0.5;
   cursor: not-allowed;
+  border-style: dashed;
 }
 
 .shelf-herb-name {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--ink-heavy);
 }
 
 .shelf-herb-tag {
-  font-size: 10.5px;
+  font-size: 11px;
   color: var(--ink-muted);
 }
 
-/* 右欄分析卡片 */
-.analysis-stage-card {
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-}
-
+/* 右欄分析面板樣式 */
 .analysis-heading {
-  font-family: var(--font-serif);
-  font-size: 16px;
-  font-weight: 700;
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 800;
   color: var(--primary-deep);
-  margin-bottom: 12px;
 }
 
-/* 陰陽平衡儀表 */
+.gauge-section,
+.flavor-section,
+.meridian-resonance-section {
+  padding-bottom: 18px;
+  border-bottom: 1px dashed var(--border-light);
+  margin-bottom: 18px;
+}
+
 .balance-gauge-wrapper {
-  background: var(--bg-parchment);
-  border-radius: 10px;
-  padding: 14px;
-  border: 1px solid var(--border-light);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .balance-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--ink-muted);
-  font-weight: 600;
   margin-bottom: 6px;
 }
 
-.label-cold { color: #0284c7; }
-.label-neutral { color: #2d6a4f; }
-.label-warm { color: #ea580c; }
-
 .gauge-track {
-  width: 100%;
-  height: 12px;
-  background: linear-gradient(90deg, #38bdf8 0%, #34d399 50%, #fb923c 100%);
-  border-radius: 6px;
+  height: 10px;
+  background: linear-gradient(to right, #3b82f6, #10b981 50%, #ef4444);
+  border-radius: 5px;
   position: relative;
 }
 
 .gauge-pointer {
   position: absolute;
-  top: -4px;
+  top: -6px;
   transform: translateX(-50%);
-  width: 18px;
-  height: 20px;
-  transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: 16px;
+  height: 22px;
+  display: flex;
+  justify-content: center;
 }
 
 .pointer-tip {
-  width: 0;
-  height: 0;
-  border-left: 9px solid transparent;
-  border-right: 9px solid transparent;
-  border-top: 12px solid #1f2937;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  width: 4px;
+  height: 100%;
+  background: #1e293b;
+  border-radius: 2px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
 }
 
 .balance-verdict-box {
-  padding: 12px 16px;
-  border-radius: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
   font-size: 13px;
-  line-height: 1.55;
-  border: 1px solid transparent;
 }
 
-.cold-theme {
-  background: #f0f9ff;
-  border-color: #bae6fd;
-  color: #0369a1;
+.balance-verdict-box strong {
+  display: block;
+  margin-bottom: 4px;
 }
 
-.neutral-theme {
-  background: #f0fdf4;
-  border-color: #bbf7d0;
-  color: #15803d;
+.balance-verdict-box p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
 }
 
-.warm-theme {
-  background: #fff7ed;
-  border-color: #fed7aa;
-  color: #c2410c;
-}
+.balance-verdict-box.cold-theme { background: #eff6ff; color: #1e40af; border-left: 4px solid #3b82f6; }
+.balance-verdict-box.neutral-theme { background: #ecfdf5; color: #065f46; border-left: 4px solid #10b981; }
+.balance-verdict-box.warm-theme { background: #fef2f2; color: #991b1b; border-left: 4px solid #ef4444; }
+.balance-verdict-box.empty { background: var(--bg-subtle); color: var(--ink-muted); }
 
-.empty {
-  background: var(--bg-subtle);
-  color: var(--ink-muted);
-}
-
-/* 滋味長條圖 */
+/* 滋味條狀圖 */
 .flavor-bars-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .flavor-bar-item {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 12px;
 }
 
 .flavor-name {
-  width: 58px;
-  color: var(--ink-body);
-  flex-shrink: 0;
+  width: 60px;
+  color: var(--ink-heavy);
+  font-weight: 600;
 }
 
 .bar-outer {
@@ -867,23 +1905,21 @@ onBeforeUnmount(() => {
 
 .bar-fill {
   height: 100%;
-  border-radius: 4px;
   transition: width 0.4s ease;
 }
 
-.bar-fill.bitter { background: #475569; }
-.bar-fill.sweet { background: #b07d48; }
-.bar-fill.pungent { background: #10b981; }
-.bar-fill.cool { background: #06b6d4; }
+.bar-fill.bitter { background: #854d0e; }
+.bar-fill.sweet { background: #f59e0b; }
+.bar-fill.pungent { background: #8b5cf6; }
+.bar-fill.cool { background: #10b981; }
 
 .bar-val {
-  font-size: 11px;
-  color: var(--ink-muted);
-  width: 32px;
+  width: 36px;
   text-align: right;
+  color: var(--ink-muted);
 }
 
-/* 五行經絡共鳴 */
+/* 經絡膠囊 */
 .meridian-pills-row {
   display: flex;
   gap: 8px;
@@ -891,66 +1927,50 @@ onBeforeUnmount(() => {
 }
 
 .resonance-pill {
-  flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 8px 4px;
-  border-radius: 8px;
-  background: var(--bg-parchment);
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  background: var(--bg-subtle);
   border: 1px solid var(--border-light);
-  opacity: 0.55;
-  transition: all 0.3s ease;
-}
-
-.resonance-pill.active {
-  opacity: 1;
-  background: #fff;
-  border-color: var(--primary);
-  box-shadow: 0 4px 10px rgba(45, 106, 79, 0.15);
-  transform: translateY(-2px);
-}
-
-.elem-seal {
-  font-family: var(--font-serif);
-  font-weight: 900;
-  font-size: 16px;
-  color: var(--primary-deep);
-}
-
-.elem-organ {
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--ink-heavy);
-}
-
-.elem-status {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--ink-muted);
 }
 
-.resonance-pill.active .elem-status {
-  color: var(--primary);
-  font-weight: bold;
+.resonance-pill.active {
+  background: rgba(45, 106, 79, 0.1);
+  border-color: var(--primary);
+  color: var(--primary-deep);
+  font-weight: 700;
 }
 
-/* 煎煮時鐘 */
-.boil-timer-section {
-  background: var(--bg-parchment);
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 16px 20px;
+.elem-seal {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--border-light);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
 }
 
+.resonance-pill.active .elem-seal {
+  background: var(--primary);
+}
+
+/* 熬煮計時器 */
 .timer-top-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .timer-stage-title {
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--amber-deep);
   font-weight: 600;
 }
@@ -958,9 +1978,9 @@ onBeforeUnmount(() => {
 .timer-display-box {
   font-family: monospace;
   font-size: 26px;
-  font-weight: 900;
+  font-weight: 800;
   color: var(--primary-deep);
-  background: #fff;
+  background: var(--bg-subtle);
   padding: 4px 14px;
   border-radius: 8px;
   border: 1px solid var(--border-light);
@@ -968,43 +1988,434 @@ onBeforeUnmount(() => {
 
 .timer-controls {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .btn-timer-action {
-  padding: 8px 18px;
-  border-radius: 10px;
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
   background: var(--primary);
   color: #fff;
-  font-weight: 700;
-  font-size: 13.5px;
+  border: none;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-timer-action.running {
-  background: #c2410c;
+  background: #d97706;
 }
 
 .btn-timer-subtle {
-  padding: 8px 14px;
-  border-radius: 10px;
-  background: #fff;
-  border: 1px solid var(--border-light);
+  padding: 10px 14px;
+  border-radius: 8px;
   font-size: 13px;
-  color: var(--ink-body);
+  font-weight: 600;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  color: var(--ink-heavy);
   cursor: pointer;
 }
 
-.btn-timer-subtle:hover:not(:disabled) {
-  border-color: var(--primary);
-  color: var(--primary);
+/* ========================================= */
+/* 分頁三：專家 LLM 客製配方建議樣式 */
+/* ========================================= */
+.consult-formulate-section {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
-@media (max-width: 992px) {
-  .alchemy-workspace {
+.consult-intro-card {
+  background: var(--bg-card);
+  border-radius: 14px;
+  border: 1px solid var(--border-card);
+  padding: 20px 24px;
+}
+
+.consult-section-title {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--primary-deep);
+}
+
+.consult-section-subtitle {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink-body);
+  line-height: 1.5;
+}
+
+.consult-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .consult-form-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.form-step-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border-card);
+  padding: 20px;
+}
+
+.step-num {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.step-title {
+  margin: 0 0 14px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--primary-deep);
+}
+
+.expert-select-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.expert-persona-card {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-subtle);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.expert-persona-card:hover {
+  border-color: var(--primary);
+  background: #fff;
+}
+
+.expert-persona-card.active {
+  border-color: var(--primary);
+  background: rgba(45, 106, 79, 0.08);
+  box-shadow: 0 2px 8px rgba(45, 106, 79, 0.1);
+}
+
+.persona-avatar {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.persona-name {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: var(--primary-deep);
+}
+
+.persona-role {
+  font-size: 12px;
+  color: var(--ink-heavy);
+  margin-bottom: 2px;
+}
+
+.persona-tone {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+.type-select-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.type-choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-subtle);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-heavy);
+  transition: all 0.2s ease;
+}
+
+.type-choice-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.consult-textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  padding: 10px 12px;
+  font-size: 13.5px;
+  background: var(--bg-parchment);
+  color: var(--ink-heavy);
+  outline: none;
+  resize: vertical;
+  margin-bottom: 10px;
+}
+
+.consult-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
+}
+
+.quick-prompts-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.prompt-hint {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.prompt-chip {
+  font-size: 11.5px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  padding: 3px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: var(--primary-deep);
+}
+
+.prompt-chip:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn-generate-recipe {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14.5px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--primary-deep));
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.25);
+  transition: all 0.25s ease;
+}
+
+.btn-generate-recipe:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(45, 106, 79, 0.35);
+}
+
+.btn-generate-recipe:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 建議成果卡 */
+.recipe-result-card {
+  background: var(--bg-card);
+  border-radius: 18px;
+  border: 2px solid var(--primary);
+  padding: 24px;
+  box-shadow: 0 8px 30px rgba(45, 106, 79, 0.15);
+}
+
+.recipe-result-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px dashed var(--border-light);
+  padding-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.recipe-seal-stamp {
+  background: #b91c1c;
+  color: #fff;
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.recipe-result-title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--primary-deep);
+}
+
+.recipe-author-line {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin-top: 2px;
+}
+
+.btn-load-ai-recipe {
+  margin-left: auto;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.recipe-expert-speech {
+  background: var(--bg-parchment);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--amber-deep);
+  position: relative;
+}
+
+.speech-quote-mark {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  font-size: 28px;
+  color: rgba(45, 106, 79, 0.2);
+  line-height: 1;
+}
+
+.recipe-expert-speech p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-heavy);
+  line-height: 1.6;
+}
+
+.recipe-ingredients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.recipe-herb-card {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.herb-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.herb-role-pill {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.herb-role-pill.君 { background: #fef08a; color: #854d0e; }
+.herb-role-pill.臣 { background: #e0f2fe; color: #075985; }
+.herb-role-pill.佐 { background: #dcfce7; color: #166534; }
+.herb-role-pill.使 { background: #f3e8ff; color: #6b21a8; }
+
+.herb-name-text {
+  font-size: 15px;
+  color: var(--primary-deep);
+}
+
+.herb-ratio-text {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-bottom: 4px;
+}
+
+.herb-action-text {
+  font-size: 12px;
+  color: var(--ink-body);
+}
+
+.recipe-guide-section {
+  background: rgba(45, 106, 79, 0.04);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.recipe-guide-section h4 {
+  margin: 0 0 6px;
+  font-size: 13.5px;
+  color: var(--primary-deep);
+}
+
+.recipe-guide-section p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-heavy);
+  line-height: 1.5;
+}
+
+.recipe-caution-section {
+  background: #fff5f5;
+  border-left: 3px solid #e53e3e;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: #742a2a;
+}
+
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 60px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px dashed var(--border-light);
+}
+
+.spinner {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.empty-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.btn-reset {
+  margin-top: 14px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
 }
 </style>

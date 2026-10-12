@@ -24,6 +24,10 @@ class ApiResponse {
     return response;
   }
 
+  static success(data = null, meta = null, message = 'Success') {
+    return this.ok(data, message, meta);
+  }
+
   /**
    * 失敗回應
    * @param {string} message 錯誤訊息

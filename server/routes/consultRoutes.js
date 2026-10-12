@@ -8,6 +8,7 @@ const consultController = require('../controllers/consultController');
 
 router.get('/experts', consultController.getExperts);
 router.get('/experts/:id', consultController.getExpertById);
+router.post('/formulate', consultController.formulate);
 router.post('/', consultController.consult);
 
 module.exports = router;

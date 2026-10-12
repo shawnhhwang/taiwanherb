@@ -14,6 +14,8 @@ const healthRoutes = require('./routes/healthRoutes');
 const taxonomyRoutes = require('./routes/taxonomyRoutes');
 const consultRoutes = require('./routes/consultRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const shopRoutes = require('./routes/shopRoutes');
+const formulaRoutes = require('./routes/formulaRoutes');
 const ApiResponse = require('./utils/apiResponse');
 
 const app = express();
@@ -29,6 +31,8 @@ app.use('/api/herbs', herbRoutes);
 app.use('/api/health', healthRoutes);
 app.use('/api/consult', consultRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/shops', shopRoutes);
+app.use('/api/formulas', formulaRoutes);
 app.use('/api', taxonomyRoutes);
 
 // 提供靜態圖片與公共檔案 (無版權植物向量圖檔)

@@ -95,7 +95,16 @@
 
       <!-- 標籤頁三：青草茶方劑調配研製所 (Alchemy Lab) - 純淨整潔，無首頁資訊 -->
       <div v-else-if="!selectedHerbId && activeTab === 'alchemy'" style="grid-column: 1 / -1;">
-        <HerbAlchemyLab :all-herbs="allHerbsFullList" />
+        <HerbAlchemyLab :all-herbs="allHerbsFullList" :initial-herb="alchemyInitialHerb" />
+      </div>
+
+      <!-- 標籤頁：結盟青草店與採買避坑指南 (Allied Shops) - 純淨整潔，無首頁資訊 -->
+      <div v-else-if="!selectedHerbId && activeTab === 'shops'" style="grid-column: 1 / -1;">
+        <AlliedShopsView
+          @view-herb-name="handleViewHerbByName"
+          @jump-to-alchemy="switchMainTab('alchemy')"
+          @switch-tab="switchMainTab"
+        />
       </div>
 
       <!-- 標籤頁四：五行經絡引導圖 (Meridian Body Map) - 純淨整潔，無首頁資訊 -->
@@ -291,6 +300,8 @@
           @select-herb-id="openHerbDetail"
           @toggle-compare="toggleCompare"
           @toggle-favorite="toggleFavorite"
+          @add-to-cauldron="handleAddToCauldron"
+          @jump-to-shops="switchMainTab('shops')"
         />
       </main>
     </div>
@@ -467,11 +478,13 @@ import CommandPalette from './components/CommandPalette.vue';
 import HerbCompareModal from './components/HerbCompareModal.vue';
 import HealthModal from './components/HealthModal.vue';
 import AuthModal from './components/AuthModal.vue';
+import AlliedShopsView from './components/AlliedShopsView.vue';
 import { getSeasonalHerbRecommendation } from './services/solarTerms';
 
 // 狀態定義
 const herbs = ref([]);
 const allHerbsFullList = ref([]);
+const alchemyInitialHerb = ref(null);
 const categories = ref([]);
 const channels = ref([]);
 const natures = ref([]);
@@ -678,6 +691,22 @@ const goCatalog = () => {
   activeTab.value = 'home';
   backToCatalog();
   window.location.hash = '#/home';
+};
+
+const handleAddToCauldron = (herb) => {
+  alchemyInitialHerb.value = herb;
+  switchMainTab('alchemy');
+};
+
+const handleViewHerbByName = (herbName) => {
+  const found = allHerbsFullList.value.find(h => h.name === herbName);
+  if (found) {
+    openHerbDetail(found.id);
+  } else {
+    searchQuery.value = herbName;
+    switchMainTab('catalog');
+    loadHerbs();
+  }
 };
 
 // 今日推薦 (依據現實當前時間計算最接近之 24 節氣對應當令草藥)

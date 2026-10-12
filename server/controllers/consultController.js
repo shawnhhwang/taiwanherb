@@ -54,6 +54,29 @@ class ConsultController {
       next(err);
     }
   }
+
+  /**
+   * POST /api/consult/formulate
+   * 專家 LLM AI 客製配方建議
+   */
+  async formulate(req, res, next) {
+    try {
+      const { userNeeds, expertId, targetType } = req.body || {};
+      if (!userNeeds || typeof userNeeds !== 'string' || userNeeds.trim() === '') {
+        return res.status(400).json(ApiResponse.fail('請提供您的調理需求或生活症狀', 400));
+      }
+
+      const result = await ragService.formulateRecipe({
+        userNeeds: userNeeds.trim(),
+        expertId: expertId || 'wanhua_uncle',
+        targetType: targetType || 'herbal_tea'
+      });
+
+      return res.json(ApiResponse.ok(result, '本草專家客製配方建議生成成功'));
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = new ConsultController();
