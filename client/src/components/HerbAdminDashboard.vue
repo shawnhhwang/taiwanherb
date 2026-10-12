@@ -139,6 +139,14 @@
             <div class="stat-label">RAG 風土專家 Persona</div>
           </div>
         </div>
+
+        <div class="stat-card" @click="currentTab = 'books'">
+          <div class="stat-icon">📚</div>
+          <div class="stat-content">
+            <div class="stat-value">{{ adminBooks.length || 6 }} <small>部</small></div>
+            <div class="stat-label">草木書目與線上試閱專著</div>
+          </div>
+        </div>
       </div>
 
       <!-- 管理模組分頁導覽列 (完整 9 大維度) -->
@@ -222,6 +230,15 @@
         >
           <span>📋</span>
           <span>審計日誌 ({{ logs.length }})</span>
+        </button>
+
+        <button
+          class="admin-nav-tab"
+          :class="{ active: currentTab === 'books' }"
+          @click="currentTab = 'books'"
+        >
+          <span>📚</span>
+          <span>草木書目與試閱 ({{ adminBooks.length }})</span>
         </button>
       </div>
 
@@ -1285,6 +1302,115 @@
           </div>
         </div>
       </div>
+
+      <!-- ======================================================== -->
+      <!-- 分頁十：📚 草木書目與線上試閱管理中樞 -->
+      <!-- ======================================================== -->
+      <div v-if="currentTab === 'books'" class="admin-tab-pane">
+        <div class="pane-header-box">
+          <div>
+            <h3 class="pane-title">📚 本草書目典藏與線上試閱管理中樞</h3>
+            <p class="pane-desc">
+              維護全站實體與電子書專著，自訂設定試閱章節、序言與試閱內容，並可審查讀者購書訂單與出貨狀態。
+            </p>
+          </div>
+          <div class="header-action-cluster" style="display: flex; gap: 10px;">
+            <button
+              v-if="hasPerm('herbs:create')"
+              class="btn-primary-action"
+              @click="openCreateBookModal"
+            >
+              <span>➕</span>
+              <span>新增本草書籍</span>
+            </button>
+            <button
+              class="admin-tool-btn"
+              @click="openBookOrdersModal"
+            >
+              <span>📦</span>
+              <span>購書訂單審查 ({{ bookOrders.length }})</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 書目列表表格 -->
+        <div class="table-responsive-box">
+          <table class="admin-data-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">封面</th>
+                <th>書名與作者</th>
+                <th>分類</th>
+                <th>實體價格 / 庫存</th>
+                <th>電子書定價</th>
+                <th>線上試閱狀態</th>
+                <th style="text-align: right; width: 250px;">管理操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="b in adminBooks" :key="b.id">
+                <td style="text-align: center; font-size: 26px;">
+                  {{ b.coverIcon || '📖' }}
+                </td>
+                <td>
+                  <div style="font-weight: 800; color: var(--primary-deep); font-size: 14.5px;">{{ b.title }}</div>
+                  <div style="font-size: 12px; color: var(--ink-muted);">{{ b.author }} · {{ b.publisher }}</div>
+                  <div style="font-size: 11px; color: var(--ink-muted); font-family: monospace;">ISBN: {{ b.isbn }}</div>
+                </td>
+                <td>
+                  <span class="user-role-tag" style="background: var(--primary-deep);">{{ b.categoryName }}</span>
+                </td>
+                <td>
+                  <div>NT$ <strong>{{ b.pricing?.physical?.price }}</strong></div>
+                  <div :style="{ color: b.pricing?.physical?.stock <= 5 ? '#dc2626' : '#15803d', fontSize: '11.5px', fontWeight: 'bold' }">
+                    庫存：{{ b.pricing?.physical?.stock }} 本
+                  </div>
+                </td>
+                <td>
+                  <div style="color: #059669; font-weight: bold;">
+                    NT$ {{ b.pricing?.ebook?.price }}
+                  </div>
+                  <div style="font-size: 11px; color: var(--ink-muted);">即時數位授權</div>
+                </td>
+                <td>
+                  <span v-if="b.samplePreview?.available" class="preview-status-pill active">
+                    ✓ 開放中 ({{ b.samplePreview?.chapters?.length || 0 }} 章)
+                  </span>
+                  <span v-else class="preview-status-pill inactive">
+                    ✕ 未開放試閱
+                  </span>
+                </td>
+                <td style="text-align: right;">
+                  <button
+                    class="btn-table-action"
+                    style="background: #059669; color: #fff; border-color: #059669; margin-right: 6px;"
+                    title="建立與編輯線上試閱章節"
+                    @click="openTrialEditorModal(b)"
+                  >
+                    📖 編輯試閱
+                  </button>
+                  <button
+                    class="btn-table-action"
+                    style="margin-right: 6px;"
+                    title="編輯書籍基本資料與價格"
+                    @click="openEditBookModal(b)"
+                  >
+                    ✏️ 編輯
+                  </button>
+                  <button
+                    v-if="hasPerm('herbs:delete')"
+                    class="btn-table-action danger"
+                    title="刪除書目"
+                    @click="deleteBook(b)"
+                  >
+                    🗑️
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- 使用者編輯/新增彈窗 (Modal) -->
@@ -1506,6 +1632,315 @@
           <button class="btn-save" :disabled="isSaving" @click="saveHerb">
             {{ isSaving ? '儲存中...' : (isEditing ? '💾 儲存修改' : '🌿 正式典藏入庫') }}
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. 線上試閱建立與編輯器彈窗 (Trial Preview Builder Modal) -->
+    <div v-if="isTrialEditorModalOpen" class="modal-backdrop" @click.self="isTrialEditorModalOpen = false">
+      <div class="herb-editor-modal" style="max-width: 860px;">
+        <div class="editor-header">
+          <div class="editor-title-wrap">
+            <div class="editor-seal" style="background: #059669;">閱</div>
+            <h3 class="editor-title">線上試閱建立與編輯器 · 《{{ activeTrialBook?.title }}》</h3>
+          </div>
+          <button class="modal-close-btn" @click="isTrialEditorModalOpen = false">✕</button>
+        </div>
+
+        <div class="editor-body-split" style="grid-template-columns: 1fr; padding: 24px; max-height: 70vh; overflow-y: auto;">
+          <!-- 頂部開關與範本輔助 -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; background: var(--bg-hover); padding: 10px 16px; border-radius: 10px;">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: bold; font-size: 13.5px;">
+              <input type="checkbox" v-model="trialForm.available" />
+              <span>開放讀者線上免費試閱 (Enable Preview)</span>
+            </label>
+            <div style="display: flex; gap: 8px;">
+              <button
+                type="button"
+                class="admin-tool-btn"
+                title="自動帶入精美示範本草試閱章節"
+                @click="loadSampleTrialTemplate"
+              >
+                🪄 載入示範試閱範本
+              </button>
+              <button
+                type="button"
+                class="admin-tool-btn"
+                :class="{ 'btn-tool-active': isPreviewTabActive }"
+                @click="isPreviewTabActive = !isPreviewTabActive"
+              >
+                {{ isPreviewTabActive ? '✏️ 回到編輯' : '👁️ 讀者端效果預覽' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- 預覽模式 -->
+          <div v-if="isPreviewTabActive" style="background: #fdfbf7; color: #292524; padding: 24px; border-radius: 12px; border: 1px solid #e7e5e4;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <span style="border: 1px solid #78350f; color: #78350f; font-size: 11px; padding: 2px 6px;">試閱預覽效果</span>
+              <h3 style="margin: 8px 0 4px; font-size: 20px;">{{ trialForm.previewTitle || '試閱標題' }}</h3>
+              <p style="margin: 0; font-size: 13px; color: #78350f;">{{ trialForm.previewSubtitle }}</p>
+            </div>
+            <div v-for="(ch, idx) in trialForm.chapters" :key="idx" style="margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px dashed #d6d3d1;">
+              <h4 style="color: #059669; margin: 0 0 10px; font-size: 16px;">{{ ch.title }}</h4>
+              <div style="white-space: pre-wrap; line-height: 1.7; font-size: 14.5px;">{{ ch.content }}</div>
+            </div>
+            <div style="background: rgba(5,150,105,0.08); padding: 14px; border-radius: 8px; text-align: center; font-size: 13px; color: #047857;">
+              {{ trialForm.previewNotice }}
+            </div>
+          </div>
+
+          <!-- 編輯模式 -->
+          <div v-else>
+            <div class="form-row">
+              <label>試閱總標題：</label>
+              <input v-model="trialForm.previewTitle" class="form-input" placeholder="例：【精彩試閱】第一章：艋舺西昌街的青草歲月" />
+            </div>
+
+            <div class="form-row">
+              <label>試閱副標題 / 導言引子：</label>
+              <input v-model="trialForm.previewSubtitle" class="form-input" placeholder="例：精選萬華老街風土紀實與老茶師親傳之青草茶武火文火三候法" />
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 12px;">
+              <div class="form-row">
+                <label>預估閱讀分鐘數：</label>
+                <input v-model.number="trialForm.readTimeMinutes" type="number" min="1" max="60" class="form-input" />
+              </div>
+              <div class="form-row">
+                <label>試閱告罄提示語：</label>
+                <input v-model="trialForm.previewNotice" class="form-input" placeholder="例：試閱篇章已完結，欲閱讀全本請購買實體書或電子書！" />
+              </div>
+            </div>
+
+            <!-- 試閱章節管理 -->
+            <div style="margin-top: 18px; border-top: 1px dashed var(--border-light); padding-top: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h4 style="margin: 0; font-size: 14px; font-weight: bold; color: var(--primary-deep);">
+                  📑 試閱章節清單 (共 {{ trialForm.chapters.length }} 章)：
+                </h4>
+                <button type="button" class="admin-tool-btn" @click="addTrialChapter">
+                  ➕ 新增章節
+                </button>
+              </div>
+
+              <div
+                v-for="(chap, cIdx) in trialForm.chapters"
+                :key="cIdx"
+                style="background: var(--bg-hover); padding: 16px; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--border-light);"
+              >
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <span style="font-weight: bold; font-size: 13px; color: var(--primary-deep);">第 {{ cIdx + 1 }} 章節</span>
+                  <button
+                    v-if="trialForm.chapters.length > 1"
+                    type="button"
+                    class="btn-table-action danger"
+                    @click="removeTrialChapter(cIdx)"
+                  >
+                    ✕ 刪除本章
+                  </button>
+                </div>
+
+                <div class="form-row" style="margin-bottom: 8px;">
+                  <label>章節標題：</label>
+                  <input v-model="chap.title" class="form-input" placeholder="例：第一章：西昌街的青草歲月" />
+                </div>
+
+                <div class="form-row">
+                  <label>試閱內文 (支援 Markdown 標題、條列、空行分段)：</label>
+                  <textarea
+                    v-model="chap.content"
+                    rows="6"
+                    class="form-textarea"
+                    placeholder="請輸入或貼上試閱內文..."
+                    style="font-family: inherit; font-size: 13.5px; line-height: 1.6;"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="editor-footer">
+          <button class="btn-cancel" @click="isTrialEditorModalOpen = false">取消</button>
+          <button class="btn-save" style="background: #059669;" :disabled="isSavingTrial" @click="saveTrialPreview">
+            {{ isSavingTrial ? '儲存試閱中...' : '💾 正式儲存線上試閱內容' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 書籍基本資料建立/編輯 Modal -->
+    <div v-if="isBookEditModalOpen" class="modal-backdrop" @click.self="isBookEditModalOpen = false">
+      <div class="herb-editor-modal" style="max-width: 760px;">
+        <div class="editor-header">
+          <div class="editor-title-wrap">
+            <div class="editor-seal">書</div>
+            <h3 class="editor-title">{{ isEditingBook ? '編輯本草書籍資料' : '新增本草經典書籍' }}</h3>
+          </div>
+          <button class="modal-close-btn" @click="isBookEditModalOpen = false">✕</button>
+        </div>
+
+        <div class="editor-body-split" style="grid-template-columns: 1fr; padding: 24px; max-height: 70vh; overflow-y: auto;">
+          <div class="form-row">
+            <label>書名 *：</label>
+            <input v-model="bookForm.title" class="form-input" placeholder="例如: 萬華百年青草茶香" />
+          </div>
+
+          <div class="form-row">
+            <label>副標題：</label>
+            <input v-model="bookForm.subtitle" class="form-input" placeholder="例如: 西昌街老茶師的四時退火秘笈" />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-row">
+              <label>作者姓名 *：</label>
+              <input v-model="bookForm.author" class="form-input" placeholder="例如: 林萬吉 老茶師" />
+            </div>
+            <div class="form-row">
+              <label>作者頭銜/背景：</label>
+              <input v-model="bookForm.authorRole" class="form-input" placeholder="例如: 萬華西昌街百年青草巷第三代傳人" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+            <div class="form-row">
+              <label>分類：</label>
+              <select v-model="bookForm.category" class="form-select">
+                <option value="tea_culture">青草茶文化</option>
+                <option value="terroir_field">野外圖鑑</option>
+                <option value="biotech_science">科學機轉</option>
+                <option value="indigenous_folk">原鄉民俗</option>
+                <option value="seasonal_health">節氣養生</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label>封面圖示 Emoji：</label>
+              <input v-model="bookForm.coverIcon" class="form-input" style="text-align: center;" placeholder="例: 🍵" />
+            </div>
+            <div class="form-row">
+              <label>封面徽章：</label>
+              <input v-model="bookForm.coverBadge" class="form-input" placeholder="例: 百年經典" />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 12px;">
+            <div class="form-row">
+              <label>ISBN：</label>
+              <input v-model="bookForm.isbn" class="form-input" placeholder="978-986-041-..." />
+            </div>
+            <div class="form-row">
+              <label>出版社：</label>
+              <input v-model="bookForm.publisher" class="form-input" placeholder="風土文化出版" />
+            </div>
+            <div class="form-row">
+              <label>總頁數：</label>
+              <input v-model.number="bookForm.pages" type="number" class="form-input" />
+            </div>
+          </div>
+
+          <!-- 價格與庫存 -->
+          <div style="background: var(--bg-hover); padding: 14px; border-radius: 10px; margin-top: 6px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+            <div class="form-row">
+              <label>實體書售價 (NT$) *：</label>
+              <input v-model.number="bookForm.physicalPrice" type="number" class="form-input" />
+            </div>
+            <div class="form-row">
+              <label>實體庫存 (本) *：</label>
+              <input v-model.number="bookForm.physicalStock" type="number" class="form-input" />
+            </div>
+            <div class="form-row">
+              <label>電子書售價 (NT$) *：</label>
+              <input v-model.number="bookForm.ebookPrice" type="number" class="form-input" />
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top: 10px;">
+            <label>內容簡介 (Summary)：</label>
+            <textarea v-model="bookForm.summary" rows="3" class="form-textarea" placeholder="詳細介紹本書核心內容與亮點..."></textarea>
+          </div>
+        </div>
+
+        <div class="editor-footer">
+          <button class="btn-cancel" @click="isBookEditModalOpen = false">取消</button>
+          <button class="btn-save" :disabled="isSavingBook" @click="saveBook">
+            {{ isSavingBook ? '儲存中...' : '💾 確認儲存書目' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 購書訂單審查 Modal -->
+    <div v-if="isBookOrdersModalOpen" class="modal-backdrop" @click.self="isBookOrdersModalOpen = false">
+      <div class="herb-editor-modal" style="max-width: 900px;">
+        <div class="editor-header">
+          <div class="editor-title-wrap">
+            <div class="editor-seal" style="background: #2563eb;">訂</div>
+            <h3 class="editor-title">全站購書訂單審查中樞 (共 {{ bookOrders.length }} 筆)</h3>
+          </div>
+          <button class="modal-close-btn" @click="isBookOrdersModalOpen = false">✕</button>
+        </div>
+
+        <div style="padding: 20px; max-height: 70vh; overflow-y: auto;">
+          <div v-if="bookOrders.length === 0" style="text-align: center; padding: 40px; color: var(--ink-muted);">
+            尚無任何購書訂單紀錄
+          </div>
+          <table v-else class="admin-data-table">
+            <thead>
+              <tr>
+                <th>單號與時間</th>
+                <th>書名與購買規格</th>
+                <th>買家姓名 / Email</th>
+                <th>金額</th>
+                <th>狀態</th>
+                <th style="text-align: right;">物流/出貨狀態操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="ord in bookOrders" :key="ord.orderId">
+                <td>
+                  <div style="font-family: monospace; font-weight: bold; font-size: 12px;">{{ ord.orderId }}</div>
+                  <div style="font-size: 11px; color: var(--ink-muted);">{{ new Date(ord.createdAt).toLocaleString('zh-TW') }}</div>
+                </td>
+                <td>
+                  <div style="font-weight: bold; font-size: 13.5px;">{{ ord.bookTitle }}</div>
+                  <div style="font-size: 11.5px; color: var(--ink-muted);">{{ ord.formatDesc }}</div>
+                </td>
+                <td>
+                  <div style="font-weight: 600;">{{ ord.buyerName }}</div>
+                  <div style="font-size: 11.5px; color: var(--ink-muted);">{{ ord.buyerEmail }}</div>
+                </td>
+                <td>
+                  <strong>NT$ {{ ord.totalAmount }}</strong>
+                </td>
+                <td>
+                  <span class="user-role-tag" :style="{ background: ord.orderStatus === 'completed' ? '#059669' : ord.orderStatus === 'shipping' ? '#2563eb' : '#d97706' }">
+                    {{ ord.orderStatus === 'completed' ? '已完成' : ord.orderStatus === 'shipping' ? '配送中' : '處理中' }}
+                  </span>
+                </td>
+                <td style="text-align: right;">
+                  <button
+                    v-if="ord.purchaseType !== 'ebook' && ord.orderStatus !== 'shipping' && ord.orderStatus !== 'completed'"
+                    class="btn-table-action"
+                    style="background: #2563eb; color: #fff;"
+                    @click="markOrderAsShipping(ord)"
+                  >
+                    🚚 標記出貨
+                  </button>
+                  <span v-else-if="ord.trackingNumber" style="font-size: 11.5px; color: #1e40af;">
+                    物流碼: {{ ord.trackingNumber }}
+                  </span>
+                  <span v-else style="font-size: 11.5px; color: #059669;">
+                    即時數位交付
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="editor-footer">
+          <button class="btn-cancel" @click="isBookOrdersModalOpen = false">關閉視窗</button>
         </div>
       </div>
     </div>
@@ -2123,6 +2558,271 @@ const confirmReset = async () => {
 };
 
 // ==========================================
+// 10. 草木書目與線上試閱管理 (Books & Trial Preview)
+// ==========================================
+const adminBooks = ref([]);
+const bookOrders = ref([]);
+
+// 1. 線上試閱建立器 (Trial Preview Builder)
+const isTrialEditorModalOpen = ref(false);
+const activeTrialBook = ref(null);
+const isPreviewTabActive = ref(false);
+const isSavingTrial = ref(false);
+const trialForm = ref({
+  available: true,
+  previewTitle: '',
+  previewSubtitle: '',
+  readTimeMinutes: 5,
+  previewNotice: '',
+  chapters: []
+});
+
+const openTrialEditorModal = (book) => {
+  activeTrialBook.value = book;
+  isPreviewTabActive.value = false;
+  const sp = book.samplePreview || {};
+  trialForm.value = {
+    available: sp.available !== false,
+    previewTitle: sp.previewTitle || `【線上試閱】《${book.title}》精彩摘選`,
+    previewSubtitle: sp.previewSubtitle || '深入探究風土本草與生活茶飲智慧',
+    readTimeMinutes: sp.readTimeMinutes || 5,
+    previewNotice: sp.previewNotice || '試閱篇章已完結，欲閱讀全本請購買實體書或電子書！',
+    chapters: Array.isArray(sp.chapters) && sp.chapters.length > 0
+      ? sp.chapters.map(c => ({ title: c.title, content: c.content }))
+      : [
+          {
+            title: '第一章：島嶼風土與採集紀實',
+            content: `本草植物生長於台灣得天獨厚的島嶼環境，受高山溪流與海風浸潤，具有獨特的性味與活性。\n\n在《${book.title}》中，我們將引領讀者細品先民傳承的四時採集智慧與日常茶飲配方。`
+          }
+        ]
+  };
+  isTrialEditorModalOpen.value = true;
+};
+
+const addTrialChapter = () => {
+  const nextNum = (trialForm.value.chapters?.length || 0) + 1;
+  trialForm.value.chapters.push({
+    title: `第 ${nextNum} 章：本草新選與生活應用`,
+    content: ''
+  });
+};
+
+const removeTrialChapter = (index) => {
+  trialForm.value.chapters.splice(index, 1);
+};
+
+const loadSampleTrialTemplate = () => {
+  const bTitle = activeTrialBook.value?.title || '本草典籍';
+  trialForm.value = {
+    available: true,
+    previewTitle: `【典藏試閱】《${bTitle}》名師精選導讀`,
+    previewSubtitle: '融合自然風土哲學與百年採集智慧，重溫島嶼青草馨香與當代生活茶飲應用',
+    readTimeMinutes: 6,
+    previewNotice: '草木有情，字字珠璣。本試閱章節為精選導覽，全書收錄完整草藥性味歸經圖鑑、高清植物細節與原創茶譜配方，歡迎購買實體典藏書或電子書解鎖全章節！',
+    chapters: [
+      {
+        title: '楔子：島嶼四時，草木為師',
+        content: `在台灣這座被太平洋與黑潮環抱的翠綠之島，每一株在田埂、溪澗、山巒間隨風搖曳的野草，都蘊藏著千百年來先民與土地對話的深厚記憶。\n\n昔日農家在夏至伏暑時節，順手摘取田埂旁的車前草、鳳尾草與仙草，以紅磚柴爐細火慢熬，便是全家人消暑生津的無上甘露。\n\n本草不僅是植物的生物特徵，更是一種浸潤於生活節奏中的生命美學。`
+      },
+      {
+        title: '第一章：百草相生與武火文火三候法',
+        content: `熬煮一壺醇厚不澀的四時青草茶，關鍵在於「君臣相和」與「水火相濟」。\n\n以清涼解鬱者為先鋒（君），繼以甘潤平正者調和中道（臣），最後由芳香行氣之品收尾（佐使）。\n\n大火初沸以逼香氣（武火），隨即轉為若有若無之微沸靜煮四十分鐘（文火），熄火後加蓋燜焗一刻鐘（陰火候）。如此熬出之草湯，入口甘醇，落喉生津，方為道地正宗。`
+      }
+    ]
+  };
+  audio.playChime(528);
+};
+
+const saveTrialPreview = async () => {
+  if (!activeTrialBook.value) return;
+  isSavingTrial.value = true;
+  try {
+    const updated = await HerbApi.adminUpdateBookPreview(activeTrialBook.value.id, trialForm.value);
+    activeTrialBook.value.samplePreview = updated;
+    audio.playStamp();
+    alert(`《${activeTrialBook.value.title}》線上試閱內容已成功保存！讀者現在可於前台書閣體驗。`);
+    isTrialEditorModalOpen.value = false;
+    await loadAdminBooks();
+  } catch (err) {
+    alert('儲存線上試閱失敗：' + err.message);
+  } finally {
+    isSavingTrial.value = false;
+  }
+};
+
+// 2. 書籍 CRUD
+const isBookEditModalOpen = ref(false);
+const isEditingBook = ref(false);
+const isSavingBook = ref(false);
+const bookForm = ref({
+  id: '',
+  title: '',
+  subtitle: '',
+  author: '',
+  authorRole: '',
+  category: 'tea_culture',
+  coverIcon: '🍵',
+  coverBadge: '',
+  isbn: '',
+  publisher: '',
+  pages: 200,
+  physicalPrice: 420,
+  physicalStock: 50,
+  ebookPrice: 280,
+  summary: ''
+});
+
+const openCreateBookModal = () => {
+  isEditingBook.value = false;
+  bookForm.value = {
+    id: '',
+    title: '',
+    subtitle: '',
+    author: '',
+    authorRole: '',
+    category: 'tea_culture',
+    coverIcon: '📖',
+    coverBadge: '新書典藏',
+    isbn: '978-986-041-' + Math.floor(1000 + Math.random() * 9000),
+    publisher: '風土文化出版',
+    pages: 220,
+    physicalPrice: 450,
+    physicalStock: 60,
+    ebookPrice: 290,
+    summary: ''
+  };
+  isBookEditModalOpen.value = true;
+};
+
+const openEditBookModal = (book) => {
+  isEditingBook.value = true;
+  bookForm.value = {
+    id: book.id,
+    title: book.title,
+    subtitle: book.subtitle || '',
+    author: book.author,
+    authorRole: book.authorRole || '',
+    category: book.category,
+    coverIcon: book.coverIcon || '📖',
+    coverBadge: book.coverBadge || '',
+    isbn: book.isbn || '',
+    publisher: book.publisher || '',
+    pages: book.pages || 200,
+    physicalPrice: book.pricing?.physical?.price || 400,
+    physicalStock: book.pricing?.physical?.stock || 50,
+    ebookPrice: book.pricing?.ebook?.price || 280,
+    summary: book.summary || ''
+  };
+  isBookEditModalOpen.value = true;
+};
+
+const saveBook = async () => {
+  if (!bookForm.value.title.trim()) {
+    alert('請輸入書籍名稱');
+    return;
+  }
+  if (!bookForm.value.author.trim()) {
+    alert('請輸入作者姓名');
+    return;
+  }
+  isSavingBook.value = true;
+  try {
+    const payload = {
+      title: bookForm.value.title.trim(),
+      subtitle: bookForm.value.subtitle.trim(),
+      author: bookForm.value.author.trim(),
+      authorRole: bookForm.value.authorRole.trim(),
+      category: bookForm.value.category,
+      coverIcon: bookForm.value.coverIcon || '📖',
+      coverBadge: bookForm.value.coverBadge,
+      isbn: bookForm.value.isbn,
+      publisher: bookForm.value.publisher,
+      pages: bookForm.value.pages,
+      summary: bookForm.value.summary,
+      pricing: {
+        physical: {
+          price: Number(bookForm.value.physicalPrice),
+          stock: Number(bookForm.value.physicalStock),
+          description: '繁體中文精裝版 / 附全彩植物插圖拉頁'
+        },
+        ebook: {
+          price: Number(bookForm.value.ebookPrice),
+          description: 'EPUB / PDF 雙格式數位版 / 即時線上閱讀'
+        },
+        combo: {
+          price: Math.round((Number(bookForm.value.physicalPrice) + Number(bookForm.value.ebookPrice)) * 0.85),
+          description: '實體紙本書 + 電子書雙享典藏版 (現省 15%)'
+        }
+      }
+    };
+
+    if (isEditingBook.value) {
+      await HerbApi.adminUpdateBook(bookForm.value.id, payload);
+      alert('書籍資料更新成功！');
+    } else {
+      await HerbApi.adminCreateBook(payload);
+      alert('新本草書籍已成功登錄至書閣！');
+    }
+    audio.playStamp();
+    isBookEditModalOpen.value = false;
+    await loadAdminBooks();
+  } catch (err) {
+    alert('儲存書籍失敗：' + err.message);
+  } finally {
+    isSavingBook.value = false;
+  }
+};
+
+const deleteBook = async (book) => {
+  if (!confirm(`確定要下架並刪除本草專著《${book.title}》嗎？`)) return;
+  try {
+    await HerbApi.adminDeleteBook(book.id);
+    audio.playClick();
+    await loadAdminBooks();
+  } catch (err) {
+    alert('刪除書籍失敗：' + err.message);
+  }
+};
+
+// 3. 購書訂單審查
+const isBookOrdersModalOpen = ref(false);
+
+const openBookOrdersModal = async () => {
+  await loadBookOrders();
+  isBookOrdersModalOpen.value = true;
+};
+
+const markOrderAsShipping = async (order) => {
+  try {
+    const updated = await HerbApi.adminUpdateBookOrderStatus(order.orderId, { orderStatus: 'shipping' });
+    order.orderStatus = updated.orderStatus;
+    audio.playStamp();
+    alert(`訂單 ${order.orderId} 已標記為配送中！`);
+    await loadBookOrders();
+  } catch (err) {
+    alert('更新訂單狀態失敗：' + err.message);
+  }
+};
+
+const loadAdminBooks = async () => {
+  try {
+    const b = await HerbApi.adminGetBooks();
+    adminBooks.value = b || [];
+  } catch (err) {
+    console.warn('載入書目失敗:', err);
+  }
+};
+
+const loadBookOrders = async () => {
+  try {
+    const ords = await HerbApi.adminGetBookOrders();
+    bookOrders.value = ords || [];
+  } catch (err) {
+    console.warn('載入購書訂單失敗:', err);
+  }
+};
+
+// ==========================================
 // 登入登出與資料載入
 // ==========================================
 const handleLogin = async () => {
@@ -2212,7 +2912,9 @@ const loadDashboardData = async () => {
       loadExperts(),
       loadLlmConfig(),
       loadArticleOptions(),
-      fetchExportPreview()
+      fetchExportPreview(),
+      loadAdminBooks(),
+      loadBookOrders()
     ]);
   } catch (err) {
     console.warn('Dashboard load error:', err.message);
@@ -3912,5 +4614,30 @@ onMounted(() => {
   font-size: 13px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.preview-status-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.preview-status-pill.active {
+  background: rgba(5, 150, 105, 0.12);
+  color: #059669;
+  border: 1px solid rgba(5, 150, 105, 0.3);
+}
+.preview-status-pill.inactive {
+  background: rgba(156, 163, 175, 0.12);
+  color: #6b7280;
+  border: 1px solid rgba(156, 163, 175, 0.3);
+}
+
+.btn-tool-active {
+  background: var(--primary-deep) !important;
+  color: #fff !important;
+  border-color: var(--primary-deep) !important;
 }
 </style>

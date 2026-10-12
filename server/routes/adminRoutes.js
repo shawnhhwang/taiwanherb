@@ -53,4 +53,13 @@ router.delete('/herbs/:id', adminController.deleteHerb.bind(adminController));
 router.get('/logs', adminController.getAuditLogs.bind(adminController));
 router.post('/reset', adminController.resetDatabase.bind(adminController));
 
+// 10. 草木書閣書目管理、線上試閱編輯與訂單審查
+router.get('/books', adminController.getBooks.bind(adminController));
+router.post('/books', adminController.createBook.bind(adminController));
+router.put('/books/:id', adminController.updateBook.bind(adminController));
+router.delete('/books/:id', adminController.deleteBook.bind(adminController));
+router.put('/books/:id/preview', adminController.updateBookPreview.bind(adminController));
+router.get('/books/orders', adminController.getBookOrders.bind(adminController));
+router.put('/books/orders/:orderId/status', adminController.updateBookOrderStatus.bind(adminController));
+
 module.exports = router;

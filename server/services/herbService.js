@@ -80,6 +80,10 @@ class HerbService {
     return herbRepository.getAuditLogs(limit);
   }
 
+  addAuditLog(action, entity, details) {
+    return herbRepository.addAuditLog(action, entity, details);
+  }
+
   async resetToInitial() {
     return await herbRepository.resetToInitial();
   }

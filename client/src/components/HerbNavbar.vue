@@ -56,6 +56,16 @@
 
           <button
             class="nav-tab-btn"
+            :class="{ active: activeTab === 'books' }"
+            title="草木書閣 · 線上購買實體書、電子書與精彩試閱"
+            @click="$emit('switch-tab', 'books')"
+          >
+            <span class="tab-icon">📚</span>
+            <span class="tab-label">草木書閣</span>
+          </button>
+
+          <button
+            class="nav-tab-btn"
             :class="{ active: activeTab === 'consult' }"
             title="請益本草耆老與風土達人 (RAG 語意問答)"
             @click="$emit('switch-tab', 'consult')"

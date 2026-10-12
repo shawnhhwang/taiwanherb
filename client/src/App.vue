@@ -107,6 +107,15 @@
         />
       </div>
 
+      <!-- 標籤頁：草木書閣 (Bookshelf 藏書與試閱) - 純淨整潔，無首頁資訊 -->
+      <div v-else-if="!selectedHerbId && activeTab === 'books'" style="grid-column: 1 / -1;">
+        <HerbBookshelfView
+          @view-herb-name="handleViewHerbByName"
+          @jump-to-alchemy="switchMainTab('alchemy')"
+          @switch-tab="switchMainTab"
+        />
+      </div>
+
       <!-- 標籤頁四：五行經絡引導圖 (Meridian Body Map) - 純淨整潔，無首頁資訊 -->
       <div v-else-if="!selectedHerbId && activeTab === 'meridian'" style="grid-column: 1 / -1;">
         <HerbMeridianMap :herbs="allHerbsFullList" @select-herb="openHerbDetail" />
@@ -479,6 +488,7 @@ import HerbCompareModal from './components/HerbCompareModal.vue';
 import HealthModal from './components/HealthModal.vue';
 import AuthModal from './components/AuthModal.vue';
 import AlliedShopsView from './components/AlliedShopsView.vue';
+import HerbBookshelfView from './components/HerbBookshelfView.vue';
 import { getSeasonalHerbRecommendation } from './services/solarTerms';
 
 // 狀態定義

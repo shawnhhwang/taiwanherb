@@ -9,6 +9,7 @@ const userService = require('../services/userService');
 const llmService = require('../services/llmService');
 const importExportService = require('../services/importExportService');
 const articleService = require('../services/articleService');
+const bookService = require('../services/bookService');
 const ApiResponse = require('../utils/apiResponse');
 
 class AdminController {
@@ -559,6 +560,96 @@ class AdminController {
     try {
       const count = await herbService.resetToInitial();
       return res.json(ApiResponse.ok({ restoredCount: count }, `成功重置資料庫，恢復 ${count} 味經典本草`));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  // ========================================================
+  // 10. 草木書閣書目管理、線上試閱編輯與訂單審查
+  // ========================================================
+  async getBooks(req, res, next) {
+    try {
+      const books = await bookService.adminGetBooks();
+      return res.json(ApiResponse.ok(books, '成功取得全庫書目列表'));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async createBook(req, res, next) {
+    try {
+      const session = this.checkPermission(req, res, 'herbs:create');
+      if (!session) return;
+
+      const created = await bookService.adminCreateBook(req.body);
+      await herbService.addAuditLog('CREATE_BOOK', `建立本草書籍《${created.title}》`, session.user.username);
+      return res.status(201).json(ApiResponse.ok(created, `成功建立書籍《${created.title}》`));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async updateBook(req, res, next) {
+    try {
+      const session = this.checkPermission(req, res, 'herbs:edit');
+      if (!session) return;
+
+      const { id } = req.params;
+      const updated = await bookService.adminUpdateBook(id, req.body);
+      await herbService.addAuditLog('UPDATE_BOOK', `更新本草書籍《${updated.title}》`, session.user.username);
+      return res.json(ApiResponse.ok(updated, `成功更新書籍《${updated.title}》`));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async deleteBook(req, res, next) {
+    try {
+      const session = this.checkPermission(req, res, 'herbs:delete');
+      if (!session) return;
+
+      const { id } = req.params;
+      const deleted = await bookService.adminDeleteBook(id);
+      await herbService.addAuditLog('DELETE_BOOK', `刪除本草書籍《${deleted.title}》`, session.user.username);
+      return res.json(ApiResponse.ok(deleted, `成功刪除書籍《${deleted.title}》`));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async updateBookPreview(req, res, next) {
+    try {
+      const session = this.checkPermission(req, res, 'herbs:edit');
+      if (!session) return;
+
+      const { id } = req.params;
+      const preview = await bookService.adminUpdateTrialPreview(id, req.body);
+      await herbService.addAuditLog('UPDATE_BOOK_PREVIEW', `更新書籍 ID ${id} 之線上試閱章節`, session.user.username);
+      return res.json(ApiResponse.ok(preview, `成功儲存書籍線上試閱內容`));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getBookOrders(req, res, next) {
+    try {
+      const orders = await bookService.adminGetOrders();
+      return res.json(ApiResponse.ok(orders, '成功取得全站購書訂單'));
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async updateBookOrderStatus(req, res, next) {
+    try {
+      const session = this.checkPermission(req, res, 'herbs:edit');
+      if (!session) return;
+
+      const { orderId } = req.params;
+      const updated = await bookService.adminUpdateOrderStatus(orderId, req.body);
+      await herbService.addAuditLog('UPDATE_BOOK_ORDER', `更新購書訂單 ${orderId} 狀態為 ${updated.orderStatus}`, session.user.username);
+      return res.json(ApiResponse.ok(updated, `成功更新訂單狀態`));
     } catch (err) {
       next(err);
     }

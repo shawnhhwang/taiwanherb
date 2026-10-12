@@ -240,6 +240,42 @@ export const HerbApi = {
   },
 
   /**
+   * 草木書閣書籍、試閱與線上購買模組
+   */
+  async getBooks(params = {}) {
+    const queryParts = [];
+    if (params.category && params.category !== '全部') queryParts.push(`category=${encodeURIComponent(params.category)}`);
+    if (params.query) queryParts.push(`query=${encodeURIComponent(params.query)}`);
+    if (params.sort) queryParts.push(`sort=${encodeURIComponent(params.sort)}`);
+    const qs = queryParts.length ? `?${queryParts.join('&')}` : '';
+    const res = await this.request(`/books${qs}`);
+    return res.data || [];
+  },
+
+  async getBookById(id) {
+    const res = await this.request(`/books/${id}`);
+    return res.data;
+  },
+
+  async getBookPreview(id) {
+    const res = await this.request(`/books/${id}/preview`);
+    return res.data;
+  },
+
+  async createBookOrder(orderData) {
+    const res = await this.request('/books/order', {
+      method: 'POST',
+      body: JSON.stringify(orderData)
+    });
+    return res.data;
+  },
+
+  async getMyBookOrders(email) {
+    const res = await this.request(`/books/orders/my?email=${encodeURIComponent(email)}`);
+    return res.data || [];
+  },
+
+  /**
    * 後台管理模組
    */
   async adminLogin(credentials) {
@@ -450,6 +486,57 @@ export const HerbApi = {
     const res = await this.request('/admin/articles/generate', {
       method: 'POST',
       body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  // 6. 草木書閣書目管理與線上試閱編輯器
+  async adminGetBooks() {
+    const res = await this.request('/admin/books');
+    return res.data || [];
+  },
+
+  async adminCreateBook(data) {
+    const res = await this.request('/admin/books', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  async adminUpdateBook(id, data) {
+    const res = await this.request(`/admin/books/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+    return res.data;
+  },
+
+  async adminDeleteBook(id) {
+    const res = await this.request(`/admin/books/${id}`, {
+      method: 'DELETE'
+    });
+    return res.data;
+  },
+
+  async adminUpdateBookPreview(id, previewData) {
+    const res = await this.request(`/admin/books/${id}/preview`, {
+      method: 'PUT',
+      body: JSON.stringify(previewData)
+    });
+    return res.data;
+  },
+
+  async adminGetBookOrders() {
+    const res = await this.request('/admin/books/orders');
+    return res.data || [];
+  },
+
+  async adminUpdateBookOrderStatus(orderId, statusData) {
+    const payload = typeof statusData === 'string' ? { orderStatus: statusData } : statusData;
+    const res = await this.request(`/admin/books/orders/${orderId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify(payload)
     });
     return res.data;
   }

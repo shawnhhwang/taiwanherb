@@ -703,6 +703,242 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.equal(errRes.status, 400);
     assert.equal(errRes.body.success, false);
   });
+  // ========================================================
+  // 10. 草木書閣書目檢索、線上試閱與規格查詢
+  // ========================================================
+  test('Bookshelf & Preview: 書籍檢索、分類篩選與線上試閱章節驗證', async () => {
+    // 10.1 取得全庫書籍列表
+    const booksRes = await fetchJson('/api/books');
+    assert.equal(booksRes.status, 200);
+    assert.equal(booksRes.body.success, true);
+    assert.ok(Array.isArray(booksRes.body.data));
+    assert.ok(booksRes.body.data.length >= 6);
+
+    const firstBook = booksRes.body.data[0];
+    assert.ok(firstBook.id);
+    assert.ok(firstBook.title);
+    assert.ok(firstBook.author);
+    assert.ok(firstBook.pricing?.physical?.price > 0);
+    assert.ok(firstBook.pricing?.ebook?.price > 0);
+
+    // 10.2 分類篩選 (青草茶文化)
+    const catRes = await fetchJson('/api/books?category=tea_culture');
+    assert.equal(catRes.status, 200);
+    assert.ok(catRes.body.data.every(b => b.category === 'tea_culture'));
+
+    // 10.3 關鍵字檢索
+    const searchRes = await fetchJson('/api/books?query=萬華');
+    assert.equal(searchRes.status, 200);
+    assert.ok(searchRes.body.data.length > 0);
+    assert.ok(searchRes.body.data.some(b => b.title.includes('萬華') || b.summary.includes('萬華')));
+
+    // 10.4 取得特定書籍詳情
+    const detailRes = await fetchJson(`/api/books/${firstBook.id}`);
+    assert.equal(detailRes.status, 200);
+    assert.equal(detailRes.body.data.id, firstBook.id);
+    assert.ok(detailRes.body.data.tableOfContents?.length > 0);
+
+    // 10.5 取得線上試閱章節 (Preview Reader)
+    const previewRes = await fetchJson(`/api/books/${firstBook.id}/preview`);
+    assert.equal(previewRes.status, 200);
+    assert.equal(previewRes.body.success, true);
+    assert.ok(previewRes.body.data.previewTitle);
+    assert.ok(Array.isArray(previewRes.body.data.chapters));
+    assert.ok(previewRes.body.data.chapters.length > 0);
+    assert.ok(previewRes.body.data.chapters[0].title);
+    assert.ok(previewRes.body.data.chapters[0].content);
+    assert.ok(previewRes.body.data.previewNotice);
+
+    // 10.6 不存在之書籍回傳 404
+    const notFoundRes = await fetchJson('/api/books/non_existent_book_id');
+    assert.equal(notFoundRes.status, 404);
+  });
+
+  // ========================================================
+  // 11. 線上購書下單、庫存即時扣減、授權金鑰核發與訂單反查
+  // ========================================================
+  test('Book Purchase & Orders: 實體/電子書購買、授權金鑰、物流單號與買家訂單反查', async () => {
+    const booksRes = await fetchJson('/api/books');
+    const book = booksRes.body.data[0];
+    const initialStock = book.pricing.physical.stock;
+
+    // 11.1 下單購買電子書 (即時核發數位金鑰，無須物流)
+    const testEmail = `reader_${Date.now()}@herbwisdom.tw`;
+    const ebookOrderRes = await fetchJson('/api/books/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        bookId: book.id,
+        purchaseType: 'ebook',
+        quantity: 1,
+        buyerName: '李本草',
+        buyerEmail: testEmail,
+        buyerPhone: '0912-345-678',
+        paymentMethod: 'credit_card'
+      })
+    });
+
+    assert.equal(ebookOrderRes.status, 201);
+    assert.equal(ebookOrderRes.body.success, true);
+    const ebookOrder = ebookOrderRes.body.data.order;
+    assert.ok(ebookOrder.orderId.startsWith('THB-BK-'));
+    assert.equal(ebookOrder.orderStatus, 'completed');
+    assert.ok(ebookOrder.licenseKey.startsWith('EBOOK-AUTH-'));
+    assert.equal(ebookOrder.trackingNumber, null);
+    assert.equal(ebookOrder.buyerEmail, testEmail);
+
+    // 11.2 下單購買實體書 (扣減庫存，指派物流追蹤碼)
+    const physicalOrderRes = await fetchJson('/api/books/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        bookId: book.id,
+        purchaseType: 'physical',
+        quantity: 2,
+        buyerName: '王紙本',
+        buyerEmail: testEmail,
+        buyerPhone: '0988-765-432',
+        shippingAddress: '台北市萬華區西昌街 224 巷 12 號',
+        paymentMethod: 'line_pay'
+      })
+    });
+
+    assert.equal(physicalOrderRes.status, 201);
+    const physicalOrder = physicalOrderRes.body.data.order;
+    assert.equal(physicalOrder.orderStatus, 'shipping');
+    assert.ok(physicalOrder.trackingNumber.startsWith('SF-TW-'));
+    assert.equal(physicalOrder.licenseKey, null);
+
+    // 驗證庫存已被扣除 2 本
+    const updatedBookRes = await fetchJson(`/api/books/${book.id}`);
+    assert.equal(updatedBookRes.body.data.pricing.physical.stock, initialStock - 2);
+
+    // 11.3 依買家 Email 反查我的藏書與訂單
+    const myOrdersRes = await fetchJson(`/api/books/orders/my?email=${encodeURIComponent(testEmail)}`);
+    assert.equal(myOrdersRes.status, 200);
+    assert.equal(myOrdersRes.body.success, true);
+    assert.equal(myOrdersRes.body.data.length, 2);
+
+    // 11.4 缺少必填欄位時回傳 400
+    const invalidOrderRes = await fetchJson('/api/books/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        bookId: book.id,
+        purchaseType: 'physical',
+        buyerName: ''
+      })
+    });
+    assert.equal(invalidOrderRes.status, 400);
+  });
+
+  // ========================================================
+  // 12. 後台管理員書目維護、線上試閱建立器 (Trial Preview Builder) 與出貨操作
+  // ========================================================
+  test('Admin Books & Trial Builder: 後台書目 CRUD、自訂試閱章節與訂單審查', async () => {
+    const adminAuthHeader = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer taiwanherb-admin-session-active'
+    };
+
+    // 12.1 管理員取得書目清單
+    const adminBooksRes = await fetchJson('/api/admin/books', {
+      headers: { 'Authorization': 'Bearer taiwanherb-admin-session-active' }
+    });
+    assert.equal(adminBooksRes.status, 200);
+    assert.ok(Array.isArray(adminBooksRes.body.data));
+
+    // 12.2 新增書籍
+    const newBookPayload = {
+      title: '中央山脈森之草藥圖鑑',
+      subtitle: '海拔三千公尺下的野生療癒力',
+      author: '高山生藥研習社',
+      authorRole: '台灣百岳植物採集小組',
+      category: 'terroir_field',
+      coverIcon: '🌲',
+      coverBadge: '百岳巡禮',
+      isbn: '978-986-041-9999',
+      publisher: '島嶼山林學堂',
+      pages: 260,
+      pricing: {
+        physical: { price: 520, stock: 40 },
+        ebook: { price: 350 },
+        combo: { price: 740 }
+      },
+      summary: '全覽台灣高山森林底層的珍稀野草與原住民族百年傳承的揉草茶飲秘方。'
+    };
+
+    const createBookRes = await fetchJson('/api/admin/books', {
+      method: 'POST',
+      headers: adminAuthHeader,
+      body: JSON.stringify(newBookPayload)
+    });
+    assert.equal(createBookRes.status, 201);
+    const createdBook = createBookRes.body.data;
+    assert.equal(createdBook.title, newBookPayload.title);
+
+    // 12.3 🪄 線上試閱建立器 (Trial Preview Builder)：自訂試閱章節與前言
+    const customTrialData = {
+      available: true,
+      previewTitle: '【森之試閱】第一章：走入霧林帶的青草秘境',
+      previewSubtitle: '紅檜與台灣杉下，隨風吐納的野地芳香草本植物導讀',
+      readTimeMinutes: 7,
+      previewNotice: '高山篇章試閱已告一段落，全書包含百張手繪圖錄與等高線生境分佈，敬請支持正版！',
+      chapters: [
+        {
+          chapterId: 'ch_alpine_1',
+          title: '楔子：雲霧繚繞的藥草獵人',
+          content: '每當清晨第一縷微光穿透雪霸山稜，林下的石仙桃與白珠樹便在露珠中舒展。\n\n生長在海拔兩千公尺以上的草木，因為日夜溫差極大與強烈紫外線，體內蓄積了更為濃郁的多酚與揮發油。'
+        },
+        {
+          chapterId: 'ch_alpine_2',
+          title: '第二章：獵人火塘旁的舒緩茶湯',
+          content: '原住民長老在結束一日巡山後，取山肉桂葉與高山薄荷少許，以陶壺沸水滾煮片刻。\n\n那一口略帶辛甘的熱湯，驅散了一整日的山寒與筋骨疲憊。'
+        }
+      ]
+    };
+
+    const trialRes = await fetchJson(`/api/admin/books/${createdBook.id}/preview`, {
+      method: 'PUT',
+      headers: adminAuthHeader,
+      body: JSON.stringify(customTrialData)
+    });
+    assert.equal(trialRes.status, 200);
+    assert.equal(trialRes.body.success, true);
+    assert.equal(trialRes.body.data.previewTitle, customTrialData.previewTitle);
+    assert.equal(trialRes.body.data.chapters.length, 2);
+
+    // 前台讀者端應能立即取得剛建立的自訂試閱內容
+    const publicTrialRes = await fetchJson(`/api/books/${createdBook.id}/preview`);
+    assert.equal(publicTrialRes.status, 200);
+    assert.equal(publicTrialRes.body.data.previewTitle, customTrialData.previewTitle);
+    assert.equal(publicTrialRes.body.data.chapters[0].title, '楔子：雲霧繚繞的藥草獵人');
+
+    // 12.4 後台審查購書訂單
+    const ordersRes = await fetchJson('/api/admin/books/orders', {
+      headers: { 'Authorization': 'Bearer taiwanherb-admin-session-active' }
+    });
+    assert.equal(ordersRes.status, 200);
+    assert.ok(Array.isArray(ordersRes.body.data));
+    assert.ok(ordersRes.body.data.length > 0);
+
+    // 12.5 更新訂單物流狀態為 completed
+    const targetOrder = ordersRes.body.data[0];
+    const updateOrderRes = await fetchJson(`/api/admin/books/orders/${targetOrder.orderId}/status`, {
+      method: 'PUT',
+      headers: adminAuthHeader,
+      body: JSON.stringify({ orderStatus: 'completed' })
+    });
+    assert.equal(updateOrderRes.status, 200);
+    assert.equal(updateOrderRes.body.data.orderStatus, 'completed');
+
+    // 12.6 刪除測試書籍
+    const delBookRes = await fetchJson(`/api/admin/books/${createdBook.id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer taiwanherb-admin-session-active' }
+    });
+    assert.equal(delBookRes.status, 200);
+  });
 });
 
 
