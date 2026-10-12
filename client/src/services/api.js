@@ -231,6 +231,14 @@ export const HerbApi = {
     return res.data;
   },
 
+  async harmonizeFormula(payload) {
+    const res = await this.request('/formulas/harmonize', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return res.data;
+  },
+
   /**
    * 後台管理模組
    */

@@ -38,6 +38,16 @@ class FormulaController {
       next(err);
     }
   }
+
+  async harmonizeFormula(req, res, next) {
+    try {
+      const { herbIds, targetIntent } = req.body || {};
+      const harmonizedResult = await formulaService.autoHarmonize({ herbIds, targetIntent });
+      res.json(ApiResponse.success(harmonizedResult));
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = new FormulaController();

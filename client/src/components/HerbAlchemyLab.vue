@@ -216,6 +216,9 @@
           <button class="decree-close" @click="blendDecree = null">✕</button>
         </div>
         <p class="decree-desc">{{ blendDecree.decreeStory }}</p>
+        <div v-if="blendDecree.harmonizeMessage" class="decree-harmonize-pill">
+          <span>⚖️ {{ blendDecree.harmonizeMessage }}</span>
+        </div>
         <div v-if="blendDecree.conflictWarnings?.length" class="decree-warnings">
           <span v-for="(warn, wIdx) in blendDecree.conflictWarnings" :key="wIdx" class="warn-pill">
             ⚠️ {{ warn }}
@@ -250,7 +253,7 @@
             </div>
           </div>
 
-          <!-- 釜中已選草藥清單 -->
+          <!-- 釜中已選草藥清單 (動態君臣佐使角色徽章) -->
           <div class="selected-herbs-list">
             <div v-if="selectedHerbs.length === 0" class="empty-kettle-notice">
               <span>🍃</span>
@@ -258,13 +261,17 @@
             </div>
 
             <div
-              v-for="(herb, idx) in selectedHerbs"
+              v-for="herb in selectedHerbs"
               :key="herb.id"
               class="pot-herb-chip"
+              :class="`role-chip-${getHerbAssignedRole(herb.id).roleCode}`"
             >
-              <span class="herb-role-badge">{{ roleLabels[idx] || '使' }}</span>
+              <span class="herb-role-badge" :class="`badge-${getHerbAssignedRole(herb.id).roleCode}`">
+                {{ getHerbAssignedRole(herb.id).badge }}
+              </span>
               <span class="herb-chip-name">{{ herb.name }}</span>
               <span class="herb-chip-nature">({{ herb.nature }})</span>
+              <span class="herb-chip-share">{{ getHerbAssignedRole(herb.id).share }}</span>
               <button class="remove-chip-btn" title="移出茶釜" @click="removeHerb(herb.id)">✕</button>
             </div>
           </div>
@@ -298,6 +305,97 @@
 
         <!-- 右欄：陰陽寒熱指針、滋味光譜、經絡激發與熬煮定時器 -->
         <div class="analysis-stage-card">
+          <!-- ⚖️ 君臣佐使配伍平衡天平 (Jun-Chen-Zuo Equilibrium Compass) -->
+          <div class="equilibrium-section">
+            <div class="equilibrium-header">
+              <div class="eq-title-group">
+                <h3 class="analysis-heading" style="margin-bottom: 4px;">⚖️ 君臣佐使配伍平衡天平</h3>
+                <span class="eq-score-badge" :class="eqScoreClass">
+                  {{ junChenZuoBalance.overallBalanceScore }} 分 · {{ junChenZuoBalance.grade }}
+                </span>
+              </div>
+              <!-- 🪄 一鍵 AI 臣佐君平衡調和按鈕 -->
+              <button
+                class="btn-auto-harmonize"
+                :class="{ loading: isHarmonizing }"
+                :disabled="isHarmonizing || selectedHerbs.length === 0"
+                @click="triggerAutoHarmonize"
+                title="由 AI 演算缺失角色，自動補入最佳佐使草藥化解偏性"
+              >
+                <span class="btn-sparkle">{{ isHarmonizing ? '🌀' : '🪄' }}</span>
+                <span>AI 一鍵臣佐君平衡調和</span>
+              </button>
+            </div>
+
+            <!-- 總平衡度進度條 -->
+            <div class="eq-meter-wrapper">
+              <div class="eq-meter-track">
+                <div
+                  class="eq-meter-fill"
+                  :class="eqMeterClass"
+                  :style="{ width: `${junChenZuoBalance.overallBalanceScore}%` }"
+                ></div>
+              </div>
+              <div class="eq-meter-hints">
+                <span>孤君寡助 (偏偏不諧)</span>
+                <span>臣佐相得 (調暢)</span>
+                <span>四象大和 (君臣佐使完備)</span>
+              </div>
+            </div>
+
+            <!-- 四象法度卡片 2x2 網格 -->
+            <div class="eq-roles-grid">
+              <!-- 君藥卡 -->
+              <div class="eq-role-card jun" :class="{ empty: !junChenZuoBalance.analysis.junDominance }">
+                <div class="role-card-top">
+                  <span class="role-pillar-badge jun">👑 君藥 (主導攻堅)</span>
+                  <span class="role-score-text">{{ junChenZuoBalance.analysis.junDominance }}%</span>
+                </div>
+                <div class="role-herb-name">{{ junChenZuoBalance.junHerb ? `${junChenZuoBalance.junHerb.name} (${junChenZuoBalance.junHerb.nature})` : '尚缺君藥統領' }}</div>
+                <div class="role-herb-duty">{{ junChenZuoBalance.junHerb ? '主攻病機與核心訴求 (約佔40%)' : '需選入具核心發散/清解/補氣之力之藥材' }}</div>
+              </div>
+
+              <!-- 臣藥卡 -->
+              <div class="eq-role-card chen" :class="{ empty: junChenZuoBalance.analysis.chenAssistance < 60 }">
+                <div class="role-card-top">
+                  <span class="role-pillar-badge chen">🛡️ 臣藥 (輔翼增效)</span>
+                  <span class="role-score-text">{{ junChenZuoBalance.analysis.chenAssistance }}%</span>
+                </div>
+                <div class="role-herb-name">{{ junChenZuoBalance.chenHerb ? `${junChenZuoBalance.chenHerb.name} (${junChenZuoBalance.chenHerb.nature})` : '尚缺臣藥相輔' }}</div>
+                <div class="role-herb-duty">{{ junChenZuoBalance.chenHerb ? '協同君藥加強腑臟受納 (約佔28%)' : '建議搭配同氣相求之草藥強化主效' }}</div>
+              </div>
+
+              <!-- 佐藥卡 -->
+              <div class="eq-role-card zuo" :class="{ empty: junChenZuoBalance.analysis.zuoTempering < 60 }">
+                <div class="role-card-top">
+                  <span class="role-pillar-badge zuo">⚖️ 佐藥 (制偏護胃)</span>
+                  <span class="role-score-text">{{ junChenZuoBalance.analysis.zuoTempering }}%</span>
+                </div>
+                <div class="role-herb-name">{{ junChenZuoBalance.zuoHerb ? `${junChenZuoBalance.zuoHerb.name} (${junChenZuoBalance.zuoHerb.nature})` : '佐藥偏弱 (易過偏)' }}</div>
+                <div class="role-herb-duty">{{ junChenZuoBalance.zuoHerb ? '制衡苦寒或燥性，護衛脾胃 (約佔18%)' : '寒涼過盛需微溫或甘平佐制，以免傷及胃陽' }}</div>
+              </div>
+
+              <!-- 使藥卡 -->
+              <div class="eq-role-card shi" :class="{ empty: junChenZuoBalance.analysis.shiHarmonizing < 60 }">
+                <div class="role-card-top">
+                  <span class="role-pillar-badge shi">🕊️ 使藥 (引經調和)</span>
+                  <span class="role-score-text">{{ junChenZuoBalance.analysis.shiHarmonizing }}%</span>
+                </div>
+                <div class="role-herb-name">{{ junChenZuoBalance.shiHerb ? `${junChenZuoBalance.shiHerb.name} (${junChenZuoBalance.shiHerb.nature})` : '缺乏使藥調和' }}</div>
+                <div class="role-herb-duty">{{ junChenZuoBalance.shiHerb ? '引藥歸經入絡、調和百草口感 (約佔14%)' : '可配入甘草調百藥，或薄荷輕揚宣透' }}</div>
+              </div>
+            </div>
+
+            <!-- 診斷與調和心法講評 -->
+            <div class="eq-verdict-banner" :class="eqStatusClass">
+              <div class="verdict-icon">{{ junChenZuoBalance.status === 'balanced' ? '💮' : '⚠️' }}</div>
+              <div class="verdict-body">
+                <div class="verdict-title">{{ junChenZuoBalance.diagnosis }}</div>
+                <div class="verdict-advice">💡 <strong>配伍調和指南：</strong>{{ junChenZuoBalance.harmonyAdvice }}</div>
+              </div>
+            </div>
+          </div>
+
           <!-- 陰陽四氣指針儀表 -->
           <div class="gauge-section">
             <h3 class="analysis-heading">⚖️ 四氣陰陽平衡分析</h3>
@@ -658,8 +756,10 @@ const selectedHerbs = ref([]);
 const roleLabels = ['君 (主藥)', '臣 (相佐)', '佐 (調和)', '使 (引經)'];
 const shelfSearch = ref('');
 const isBlending = ref(false);
+const isHarmonizing = ref(false);
 const divineIntent = ref('清熱退火');
 const blendDecree = ref(null);
+const harmonizeToast = ref(null);
 
 const quickPresets = [
   { name: '萬華百年退火青草茶', herbNames: ['大花咸豐草', '鳳尾草', '薄荷', '甘草'] },
@@ -695,6 +795,7 @@ const clearPot = () => {
   audio.playClick();
   selectedHerbs.value = [];
   blendDecree.value = null;
+  harmonizeToast.value = null;
   resetTimer();
 };
 
@@ -737,6 +838,216 @@ const triggerDivineBlend = async () => {
     isBlending.value = false;
   }
 };
+
+// 🪄 AI 一鍵臣佐君平衡調和
+const triggerAutoHarmonize = async () => {
+  if (selectedHerbs.value.length === 0) return;
+  audio.playChime(660);
+  isHarmonizing.value = true;
+  try {
+    const currentIds = selectedHerbs.value.map(h => h.id);
+    const result = await HerbApi.harmonizeFormula({
+      herbIds: currentIds,
+      targetIntent: divineIntent.value
+    });
+
+    if (result && result.composition) {
+      const harmonizedHerbNames = result.composition.map(c => c.herbName);
+      const found = harmonizedHerbNames
+        .map(name => props.allHerbs.find(h => h.name === name))
+        .filter(Boolean);
+
+      if (found.length) {
+        selectedHerbs.value = found.slice(0, 4);
+      }
+      blendDecree.value = result;
+      harmonizeToast.value = result.harmonizeMessage || 'AI 已為您完成臣佐君平衡調和！';
+      audio.playStamp();
+    }
+  } catch (err) {
+    console.error('Auto harmonize error:', err);
+    alert('AI 一鍵調和運算忙線中，請稍後重試！');
+  } finally {
+    isHarmonizing.value = false;
+  }
+};
+
+// ⚖️ 君臣佐使配伍平衡天平演算 (Jun-Chen-Zuo Equilibrium Engine)
+const junChenZuoBalance = computed(() => {
+  const herbs = selectedHerbs.value;
+  if (!herbs || herbs.length === 0) {
+    return {
+      overallBalanceScore: 0,
+      grade: '【茶釜尚空 · 待立君位】',
+      status: 'empty',
+      analysis: {
+        junDominance: 0,
+        chenAssistance: 0,
+        zuoTempering: 0,
+        shiHarmonizing: 0
+      },
+      junHerb: null,
+      chenHerb: null,
+      zuoHerb: null,
+      shiHerb: null,
+      diagnosis: '茶釜尚無草藥，請自百草藥櫃選入主治君藥，或點擊「AI 神來一配」建立平衡。',
+      harmonyAdvice: '先立君藥（主攻核心），再配臣藥（輔助增效），次佐制偏，終以使藥引經。'
+    };
+  }
+
+  // 計算平均寒熱性味
+  const natureWeights = {
+    '大寒': -40, '寒': -25, '微寒': -12, '涼': -6,
+    '平': 0, '微溫': +12, '溫': +25, '熱': +40
+  };
+  let totalWeight = 0;
+  herbs.forEach(h => {
+    totalWeight += (natureWeights[h.nature] ?? 0);
+  });
+  const avgColdHot = Math.round((totalWeight / (herbs.length * 40)) * 100);
+
+  // 君藥判定 (首味草藥)
+  const junHerb = herbs[0] || null;
+  // 臣藥判定 (第二味草藥)
+  const chenHerb = herbs[1] || null;
+
+  // 使藥判定：甘草優先，其次薄荷/桑葉/香茅，或第4味
+  let shiHerb = herbs.slice(2).find(h =>
+    h.name.includes('甘草') || ['薄荷', '桑葉', '香茅'].some(n => h.name.includes(n))
+  ) || (herbs.length >= 4 ? herbs[herbs.length - 1] : null);
+
+  // 佐藥判定：第3味或非使藥之輔助草藥
+  let zuoHerb = herbs.slice(2).find(h => h !== shiHerb) || (herbs.length === 3 ? herbs[2] : null);
+
+  if (herbs.length === 3 && !shiHerb && zuoHerb) {
+    if (zuoHerb.name.includes('甘草') || ['薄荷', '桑葉', '香茅'].some(n => zuoHerb.name.includes(n))) {
+      shiHerb = zuoHerb;
+      zuoHerb = null;
+    }
+  }
+
+  const junScore = junHerb ? 95 : 0;
+  const chenScore = chenHerb ? 90 : (herbs.length >= 2 ? 75 : 30);
+
+  let zuoScore = 70;
+  const hasWarmOrSweet = herbs.some(h => ['平', '微溫', '溫'].includes(h.nature) || (h.taste || []).includes('甘') || h.name.includes('甘草') || h.name.includes('枸杞') || h.name.includes('土人參'));
+  const hasCoolOrMoist = herbs.some(h => ['平', '涼', '微寒'].includes(h.nature) || h.name.includes('薄荷') || h.name.includes('桑葉'));
+
+  if (avgColdHot <= -20) {
+    zuoScore = hasWarmOrSweet ? 96 : 38;
+  } else if (avgColdHot >= 20) {
+    zuoScore = hasCoolOrMoist ? 95 : 42;
+  } else {
+    zuoScore = herbs.length >= 3 ? 94 : 76;
+  }
+
+  let shiScore = 60;
+  if (herbs.some(h => h.name.includes('甘草'))) {
+    shiScore = 98;
+  } else if (herbs.some(h => ['薄荷', '桑葉', '香茅'].some(n => h.name.includes(n)))) {
+    shiScore = 90;
+  } else if (herbs.length >= 4) {
+    shiScore = 80;
+  } else {
+    shiScore = herbs.length >= 2 ? 65 : 40;
+  }
+
+  const overallBalanceScore = Math.round(
+    (junScore * 0.28) + (chenScore * 0.24) + (zuoScore * 0.30) + (shiScore * 0.18)
+  );
+
+  let grade = '';
+  let status = 'balanced';
+  let diagnosis = '';
+  let harmonyAdvice = '';
+
+  if (herbs.length === 1) {
+    grade = '【孤君無臣 · 獨木難支】';
+    status = 'needs_chen';
+    diagnosis = `釜中僅有「${herbs[0].name}」單一君藥，缺乏臣藥相輔相成與佐使調和，單味藥力易顯單薄或偏性突兀。`;
+    harmonyAdvice = '建議補入相配之臣藥加強主治，或點擊「AI 一鍵臣佐君平衡調和」自動配全四象。';
+  } else if (herbs.length === 2) {
+    grade = '【君臣相得 · 待補佐使】';
+    status = 'needs_zuo';
+    diagnosis = `君藥（${junHerb?.name}）與臣藥（${chenHerb?.name}）配伍成型，但缺乏佐藥制其偏性與使藥調和脾胃。`;
+    harmonyAdvice = avgColdHot < -10
+      ? '方劑偏涼，建議點擊「AI 一鍵臣佐君平衡調和」補入微溫甘平佐藥（如甘草或枸杞）以佐制苦寒、護衛胃氣。'
+      : '建議補入使藥（如薄荷或甘草）引經入絡、調和百草風味。';
+  } else if (zuoScore <= 50) {
+    grade = '【偏寒少佐 · 易傷胃陽】';
+    status = 'needs_zuo';
+    diagnosis = `君臣藥性偏大苦大寒（寒熱指數 ${avgColdHot}），釜中缺乏甘平佐藥佐制寒毒，空腹飲用易引發脾胃不適。`;
+    harmonyAdvice = '強烈建議點擊「AI 一鍵臣佐君平衡調和」補入【甘草】或【枸杞子】作為佐藥，甘以緩之、健脾和中！';
+  } else if (overallBalanceScore >= 90) {
+    grade = '【四大法度完備 · 臣佐君大和】';
+    status = 'balanced';
+    diagnosis = `君藥主攻明確，臣藥輔弼相成，佐藥制偏護中，使藥引經調和。臣佐君三位一體，陰陽中正，四氣和平！`;
+    harmonyAdvice = '方劑配伍結構精妙，寒熱相制，入口甘潤，具備傳統常民茶飲之最高和諧法度。';
+  } else {
+    grade = '【善劑相生 · 臣佐君調暢】';
+    status = 'balanced';
+    diagnosis = `君臣佐使分工大致妥當，陰陽寒熱互為表裡，滋味甘平回甘。`;
+    harmonyAdvice = '配伍得宜，可依個人體質酌量增減煎煮時間。';
+  }
+
+  return {
+    overallBalanceScore,
+    grade,
+    status,
+    analysis: {
+      junDominance: junScore,
+      chenAssistance: chenScore,
+      zuoTempering: zuoScore,
+      shiHarmonizing: shiScore
+    },
+    junHerb,
+    chenHerb,
+    zuoHerb,
+    shiHerb,
+    diagnosis,
+    harmonyAdvice
+  };
+});
+
+const getHerbAssignedRole = (herbId) => {
+  const evalData = junChenZuoBalance.value;
+  if (!evalData) return { roleCode: 'jun', badge: '👑 君', title: '君藥', share: '40%' };
+  if (evalData.junHerb && evalData.junHerb.id === herbId) {
+    const share = selectedHerbs.value.length === 1 ? '100%' : selectedHerbs.value.length === 2 ? '60%' : '40%';
+    return { roleCode: 'jun', badge: '👑 君', title: '君藥 (主導)', share };
+  }
+  if (evalData.chenHerb && evalData.chenHerb.id === herbId) {
+    const share = selectedHerbs.value.length === 2 ? '40%' : '28%';
+    return { roleCode: 'chen', badge: '🛡️ 臣', title: '臣藥 (輔弼)', share };
+  }
+  if (evalData.shiHerb && evalData.shiHerb.id === herbId) {
+    return { roleCode: 'shi', badge: '🕊️ 使', title: '使藥 (引經)', share: '14%' };
+  }
+  return { roleCode: 'zuo', badge: '⚖️ 佐', title: '佐藥 (制偏)', share: '18%' };
+};
+
+const eqScoreClass = computed(() => {
+  const s = junChenZuoBalance.value.overallBalanceScore;
+  if (s >= 90) return 'score-great';
+  if (s >= 75) return 'score-good';
+  if (s >= 50) return 'score-fair';
+  return 'score-poor';
+});
+
+const eqMeterClass = computed(() => {
+  const s = junChenZuoBalance.value.overallBalanceScore;
+  if (s >= 90) return 'fill-great';
+  if (s >= 75) return 'fill-good';
+  if (s >= 50) return 'fill-fair';
+  return 'fill-poor';
+});
+
+const eqStatusClass = computed(() => {
+  const st = junChenZuoBalance.value.status;
+  if (st === 'balanced') return 'status-balanced';
+  if (st === 'needs_zuo') return 'status-warning';
+  return 'status-info';
+});
 
 // 陰陽寒熱指針演算
 const balanceScore = computed(() => {
@@ -1518,6 +1829,19 @@ onBeforeUnmount(() => {
   line-height: 1.5;
 }
 
+.decree-harmonize-pill {
+  display: inline-flex;
+  align-items: center;
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
 .decree-warnings {
   display: flex;
   gap: 8px;
@@ -1695,15 +2019,63 @@ onBeforeUnmount(() => {
   border: 1px solid var(--border-light);
   border-radius: 8px;
   font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.pot-herb-chip.role-chip-jun {
+  border-left: 4px solid #b91c1c;
+  background: #fef2f2;
+}
+
+.pot-herb-chip.role-chip-chen {
+  border-left: 4px solid #2563eb;
+  background: #eff6ff;
+}
+
+.pot-herb-chip.role-chip-zuo {
+  border-left: 4px solid #059669;
+  background: #ecfdf5;
+}
+
+.pot-herb-chip.role-chip-shi {
+  border-left: 4px solid #d97706;
+  background: #fffbeb;
 }
 
 .herb-role-badge {
   background: var(--primary);
   color: #fff;
   font-size: 11px;
-  padding: 2px 6px;
+  padding: 2px 7px;
   border-radius: 4px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.herb-role-badge.badge-jun {
+  background: #b91c1c;
+}
+
+.herb-role-badge.badge-chen {
+  background: #2563eb;
+}
+
+.herb-role-badge.badge-zuo {
+  background: #059669;
+}
+
+.herb-role-badge.badge-shi {
+  background: #d97706;
+}
+
+.herb-chip-share {
+  font-size: 11px;
   font-weight: 700;
+  color: var(--ink-muted);
+  background: rgba(0, 0, 0, 0.05);
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-right: 6px;
 }
 
 .herb-chip-name {
@@ -1806,6 +2178,276 @@ onBeforeUnmount(() => {
   font-size: 15px;
   font-weight: 800;
   color: var(--primary-deep);
+}
+
+/* ⚖️ 君臣佐使配伍平衡天平樣式 */
+.equilibrium-section {
+  padding-bottom: 20px;
+  border-bottom: 1px dashed var(--border-light);
+  margin-bottom: 20px;
+}
+
+.equilibrium-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.eq-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eq-score-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  width: fit-content;
+}
+
+.eq-score-badge.score-great {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.eq-score-badge.score-good {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.eq-score-badge.score-fair {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.eq-score-badge.score-poor {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.btn-auto-harmonize {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 18px;
+  font-size: 12.5px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #059669, #0d9488);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(5, 150, 105, 0.25);
+  transition: all 0.25s ease;
+}
+
+.btn-auto-harmonize:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(5, 150, 105, 0.35);
+}
+
+.btn-auto-harmonize:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-sparkle {
+  font-size: 14px;
+}
+
+/* 總平衡度進度條 */
+.eq-meter-wrapper {
+  margin-bottom: 16px;
+}
+
+.eq-meter-track {
+  height: 12px;
+  background: var(--bg-subtle);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+  position: relative;
+}
+
+.eq-meter-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.eq-meter-fill.fill-great {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.eq-meter-fill.fill-good {
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+}
+
+.eq-meter-fill.fill-fair {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.eq-meter-fill.fill-poor {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.eq-meter-hints {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+
+/* 四象法度卡片 2x2 網格 */
+.eq-roles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.eq-role-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.eq-role-card.jun {
+  border-top: 3px solid #b91c1c;
+  background: #fef2f2;
+}
+
+.eq-role-card.chen {
+  border-top: 3px solid #2563eb;
+  background: #eff6ff;
+}
+
+.eq-role-card.zuo {
+  border-top: 3px solid #059669;
+  background: #ecfdf5;
+}
+
+.eq-role-card.shi {
+  border-top: 3px solid #d97706;
+  background: #fffbeb;
+}
+
+.eq-role-card.empty {
+  opacity: 0.65;
+  filter: grayscale(0.3);
+}
+
+.role-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.role-pillar-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.role-pillar-badge.jun {
+  background: rgba(185, 28, 28, 0.12);
+  color: #991b1b;
+}
+
+.role-pillar-badge.chen {
+  background: rgba(37, 99, 235, 0.12);
+  color: #1e40af;
+}
+
+.role-pillar-badge.zuo {
+  background: rgba(5, 150, 105, 0.12);
+  color: #065f46;
+}
+
+.role-pillar-badge.shi {
+  background: rgba(217, 119, 6, 0.12);
+  color: #92400e;
+}
+
+.role-score-text {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--ink-heavy);
+}
+
+.role-herb-name {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--ink-heavy);
+  margin-top: 2px;
+}
+
+.role-herb-duty {
+  font-size: 11px;
+  color: var(--ink-muted);
+  line-height: 1.4;
+}
+
+/* 診斷與調和心法講評 */
+.eq-verdict-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.eq-verdict-banner.status-balanced {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.eq-verdict-banner.status-warning {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+}
+
+.eq-verdict-banner.status-info {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+}
+
+.verdict-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.verdict-title {
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+
+.verdict-advice {
+  font-size: 12px;
+  opacity: 0.95;
 }
 
 .gauge-section,

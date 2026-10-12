@@ -628,7 +628,7 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.ok(singleFormulaRes.body.data.name.includes('百年退火青草茶'));
     assert.ok(singleFormulaRes.body.data.composition.some(c => c.role === '君'));
 
-    // 8.4 🎲 AI 神來一配 (Divine Blend) 演算法演算測試
+    // 8.4 🎲 AI 神來一配 (Divine Blend) 演算法演算測試 (含君臣佐使平衡)
     const blendRes = await fetchJson('/api/formulas/blend', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -643,6 +643,35 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.ok(blendRes.body.data.composition.length >= 2);
     assert.ok(typeof blendRes.body.data.balanceScore === 'number');
     assert.ok(blendRes.body.data.channelsCovered);
+    // 臣佐君平衡對象檢驗
+    assert.ok(blendRes.body.data.equilibrium);
+    assert.ok(blendRes.body.data.equilibrium.overallBalanceScore >= 80);
+    assert.ok(blendRes.body.data.equilibrium.composition.some(c => c.role === '君'));
+    assert.ok(blendRes.body.data.equilibrium.composition.some(c => c.role === '臣'));
+    assert.ok(blendRes.body.data.equilibrium.composition.some(c => c.role === '佐' || c.role === '使'));
+    assert.ok(blendRes.body.data.equilibrium.analysis.junDominance > 0);
+    assert.ok(blendRes.body.data.equilibrium.analysis.zuoTempering > 0);
+
+    // 8.5 🪄 AI 一鍵臣佐君平衡調和 (Auto-Harmonize) 演算法測試
+    // 投入偏苦寒草藥 (大花咸豐草 id: 1)，測試自動補入甘草/薄荷佐使調和至 90+ 分大和
+    const harmRes = await fetchJson('/api/formulas/harmonize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        herbIds: [1],
+        targetIntent: '清熱退火'
+      })
+    });
+    assert.equal(harmRes.status, 200);
+    assert.equal(harmRes.body.success, true);
+    assert.equal(harmRes.body.data.isHarmonized, true);
+    assert.ok(harmRes.body.data.equilibrium);
+    assert.ok(harmRes.body.data.equilibrium.overallBalanceScore >= 90);
+    assert.ok(harmRes.body.data.addedHerbs.length > 0);
+    assert.ok(harmRes.body.data.harmonizeMessage.includes('臣佐君'));
+    assert.ok(harmRes.body.data.composition.some(c => c.role === '君'));
+    assert.ok(harmRes.body.data.composition.some(c => c.role === '臣'));
+    assert.ok(harmRes.body.data.composition.some(c => c.role === '佐' || c.role === '使'));
   });
 
   // 9. 專家 LLM AI 客製配方建議測試
