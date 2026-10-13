@@ -450,4 +450,40 @@ const matchingHerbs = computed(() => {
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 640px) {
+  .meridian-map-container {
+    padding: 18px 14px;
+    border-radius: 14px;
+  }
+
+  .map-header {
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .map-seal {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .map-title {
+    font-size: 18px;
+  }
+
+  .elements-nav-bar {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .element-detail-card {
+    padding: 18px 14px;
+    border-radius: 14px;
+  }
+
+  .matching-herbs-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

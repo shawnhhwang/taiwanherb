@@ -960,4 +960,113 @@ const enterAdmin = () => {
   color: #dc2626;
   opacity: 0.6;
 }
+
+/* 行動端與 iPhone 最佳化 */
+@media (max-width: 768px) {
+  .auth-modal-overlay {
+    padding: 8px;
+  }
+
+  .auth-modal-card {
+    max-width: 96vw;
+    max-height: 94dvh;
+    border-radius: 16px;
+  }
+
+  .auth-modal-header {
+    padding: 14px 16px;
+  }
+
+  .header-seal-wrap {
+    gap: 8px;
+  }
+
+  .auth-seal {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .auth-modal-title {
+    font-size: 15px;
+  }
+
+  .auth-modal-subtitle {
+    display: none;
+  }
+
+  .auth-tab-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 10px;
+    gap: 4px;
+    scrollbar-width: none;
+  }
+
+  .auth-tab-btn {
+    padding: 10px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .auth-modal-body {
+    padding: 16px 14px;
+    gap: 16px;
+  }
+
+  .login-form-box {
+    padding: 16px 14px;
+  }
+
+  .custom-input {
+    font-size: 16px !important;
+  }
+
+  .current-user-banner {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 14px;
+  }
+
+  .banner-user-actions {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .btn-enter-admin,
+  .btn-logout {
+    flex: 1;
+    text-align: center;
+  }
+
+  .hint-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .role-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .matrix-table th:first-child,
+  .matrix-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: var(--bg-card);
+    z-index: 1;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+    white-space: nowrap;
+  }
+
+  .matrix-table th {
+    font-size: 11.5px;
+    padding: 8px 10px;
+  }
+
+  .matrix-table td {
+    font-size: 11.5px;
+    padding: 8px 10px;
+  }
+}
 </style>

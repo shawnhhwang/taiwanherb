@@ -967,4 +967,58 @@ const copyShopInfo = (shop) => {
   font-size: 13px;
   cursor: pointer;
 }
+
+/* 行動端與 iPhone 最佳化 */
+@media (max-width: 768px) {
+  .allied-banner {
+    padding: 24px 16px;
+  }
+
+  .allied-main-title {
+    font-size: 22px;
+  }
+
+  .guides-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shops-control-bar {
+    padding: 14px 12px;
+  }
+
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .region-buttons {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+
+  .filter-pill-btn {
+    flex-shrink: 0;
+  }
+
+  .search-box {
+    min-width: 100% !important;
+    width: 100%;
+  }
+
+  .shop-search-input {
+    font-size: 16px !important;
+  }
+
+  .shops-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-card {
+    padding: 16px 14px;
+  }
+}
 </style>

@@ -689,4 +689,98 @@ const loadPreset = (preset) => {
   border-top: 1px solid var(--border-light);
   line-height: 1.5;
 }
+
+/* 行動端與 iPhone 最佳化 */
+@media (max-width: 768px) {
+  .compare-modal-card {
+    width: 96vw;
+    max-height: 94dvh;
+    border-radius: 16px;
+  }
+
+  .modal-title-group {
+    gap: 8px;
+  }
+
+  .compare-seal {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .compare-modal-title {
+    font-size: 16px;
+  }
+
+  .compare-modal-subtitle {
+    display: none;
+  }
+
+  .compare-toolbar {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .compare-add-group {
+    min-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .compare-select {
+    max-width: 100%;
+    width: 100%;
+    font-size: 16px !important;
+  }
+
+  .btn-add-selected {
+    width: 100%;
+    padding: 8px 12px;
+  }
+
+  .compare-presets-group {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    padding-bottom: 4px;
+  }
+
+  /* 比對表格吸頂首欄 (Sticky Column) 方便左右滑動比對 */
+  .th-property,
+  .td-header {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--bg-subtle) !important;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+    min-width: 105px;
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+
+  .th-herb-column {
+    min-width: 180px;
+    padding: 10px 12px;
+  }
+
+  .compare-table td {
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
+
+  .empty-quick-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .compare-modal-title {
+    font-size: 15px;
+  }
+
+  .btn-clear-compare {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}
 </style>

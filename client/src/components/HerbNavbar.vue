@@ -365,6 +365,59 @@
               <span>系統節點狀態監控</span>
             </button>
           </div>
+
+          <!-- 使用者身分卡片 (行動端快捷操作) -->
+          <div class="mobile-user-card" @click="handleMobileAction('open-auth')">
+            <div class="m-user-left">
+              <span class="m-user-avatar">{{ currentUser?.avatar || '👤' }}</span>
+              <div>
+                <div class="m-user-name">{{ currentUser ? currentUser.name : '登入 / 身分切換' }}</div>
+                <div class="m-user-role">{{ currentUser ? (currentUser.roleTitle || currentUser.role) : '點擊切換角色或登入管理' }}</div>
+              </div>
+            </div>
+            <span class="m-user-arrow">➔</span>
+          </div>
+
+          <!-- 主題與聲景控制 (行動端專用面板) -->
+          <div class="mobile-theme-audio-box">
+            <div class="m-box-title">🎨 東方美學主題與草木聲景</div>
+            <div class="m-theme-options">
+              <button
+                class="m-theme-btn"
+                :class="{ active: currentTheme === 'parchment' }"
+                @click="setTheme('parchment')"
+              >
+                <span class="m-theme-dot" style="background: #d4a373;"></span>
+                <span>宣紙米黃</span>
+              </button>
+              <button
+                class="m-theme-btn"
+                :class="{ active: currentTheme === 'bamboo' }"
+                @click="setTheme('bamboo')"
+              >
+                <span class="m-theme-dot" style="background: #2d6a4f;"></span>
+                <span>晨曦竹林</span>
+              </button>
+              <button
+                class="m-theme-btn"
+                :class="{ active: currentTheme === 'midnight' }"
+                @click="setTheme('midnight')"
+              >
+                <span class="m-theme-dot" style="background: #111827;"></span>
+                <span>暮夜玄青</span>
+              </button>
+            </div>
+            <div class="m-audio-options">
+              <button class="m-audio-btn" :class="{ active: !isMuted }" @click="toggleAudio">
+                <span>{{ isMuted ? '🔇' : '🔔' }}</span>
+                <span>{{ isMuted ? '音效：靜音' : '音效：已開' }}</span>
+              </button>
+              <button class="m-audio-btn" :class="{ active: isAmbientOn }" @click="toggleAmbientSound">
+                <span>🍃</span>
+                <span>{{ isAmbientOn ? '松風：播放中' : '松風：暫停' }}</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </transition>
@@ -1048,6 +1101,132 @@ const handleMobileAction = (actionEvent) => {
   border-color: var(--primary);
 }
 
+/* 行動端抽屜使用者卡片 */
+.mobile-user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  background: var(--bg-parchment);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  margin-top: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-user-card:hover {
+  border-color: var(--primary);
+  background: #ffffff;
+}
+
+.m-user-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.m-user-avatar {
+  font-size: 22px;
+}
+
+.m-user-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--primary-deep);
+}
+
+.m-user-role {
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+.m-user-arrow {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* 行動端抽屜美學主題與聲景區塊 */
+.mobile-theme-audio-box {
+  background: var(--bg-parchment);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: 12px;
+}
+
+.m-box-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-heavy);
+  margin-bottom: 8px;
+}
+
+.m-theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.m-theme-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 4px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-body);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.m-theme-btn.active {
+  border-color: var(--primary-deep);
+  background: var(--primary-pale);
+  color: var(--primary-deep);
+  font-weight: 700;
+}
+
+.m-theme-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.m-audio-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.m-audio-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.m-audio-btn.active {
+  border-color: var(--primary);
+  background: var(--primary-pale);
+  color: var(--primary-deep);
+}
+
 /* 抽屜過渡動畫 */
 .mobile-drawer-slide-enter-active,
 .mobile-drawer-slide-leave-active {
@@ -1169,10 +1348,16 @@ const handleMobileAction = (actionEvent) => {
   }
 }
 
-/* 5. <= 540px (各款智慧型手機)：極致簡約 */
+/* 5. <= 540px (iPhone 等各款智慧型手機)：極致簡約且保證 0 擠壓與 0 橫向滾動 */
 @media (max-width: 540px) {
+  .top-navbar {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
   .navbar-inner {
     padding: 6px 12px;
+  }
+  .brand-section {
+    gap: 8px;
   }
   .brand-title {
     font-size: 15px;
@@ -1182,18 +1367,49 @@ const handleMobileAction = (actionEvent) => {
     height: 32px;
     font-size: 17px;
   }
+  /* 手機頂部僅保留頭像、鈴聲開關與漢堡選單，完整主題與聲景直接在抽屜內自如操作 */
+  .theme-switcher-group,
+  .ambient-btn {
+    display: none;
+  }
+  .nav-ambient-capsule {
+    padding: 2px 4px;
+    background: transparent;
+    border: none;
+  }
   .user-name-tag,
   .user-role-pill {
     display: none;
   }
   .btn-user-auth {
-    padding: 4px 6px;
+    padding: 4px;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    justify-content: center;
   }
   .nav-auth-divider {
     display: none;
   }
   .mobile-tabs-grid {
     grid-template-columns: 1fr;
+  }
+  .mobile-nav-drawer {
+    padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* 6. <= 390px (iPhone SE, iPhone 12/13 mini 等小螢幕手機) */
+@media (max-width: 390px) {
+  .brand-title {
+    font-size: 14.5px;
+  }
+  .navbar-inner {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+  .nav-right-cluster {
+    gap: 5px;
   }
 }
 </style>

@@ -305,4 +305,38 @@ const selectRegion = (regionName) => {
   border-radius: 4px;
   border: 1px solid rgba(0, 0, 0, 0.04);
 }
+
+@media (max-width: 640px) {
+  .terroir-map-container {
+    padding: 14px 12px;
+  }
+  .terroir-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .terroir-main-title {
+    font-size: 16px;
+  }
+  .terroir-regions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .terroir-card {
+    padding: 10px;
+  }
+  .terroir-card-name {
+    font-size: 13px;
+  }
+  .terroir-card-desc {
+    font-size: 10.5px;
+    margin-bottom: 6px;
+  }
+}
+
+@media (max-width: 380px) {
+  .terroir-regions-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

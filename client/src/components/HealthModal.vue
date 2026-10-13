@@ -13,8 +13,8 @@
         <div v-if="!health" style="text-align: center; padding: 20px;">載入系統狀態中...</div>
 
         <div v-else>
-          <div style="background: var(--bg-parchment); border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--border-light);">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13.5px;">
+          <div class="health-card-block">
+            <div class="health-info-grid">
               <div><strong>運行狀態：</strong> <span style="color: #059669; font-weight: bold;">UP (正常)</span></div>
               <div><strong>服務器時間：</strong> {{ uptime }}</div>
               <div><strong>Node.js 版本：</strong> {{ health.nodeVersion }}</div>
@@ -25,11 +25,11 @@
           </div>
 
           <!-- 資料庫 Failover 區塊 -->
-          <div style="border: 1px solid var(--border-light); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-            <h4 style="font-size: 14.5px; font-weight: bold; color: var(--primary-deep); margin-bottom: 10px;">
+          <div class="health-card-block">
+            <h4 class="health-block-title">
               💾 資料庫與容錯切換 (Failover)
             </h4>
-            <div style="font-size: 13.5px; display: flex; flex-direction: column; gap: 6px;">
+            <div class="health-details-list">
               <div><strong>運行模式：</strong> {{ health.database?.modeDescription }}</div>
               <div><strong>活躍節點 (Active Node)：</strong> <span class="badge-channel" style="font-weight: bold; color: var(--primary);">{{ health.database?.activeNode }}</span></div>
               <div><strong>累積故障轉移次數：</strong> {{ health.database?.failoverCount }} 次</div>
@@ -41,7 +41,7 @@
           </div>
 
           <!-- Failover 測試演練按鈕 -->
-          <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <div class="health-actions-row">
             <button
               class="btn-pill btn-pill-subtle"
               :disabled="isTestingFailover"
@@ -80,3 +80,59 @@ const triggerDrill = async () => {
   }
 };
 </script>
+
+<style scoped>
+.health-card-block {
+  background: var(--bg-parchment);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 18px;
+  border: 1px solid var(--border-light);
+}
+
+.health-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  font-size: 13.5px;
+}
+
+.health-block-title {
+  font-size: 14.5px;
+  font-weight: bold;
+  color: var(--primary-deep);
+  margin-bottom: 10px;
+}
+
+.health-details-list {
+  font-size: 13.5px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.health-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .health-info-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .health-actions-row {
+    flex-direction: column;
+  }
+
+  .health-actions-row button {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
+</style>

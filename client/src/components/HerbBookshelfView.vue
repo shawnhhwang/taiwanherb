@@ -2399,4 +2399,172 @@ onMounted(() => {
   color: var(--ink-muted);
   margin-top: 6px;
 }
+
+/* ========================================================
+   iPhone 與行動裝置全響應式及觸控沉浸最佳化
+   ======================================================== */
+@media (max-width: 860px) {
+  .bookshelf-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 20px 16px;
+  }
+
+  .banner-stats-box {
+    align-self: stretch;
+    justify-content: space-around;
+  }
+
+  .banner-main-title {
+    font-size: 22px;
+  }
+
+  .bookshelf-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .category-pills {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    scrollbar-width: none;
+  }
+
+  .cat-pill-btn {
+    flex-shrink: 0;
+  }
+
+  .search-sort-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .shelf-search-box {
+    width: 100%;
+  }
+
+  .shelf-search-input {
+    width: 100%;
+    font-size: 16px !important;
+  }
+
+  .shelf-sort-select {
+    width: 100%;
+    font-size: 16px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  /* 沉浸式線上試閱全螢幕手機閱讀模式 */
+  .preview-reader-overlay {
+    padding: 0;
+  }
+
+  .preview-reader-window {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .reader-toolbar {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .reader-book-title {
+    font-size: 14px;
+  }
+
+  .reader-author {
+    display: none;
+  }
+
+  .reader-body-wrapper {
+    padding: 16px 14px;
+  }
+
+  .chapter-switch-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 8px;
+  }
+
+  .chapter-tab-pill {
+    flex-shrink: 0;
+  }
+
+  .reader-footer-bar {
+    padding: 10px 12px;
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .footer-action-right {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  /* 購書結帳對話框手機最適化 */
+  .checkout-modal-overlay {
+    padding: 8px;
+  }
+
+  .checkout-modal-card {
+    width: 100%;
+    max-width: 96vw;
+    max-height: 92dvh;
+    padding: 18px 14px;
+    border-radius: 16px;
+  }
+
+  .spec-choices-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* 藏書閣抽屜全螢幕 */
+  .my-orders-drawer {
+    width: 100vw;
+    max-width: 100vw;
+    padding: 18px 14px;
+    padding-top: calc(18px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (max-width: 480px) {
+  .book-actions-footer {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .book-info-area {
+    padding: 16px 14px;
+  }
+
+  .book-title {
+    font-size: 17px;
+  }
+
+  .price-spec-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .spec-price {
+    align-self: flex-end;
+  }
+}
 </style>

@@ -642,4 +642,62 @@ const onImageError = (e) => {
   color: #78350f;
   line-height: 1.4;
 }
+
+/* 行動端與 iPhone 最佳化 */
+@media (max-width: 768px) {
+  .detail-back-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .detail-breadcrumbs {
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+
+  .detail-header-seal-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .detail-title {
+    font-size: 24px !important;
+  }
+
+  .detail-image {
+    height: 240px;
+  }
+
+  .shops-mini-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .related-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-info-row {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .detail-title {
+    font-size: 22px !important;
+  }
+
+  .detail-image {
+    height: 210px;
+  }
+
+  .section-block {
+    padding: 14px 16px;
+  }
+
+  .allied-shops-recommend-card {
+    padding: 14px 12px;
+  }
+}
 </style>

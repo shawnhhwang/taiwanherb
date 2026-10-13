@@ -3060,4 +3060,133 @@ onBeforeUnmount(() => {
   font-size: 13px;
   cursor: pointer;
 }
+
+/* 行動端與 iPhone 最佳化 */
+@media (max-width: 768px) {
+  .alchemy-banner {
+    padding: 24px 16px;
+  }
+
+  .alchemy-main-title {
+    font-size: 22px;
+  }
+
+  .alchemy-tabs-nav {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+    padding-bottom: 8px;
+  }
+
+  .tab-switch-btn {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .roles-filter-bar {
+    padding: 14px 12px;
+  }
+
+  .filter-cluster {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .pills-cluster {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    width: 100%;
+    padding-bottom: 4px;
+  }
+
+  .filter-pill-btn {
+    flex-shrink: 0;
+  }
+
+  .formulas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preset-formulas-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px 12px;
+  }
+
+  .quick-presets-group {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    width: 100%;
+    padding-bottom: 4px;
+  }
+
+  .preset-pill {
+    flex-shrink: 0;
+  }
+
+  .divine-blend-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-divine-blend {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .select-intent-dropdown {
+    width: 100%;
+    font-size: 16px !important;
+  }
+
+  .kettle-stage-card,
+  .analysis-stage-card {
+    padding: 18px 14px;
+  }
+
+  .consult-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .consult-textarea {
+    font-size: 16px !important;
+  }
+
+  .expert-select-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 540px) {
+  .eq-roles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-ingredients-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-result-card {
+    padding: 16px 14px;
+  }
+
+  .recipe-result-title {
+    font-size: 18px;
+  }
+
+  .btn-load-ai-recipe {
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+  }
+}
 </style>

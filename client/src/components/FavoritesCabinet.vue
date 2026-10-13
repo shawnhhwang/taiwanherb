@@ -264,4 +264,31 @@ defineEmits(['browse-catalog', 'view-herb', 'remove-favorite']);
   color: #ef4444;
   cursor: pointer;
 }
+
+@media (max-width: 640px) {
+  .cabinet-container {
+    padding: 18px 14px;
+    border-radius: 14px;
+  }
+
+  .cabinet-header {
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .cabinet-seal {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .cabinet-title {
+    font-size: 18px;
+  }
+
+  .cabinet-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
 </style>

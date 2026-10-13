@@ -4640,4 +4640,40 @@ onMounted(() => {
   color: #fff !important;
   border-color: var(--primary-deep) !important;
 }
+
+/* 行動端與 iPhone 最佳化 */
+@media (max-width: 768px) {
+  .herb-editor-modal {
+    max-width: 96vw !important;
+    max-height: 94dvh !important;
+    border-radius: 16px;
+  }
+
+  .editor-body-split {
+    grid-template-columns: 1fr;
+    padding: 16px 14px;
+    gap: 16px;
+  }
+
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar-search-input {
+    width: 100%;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
 </style>

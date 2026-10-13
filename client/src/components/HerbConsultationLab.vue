@@ -899,4 +899,87 @@ const submitConsultation = async () => {
 .strip-text strong {
   color: var(--primary-deep);
 }
+
+/* 行動端與 iPhone 最佳化 */
+@media (max-width: 768px) {
+  .consult-banner {
+    padding: 24px 16px;
+  }
+
+  .consult-main-title {
+    font-size: 22px;
+  }
+
+  .experts-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .expert-card {
+    padding: 12px;
+  }
+
+  .expert-avatar {
+    font-size: 28px;
+  }
+
+  .consult-input-card {
+    padding: 16px 14px;
+  }
+
+  .consult-textarea {
+    font-size: 16px !important;
+    padding: 10px 12px;
+  }
+
+  .consult-input-bottom {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .btn-consult-submit {
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+  }
+
+  .result-scroll-plate {
+    padding: 18px 14px;
+    border-radius: 14px;
+  }
+
+  .result-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .result-header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .citations-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 440px) {
+  .experts-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preset-questions-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    scrollbar-width: none;
+  }
+
+  .preset-chip {
+    flex-shrink: 0;
+  }
+}
 </style>

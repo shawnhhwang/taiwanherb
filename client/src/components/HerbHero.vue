@@ -570,4 +570,47 @@ const onQuickSearch = (name) => {
     max-width: 100%;
   }
 }
+
+@media (max-width: 640px) {
+  .hero-inner {
+    padding: 16px 12px;
+    gap: 20px;
+  }
+  .hero-main-title {
+    font-size: 26px;
+    line-height: 1.3;
+  }
+  .hero-intro-text {
+    font-size: 13.5px;
+  }
+  .solar-wisdom-card {
+    padding: 14px 12px;
+  }
+  .hero-navigation-pills {
+    gap: 8px;
+  }
+  .hero-nav-pill {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .card-image-window {
+    height: 190px;
+  }
+  .specimen-card-content {
+    padding: 14px;
+  }
+}
+
+@media (max-width: 390px) {
+  .hero-main-title {
+    font-size: 22px;
+  }
+  .hero-intro-text {
+    font-size: 12.5px;
+  }
+  .hero-nav-pill {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
 </style>

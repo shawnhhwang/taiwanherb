@@ -269,4 +269,34 @@ const onImageError = (e) => {
   margin-right: 4px;
   font-weight: 500;
 }
+
+/* 行動端與觸控螢幕優化 */
+@media (hover: none), (max-width: 768px) {
+  .herb-card {
+    transform: none !important;
+  }
+
+  .card-fav-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+    top: 8px;
+    right: 8px;
+  }
+
+  .card-herb-number {
+    right: 50px;
+    top: 10px;
+  }
+
+  .btn-compare-toggle {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .btn-card-action {
+    font-size: 13px;
+    padding: 6px 0;
+  }
+}
 </style>

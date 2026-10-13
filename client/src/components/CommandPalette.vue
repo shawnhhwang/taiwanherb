@@ -352,4 +352,46 @@ const close = () => {
   font-size: 11.5px;
   color: var(--ink-muted);
 }
+
+@media (max-width: 640px) {
+  .cmd-palette-backdrop {
+    padding-top: max(16px, env(safe-area-inset-top, 16px));
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+  }
+
+  .cmd-palette-modal {
+    max-width: 100%;
+    max-height: 85dvh;
+    border-radius: 16px;
+  }
+
+  .cmd-input {
+    font-size: 16px !important;
+  }
+
+  .cmd-kbd {
+    display: none;
+  }
+
+  .cmd-shortcuts-row {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+
+  .cmd-shortcut-tag {
+    flex-shrink: 0;
+  }
+
+  .cmd-footer-bar {
+    padding: 8px 14px;
+    gap: 8px;
+    font-size: 11px;
+    flex-wrap: wrap;
+  }
+}
 </style>

@@ -84,6 +84,9 @@ body {
   color: var(--ink-body);
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 a {
@@ -110,26 +113,7 @@ button {
   min-height: 100vh;
 }
 
-/* 頂部導覽列 */
-.top-navbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
-}
-
-.navbar-inner {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 12px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
+/* 頂部導覽列由 HerbNavbar.vue 元件獨立封裝管理 */
 
 .brand-section {
   display: flex;
@@ -950,18 +934,134 @@ button {
   }
 }
 
-@media (max-width: 640px) {
-  .navbar-inner {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+/* ========================================================
+   iOS / iPhone 行動裝置完全相容優化 (Safe Area, Touch UX & Auto-Zoom Prevention)
+   ======================================================== */
+@media (max-width: 768px) {
+  /* 防止 iOS Safari 點擊輸入框時畫面強制放大 (Auto-Zoom Issue) */
+  input, select, textarea {
+    font-size: 16px !important;
   }
-  .nav-search-container {
-    max-width: 100%;
+
+  /* 消除行動觸控點擊延遲與灰框 */
+  button, a, .btn-pill, .filter-chip, .nav-tool-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
+
+  .main-content {
+    padding: 12px 10px;
+  }
+
+  .main-wrapper {
+    padding: 14px 10px;
+    gap: 16px;
+  }
+
   .catalog-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: 10px;
+  }
+
+  .herbs-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .detail-container {
+    padding: 18px 14px;
+    border-radius: 14px;
+  }
+
+  /* 模態彈窗行動端自適應 */
+  .modal-overlay {
+    padding: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-card {
+    max-width: 96vw !important;
+    max-height: 92dvh !important;
+    border-radius: 16px !important;
+  }
+
+  .sidebar {
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+
+  /* 首頁行動呼召卡與節氣提示條 */
+  .home-cta-card {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: 20px 16px;
+    gap: 16px;
+  }
+
+  .btn-cta-knowledge {
+    width: 100%;
+    text-align: center;
+  }
+
+  .seasonal-recommendation-toast {
+    padding: 8px 12px;
+    gap: 10px;
+  }
+
+  .toast-text {
+    font-size: 12.5px;
+  }
+
+  /* 免責宣告彈窗手機最適化 */
+  .disclaimer-modal-overlay {
+    padding: 8px;
+  }
+
+  .disclaimer-modal-card {
+    max-width: 96vw !important;
+    max-height: 92dvh !important;
+    border-radius: 16px;
+  }
+
+  .disclaimer-modal-header {
+    padding: 14px 16px;
+  }
+
+  .disclaimer-modal-body {
+    padding: 16px 14px;
+    gap: 12px;
+  }
+
+  .disclaimer-modal-footer {
+    padding: 12px 14px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-ack {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .catalog-title-group h2 {
+    font-size: 19px;
+  }
+
+  .home-section-title {
+    font-size: 20px;
+  }
+
+  .catalog-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .select-custom {
+    flex: 1;
   }
 }
 
