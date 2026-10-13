@@ -183,6 +183,14 @@
             🍵 {{ preset.name }}
           </button>
           <button class="preset-pill reset-pill" @click="clearPot">清空釜中草藥</button>
+          <button
+            class="preset-pill saved-formulas-pill"
+            :class="{ active: isSavedDrawerOpen }"
+            @click="isSavedDrawerOpen = !isSavedDrawerOpen"
+            title="檢視我保存的私房配方庫"
+          >
+            📜 私房配方庫 ({{ savedFormulas.length }})
+          </button>
         </div>
 
         <!-- 🎲 AI 神來一配特色按鈕群 -->
@@ -207,6 +215,50 @@
           </select>
         </div>
       </div>
+
+      <!-- 📜 我的私房配方箋庫抽屜 (Saved Formulas Drawer) -->
+      <div v-if="isSavedDrawerOpen" class="saved-formulas-drawer">
+        <div class="drawer-header">
+          <div class="drawer-title-group">
+            <span class="drawer-seal">私房</span>
+            <strong>我的私房配方庫 (共 {{ savedFormulas.length }} 首)</strong>
+            <span class="drawer-hint">點選任一方劑可一鍵倒入茶釜重現或檢視箋卷</span>
+          </div>
+          <button class="btn-close-drawer" @click="isSavedDrawerOpen = false">✕ 收起</button>
+        </div>
+        <div v-if="savedFormulas.length === 0" class="saved-empty-box">
+          <span>🍵</span>
+          <span>尚無保存的私房配方。請於茶釜投入草藥後，點擊下方「📜 保存配方箋」珍藏您的道地調和方！</span>
+        </div>
+        <div v-else class="saved-cards-grid">
+          <div v-for="sf in savedFormulas" :key="sf.id" class="saved-formula-card">
+            <div class="saved-card-top">
+              <span class="saved-date-tag">{{ sf.createdAt || '自調方' }} · {{ sf.solarTermName ? `${sf.solarTermName}當令` : '節令調和' }}</span>
+              <span class="saved-score-badge" :class="sf.balanceScore >= 80 ? 'good' : 'fair'">
+                {{ sf.balanceScore }}分 · {{ sf.balanceVerdict || '調和' }}
+              </span>
+            </div>
+            <h4 class="saved-name">{{ sf.name }}</h4>
+            <div class="saved-herbs-chips">
+              <span v-for="sh in sf.herbs" :key="sh.name" class="saved-herb-chip" :class="`role-${sh.roleCode || 'jun'}`">
+                <small>{{ sh.roleBadge || '🌿' }}</small> {{ sh.name }}
+              </span>
+            </div>
+            <div class="saved-actions-row">
+              <button class="btn-saved-load" @click="loadSavedFormulaToPot(sf)" title="將此配方載入茶釜">
+                🧪 倒入茶釜
+              </button>
+              <button class="btn-saved-view" @click="viewSavedFormulaTicket(sf)" title="查看並印製配方箋">
+                📜 檢視箋卷
+              </button>
+              <button class="btn-saved-delete" @click="deleteSavedFormula(sf.id)" title="刪除此配方">
+                🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
 
       <!-- AI 神來一配靈感籤卷 Toast / 提示橫幅 -->
       <div v-if="blendDecree" class="divine-decree-banner">
@@ -483,9 +535,10 @@
               </button>
               <button class="btn-timer-subtle" @click="resetTimer">重置時鐘</button>
               <button
-                class="btn-timer-subtle"
+                class="btn-timer-subtle btn-ticket-trigger"
                 :disabled="selectedHerbs.length === 0"
-                @click="exportFormulaTicket"
+                :title="selectedHerbs.length === 0 ? '請先向茶釜投入草藥以保存配方箋' : '保存、下載與複製當前茶釜配方箋'"
+                @click="openFormulaTicketModal"
               >
                 📜 保存配方箋
               </button>
@@ -589,13 +642,22 @@
               由 <strong>{{ recipeResult.expertName }}</strong> 親自辨證指導 · 建議劑型：{{ formulaTypeLabel(recipeResult.targetType) }}
             </div>
           </div>
-          <button
-            v-if="recipeResult.suggestedHerbs?.length"
-            class="btn-load-ai-recipe"
-            @click="loadAiRecipeToPot(recipeResult)"
-          >
-            🧪 倒入茶釜調配研製 ➔
-          </button>
+          <div class="recipe-header-actions">
+            <button
+              v-if="recipeResult.suggestedHerbs?.length"
+              class="btn-load-ai-recipe"
+              @click="loadAiRecipeToPot(recipeResult)"
+            >
+              🧪 倒入茶釜調配研製 ➔
+            </button>
+            <button
+              class="btn-save-ai-recipe"
+              title="將此專家指導客製配方保存至私房配方庫"
+              @click="openAiRecipeTicketModal(recipeResult)"
+            >
+              📜 保存此方劑箋
+            </button>
+          </div>
         </div>
 
         <!-- 專家叮嚀語 -->
@@ -632,6 +694,186 @@
         </div>
       </div>
     </div>
+
+    <!-- ============================================== -->
+    <!-- 📜 本草私房配方箋 (Formula Ticket Modal) -->
+    <!-- ============================================== -->
+    <div
+      v-if="isTicketModalOpen"
+      class="ticket-modal-overlay"
+      @click.self="closeFormulaTicketModal"
+    >
+      <div class="ticket-modal-card">
+        <!-- 頂部印章與標題列 -->
+        <div class="ticket-modal-header">
+          <div class="ticket-seal-group">
+            <span class="ticket-red-seal">方箋</span>
+            <div>
+              <h3 class="ticket-modal-title">📜 臺灣本草植物誌 · 私房配方箋</h3>
+              <p class="ticket-modal-subtitle">
+                四象法度 · 君臣佐使配伍 · 依循時序慢火細燉
+              </p>
+            </div>
+          </div>
+          <button
+            class="ticket-close-btn"
+            title="關閉配方箋"
+            @click="closeFormulaTicketModal"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- 配方箋身 (古風紙卷質地) -->
+        <div class="ticket-scroll-body">
+          <!-- 橫幅通知 Toast -->
+          <div v-if="ticketModalToast" class="ticket-toast-banner">
+            <span>{{ ticketModalToast }}</span>
+          </div>
+
+          <!-- 配方名稱與元資訊編輯 -->
+          <div class="ticket-meta-box">
+            <div class="ticket-name-row">
+              <label class="ticket-label">方劑名稱：</label>
+              <input
+                v-model="ticketForm.name"
+                type="text"
+                class="ticket-name-input"
+                placeholder="為此配方命名 (例：萬華退火青草茶、客庄安神湯)..."
+              />
+            </div>
+            <div class="ticket-meta-tags">
+              <span class="ticket-meta-tag">
+                📅 研製時辰：{{ ticketForm.createdAt }}
+              </span>
+              <span class="ticket-meta-tag" v-if="ticketForm.solarTermName">
+                🍂 當令節氣：{{ ticketForm.solarTermName }}
+              </span>
+              <span class="ticket-meta-tag origin">
+                {{ ticketForm.sourceType === 'consult' ? '🍵 專家傳承' : ticketForm.sourceType === 'ai_blend' ? '🎲 AI 神來一配' : '🧪 茶釜研製' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- 君臣佐使配伍明細 -->
+          <div class="ticket-composition-section">
+            <h4 class="ticket-section-title">
+              <span>🌿 君臣佐使 · 配伍明細</span>
+              <span class="ticket-herbs-count">共 {{ ticketForm.herbs.length }} 味</span>
+            </h4>
+            <div class="ticket-herbs-grid">
+              <div
+                v-for="h in ticketForm.herbs"
+                :key="h.name"
+                class="ticket-herb-card"
+                :class="`role-${h.roleCode || 'jun'}`"
+              >
+                <div class="ticket-herb-card-top">
+                  <span class="ticket-role-badge" :class="`badge-${h.roleCode || 'jun'}`">
+                    {{ h.roleBadge || h.roleTitle || '草藥' }}
+                  </span>
+                  <strong class="ticket-herb-name">{{ h.name }}</strong>
+                  <span class="ticket-herb-share">{{ h.share || h.ratio || '' }}</span>
+                </div>
+                <div class="ticket-herb-details">
+                  <span class="ticket-nature-pill">性味：{{ h.nature || '平' }}</span>
+                  <span class="ticket-channel-pill" v-if="h.channels && h.channels.length">
+                    入經：{{ h.channels.join('、') }}
+                  </span>
+                </div>
+                <p class="ticket-herb-duty" v-if="h.action || h.roleDuty">
+                  {{ h.action || h.roleDuty }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 四氣陰陽與平衡診斷 -->
+          <div class="ticket-diagnosis-section">
+            <h4 class="ticket-section-title">⚖️ 四氣陰陽辨性與平衡評析</h4>
+            <div class="ticket-diagnosis-card">
+              <div class="ticket-diag-score-row">
+                <div class="diag-score-badge">
+                  君臣天平指數：<strong>{{ ticketForm.balanceScore }}</strong> 分
+                  <span class="diag-grade" v-if="ticketForm.balanceGrade">（{{ ticketForm.balanceGrade }}）</span>
+                </div>
+                <div class="diag-verdict-title">
+                  {{ ticketForm.balanceVerdict }}
+                </div>
+              </div>
+              <p class="ticket-diag-desc" v-if="ticketForm.diagnosisAdvice">
+                💡 <strong>調和心法：</strong>{{ ticketForm.diagnosisAdvice }}
+              </p>
+            </div>
+          </div>
+
+          <!-- 煎煮製備工法指南 -->
+          <div class="ticket-guide-section">
+            <h4 class="ticket-section-title">🍵 煎熬製備工藝</h4>
+            <div class="ticket-guide-content">
+              {{ ticketForm.boilTime || '取清水約 1500~2000c.c.，武火催沸轉文火細燉 15~20 分鐘，濾渣即可溫服。' }}
+            </div>
+          </div>
+
+          <!-- 使用者自訂備註手札 -->
+          <div class="ticket-note-section">
+            <label class="ticket-section-title" style="display:block; margin-bottom: 6px;">
+              📝 私房研製筆記（選填）：
+            </label>
+            <textarea
+              v-model="ticketForm.userNote"
+              rows="2"
+              class="ticket-note-textarea"
+              placeholder="記錄口感偏好、熬煮水質、或家人飲用心得..."
+            ></textarea>
+          </div>
+
+          <!-- 免責聲明 -->
+          <div class="ticket-disclaimer-strip">
+            ⚖️ <strong>非醫療宣告</strong>：本箋純屬臺灣民間生活青草茶飲與常民本草文化紀錄，絕無宣稱任何疾病療效，體質特殊者請遵醫囑。
+          </div>
+        </div>
+
+        <!-- 底部功能操作按鈕群 -->
+        <div class="ticket-modal-footer">
+          <div class="ticket-footer-actions">
+            <!-- 💾 保存至私房配方庫 -->
+            <button
+              class="btn-ticket-action btn-save-storage"
+              @click="saveTicketToStorage"
+            >
+              <span>💾</span>
+              <span>保存至私房配方庫</span>
+            </button>
+
+            <!-- 📥 下載配方箋文字檔 -->
+            <button
+              class="btn-ticket-action btn-download-file"
+              @click="downloadTicketFile"
+            >
+              <span>📥</span>
+              <span>下載配方箋 (.txt)</span>
+            </button>
+
+            <!-- 📋 複製配方內容 -->
+            <button
+              class="btn-ticket-action btn-copy-text"
+              @click="copyTicketText"
+            >
+              <span>📋</span>
+              <span>複製配方文字</span>
+            </button>
+          </div>
+
+          <button
+            class="btn-ticket-close"
+            @click="closeFormulaTicketModal"
+          >
+            關閉
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -639,6 +881,8 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import { HerbApi } from '../services/api';
 import { audio } from '../services/audioService';
+import { getCurrentSolarTerm } from '../services/solarTerms';
+
 
 const props = defineProps({
   allHerbs: { type: Array, default: () => [] },
@@ -760,6 +1004,46 @@ const isHarmonizing = ref(false);
 const divineIntent = ref('清熱退火');
 const blendDecree = ref(null);
 const harmonizeToast = ref(null);
+
+// 私房配方庫與配方箋 Modal 狀態
+const isTicketModalOpen = ref(false);
+const isSavedDrawerOpen = ref(false);
+const ticketModalToast = ref('');
+const ticketForm = ref({
+  id: '',
+  name: '',
+  createdAt: '',
+  solarTermName: '',
+  herbs: [],
+  balanceScore: 0,
+  balanceGrade: '',
+  balanceVerdict: '',
+  diagnosisAdvice: '',
+  boilTime: '',
+  userNote: '',
+  sourceType: 'kettle'
+});
+
+const loadSavedFormulas = () => {
+  try {
+    const raw = localStorage.getItem('taiwanherb_saved_formulas');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.error('Failed to parse saved formulas from localStorage:', e);
+    return [];
+  }
+};
+
+const savedFormulas = ref(loadSavedFormulas());
+
+const persistSavedFormulas = () => {
+  try {
+    localStorage.setItem('taiwanherb_saved_formulas', JSON.stringify(savedFormulas.value));
+  } catch (e) {
+    console.error('Failed to persist saved formulas to localStorage:', e);
+  }
+};
+
 
 const quickPresets = [
   { name: '萬華百年退火青草茶', herbNames: ['大花咸豐草', '鳳尾草', '薄荷', '甘草'] },
@@ -1195,13 +1479,289 @@ const resetTimer = () => {
   timerSeconds.value = 300;
 };
 
-const exportFormulaTicket = () => {
-  audio.playStamp();
-  const herbNames = selectedHerbs.value.map(h => `${h.name}(${h.nature})`).join('、');
-  const ticketText = `【本草方劑研製箋】\n配伍組成：${herbNames}\n辨性評定：${balanceVerdict.value.title}\n煎熬工法：武火催沸轉文火細燉\n(注意：此為民間生活茶飲文化模擬，非醫療處方)`;
-  navigator.clipboard.writeText(ticketText);
-  alert('已將茶釜配方箋複製至剪貼簿！');
+// ==============================================
+// 📜 私房配方箋與配方庫核心操作
+// ==============================================
+
+const generateTicketPlainText = (form) => {
+  const herbLines = (form.herbs || []).map((h, i) => {
+    const channels = (h.channels && h.channels.length) ? ` · 入${h.channels.join('、')}經` : '';
+    const share = h.share || h.ratio || '適量';
+    const duty = h.action || h.roleDuty ? ` —— ${h.action || h.roleDuty}` : '';
+    return `  [${h.roleBadge || h.roleTitle || '草藥'}] ${h.name} (${h.nature || '平'}性${channels}) · 份量比重：${share}${duty}`;
+  }).join('\n');
+
+  const originText = form.sourceType === 'consult' ? '道地專家傳承研定' : form.sourceType === 'ai_blend' ? 'AI 神來一配意圖演算' : '茶釜自主配伍';
+
+  return `============================================================
+           🌿 臺灣本草植物誌 · 私房配方箋 🌿
+============================================================
+方劑名稱：【${form.name || '私房本草調和方'}】
+研製時辰：${form.createdAt || '當日吉時'}
+當令節氣：二十四節氣 · ${form.solarTermName ? `${form.solarTermName}當令` : '節令調和'}
+配方來源：${originText}
+
+【🌿 君臣佐使配伍明細】(共 ${(form.herbs || []).length} 味)
+${herbLines || '  尚無草藥'}
+
+【⚖️ 四氣陰陽與平衡評析】
+  辨性評定：${form.balanceVerdict || '平潤調和'}
+  天平指數：${form.balanceScore} 分 (${form.balanceGrade || '和調'})
+${form.diagnosisAdvice ? `  調和心法：${form.diagnosisAdvice}\n` : ''}
+【🍵 煎熬製備工法】
+  ${form.boilTime || '取清水約 1500~2000c.c.，武火催沸轉文火細燉 15~20 分鐘，濾渣即可溫服。'}
+${form.userNote ? `\n【📝 私房研製筆記】\n  ${form.userNote}\n` : ''}
+------------------------------------------------------------
+⚖️【生活文化分享與非醫療聲明】
+本研製箋為臺灣本土常民傳統民間生活茶飲文化交流紀錄，
+非屬醫療院所處方，亦無宣稱任何疾病療效。
+個人體質虛寒、特殊病徵或孕產婦女，請務必尋求合格醫師辨證。
+============================================================`;
 };
+
+const openFormulaTicketModal = () => {
+  if (selectedHerbs.value.length === 0) return;
+  audio.playStamp();
+
+  const currentTerm = getCurrentSolarTerm(new Date());
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+  const formulaHerbs = selectedHerbs.value.map(h => {
+    const r = getHerbAssignedRole(h.id);
+    return {
+      id: h.id,
+      name: h.name,
+      nature: h.nature || '平',
+      channels: h.channels || [],
+      roleCode: r.roleCode,
+      roleBadge: r.badge,
+      roleTitle: r.title,
+      share: r.share,
+      roleDuty: r.roleCode === 'jun' ? '主攻病機與核心訴求 (約佔40%)' : r.roleCode === 'chen' ? '協同君藥加強腑臟受納 (約佔28%)' : r.roleCode === 'shi' ? '引藥歸經入絡、調和口感 (約佔14%)' : '制衡偏性，護衛脾胃 (約佔18%)'
+    };
+  });
+
+  const defaultName = blendDecree.value?.decreeName
+    ? blendDecree.value.decreeName
+    : `私房本草方 · ${currentTerm.name}節令調和`;
+
+  ticketForm.value = {
+    id: `formula_${Date.now()}`,
+    name: defaultName,
+    createdAt: dateStr,
+    solarTermName: currentTerm.name,
+    herbs: formulaHerbs,
+    balanceScore: junChenZuoBalance.value.overallBalanceScore || 85,
+    balanceGrade: junChenZuoBalance.value.grade || '和調',
+    balanceVerdict: balanceVerdict.value.title || '和暢平潤',
+    diagnosisAdvice: junChenZuoBalance.value.harmonyAdvice || '',
+    boilTime: '武火催沸轉文火細燉 15~20 分鐘，濾渣即可溫服飲用。',
+    userNote: '',
+    sourceType: blendDecree.value ? 'ai_blend' : 'kettle'
+  };
+
+  ticketModalToast.value = '';
+  isTicketModalOpen.value = true;
+};
+
+const closeFormulaTicketModal = () => {
+  audio.playClick();
+  isTicketModalOpen.value = false;
+  ticketModalToast.value = '';
+};
+
+const openAiRecipeTicketModal = (recipe) => {
+  if (!recipe) return;
+  audio.playStamp();
+
+  const currentTerm = getCurrentSolarTerm(new Date());
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+  const formulaHerbs = (recipe.composition || []).map((c, i) => {
+    const code = c.role === '君' ? 'jun' : c.role === '臣' ? 'chen' : c.role === '使' ? 'shi' : 'zuo';
+    const badge = c.role === '君' ? '👑 君' : c.role === '臣' ? '🛡️ 臣' : c.role === '使' ? '🕊️ 使' : '⚖️ 佐';
+    const foundHerb = props.allHerbs.find(h => h.name === c.herbName);
+    return {
+      id: foundHerb ? foundHerb.id : 990 + i,
+      name: c.herbName,
+      nature: foundHerb?.nature || '平',
+      channels: foundHerb?.channels || [],
+      roleCode: code,
+      roleBadge: badge,
+      roleTitle: `${c.role}藥`,
+      share: c.ratio || '適量',
+      action: c.action || ''
+    };
+  });
+
+  ticketForm.value = {
+    id: `formula_consult_${Date.now()}`,
+    name: recipe.recipeName || '專家傳承客製方',
+    createdAt: dateStr,
+    solarTermName: currentTerm.name,
+    herbs: formulaHerbs,
+    balanceScore: 92,
+    balanceGrade: '道地傳承',
+    balanceVerdict: `由【${recipe.expertName}】親傳指導`,
+    diagnosisAdvice: recipe.expertAdvice || '',
+    boilTime: recipe.preparationGuide || '依專家指示小火慢煮，清芳甘潤。',
+    userNote: recipe.contraindications ? `⚠️ 禁忌提醒：${recipe.contraindications}` : '',
+    sourceType: 'consult'
+  };
+
+  ticketModalToast.value = '';
+  isTicketModalOpen.value = true;
+};
+
+const saveTicketToStorage = () => {
+  audio.playStamp();
+  if (!ticketForm.value.name.trim()) {
+    ticketForm.value.name = '私房本草調和方';
+  }
+
+  const existingIdx = savedFormulas.value.findIndex(f => f.id === ticketForm.value.id);
+  const toSave = JSON.parse(JSON.stringify(ticketForm.value));
+
+  if (existingIdx !== -1) {
+    savedFormulas.value[existingIdx] = toSave;
+  } else {
+    savedFormulas.value.unshift(toSave);
+  }
+
+  persistSavedFormulas();
+  ticketModalToast.value = '✓ 已成功珍藏至「我的私房配方庫」！隨時可於茶釜調配清單一鍵載入。';
+  setTimeout(() => {
+    if (ticketModalToast.value.includes('私房配方庫')) {
+      ticketModalToast.value = '';
+    }
+  }, 3500);
+};
+
+const downloadTicketFile = () => {
+  audio.playClick();
+  const form = ticketForm.value;
+  const content = generateTicketPlainText(form);
+
+  try {
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const safeTitle = (form.name || '本草配方箋').replace(/[\s\/:*?"<>|]+/g, '_');
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    link.href = url;
+    link.download = `本草私房配方箋_${safeTitle}_${dateStamp}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    ticketModalToast.value = '✓ 配方箋文字檔下載已啟動！';
+    setTimeout(() => {
+      if (ticketModalToast.value.includes('下載已啟動')) {
+        ticketModalToast.value = '';
+      }
+    }, 3500);
+  } catch (err) {
+    console.error('Failed to download ticket file:', err);
+    ticketModalToast.value = '⚠️ 下載受限，請點擊「複製配方文字」備份！';
+  }
+};
+
+const copyTicketText = async () => {
+  audio.playClick();
+  const text = generateTicketPlainText(ticketForm.value);
+  let success = false;
+
+  // 1. 優先使用現代 navigator.clipboard (需 HTTPS 或 localhost)
+  if (navigator?.clipboard?.writeText && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      success = true;
+    } catch (e) {
+      console.warn('navigator.clipboard writeText failed, trying execCommand fallback:', e);
+    }
+  }
+
+  // 2. 跨環境與非 HTTPS 安全退避 (execCommand)
+  if (!success) {
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      textarea.style.top = '0';
+      textarea.setAttribute('readonly', '');
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+      success = document.execCommand('copy');
+      document.body.removeChild(textarea);
+    } catch (err) {
+      console.error('execCommand copy fallback failed:', err);
+    }
+  }
+
+  if (success) {
+    ticketModalToast.value = '✓ 配方箋內容已成功複製至剪貼簿！';
+  } else {
+    ticketModalToast.value = '⚠️ 剪貼簿存取受限，請直接點擊「下載配方箋」保存檔案！';
+  }
+
+  setTimeout(() => {
+    if (ticketModalToast.value.includes('複製至剪貼簿') || ticketModalToast.value.includes('剪貼簿存取')) {
+      ticketModalToast.value = '';
+    }
+  }, 3500);
+};
+
+const loadSavedFormulaToPot = (sf) => {
+  audio.playChime(660);
+  if (!sf || !sf.herbs || !sf.herbs.length) return;
+
+  const found = sf.herbs
+    .map(sh => props.allHerbs.find(h => h.id === sh.id || h.name === sh.name))
+    .filter(Boolean);
+
+  if (found.length) {
+    selectedHerbs.value = [...found.slice(0, 4)];
+  } else {
+    selectedHerbs.value = sf.herbs.slice(0, 4).map((sh, idx) => ({
+      id: sh.id || 950 + idx,
+      name: sh.name,
+      nature: sh.nature || '平',
+      channels: sh.channels || ['脾', '胃'],
+      taste: ['甘']
+    }));
+  }
+
+  currentTab.value = 'kettle';
+  isTicketModalOpen.value = false;
+  isSavedDrawerOpen.value = false;
+};
+
+const viewSavedFormulaTicket = (sf) => {
+  audio.playStamp();
+  ticketForm.value = JSON.parse(JSON.stringify(sf));
+  ticketModalToast.value = '';
+  isTicketModalOpen.value = true;
+};
+
+const deleteSavedFormula = (id) => {
+  audio.playClick();
+  savedFormulas.value = savedFormulas.value.filter(f => f.id !== id);
+  persistSavedFormulas();
+  if (ticketForm.value?.id === id && isTicketModalOpen.value) {
+    isTicketModalOpen.value = false;
+  }
+};
+
+const exportFormulaTicket = () => {
+  openFormulaTicketModal();
+};
+
 
 const liquidStyle = computed(() => {
   if (selectedHerbs.value.length === 0) {
@@ -1305,12 +1865,20 @@ watch(
   { immediate: true }
 );
 
+const handleKeydown = (e) => {
+  if (e.key === 'Escape' && isTicketModalOpen.value) {
+    closeFormulaTicketModal();
+  }
+};
+
 onMounted(() => {
   loadFormulas();
+  window.addEventListener('keydown', handleKeydown);
 });
 
 onBeforeUnmount(() => {
   if (timerInterval) clearInterval(timerInterval);
+  window.removeEventListener('keydown', handleKeydown);
 });
 </script>
 
@@ -3189,4 +3757,751 @@ onBeforeUnmount(() => {
     margin-top: 8px;
   }
 }
+
+/* ========================================================= */
+/* 📜 私房配方庫抽屜與快速按鈕 (Saved Formulas Drawer) */
+/* ========================================================= */
+.saved-formulas-pill {
+  background: #fef3c7 !important;
+  border-color: #f59e0b !important;
+  color: #92400e !important;
+  font-weight: 700 !important;
+}
+
+.saved-formulas-pill.active {
+  background: #f59e0b !important;
+  color: #ffffff !important;
+  border-color: #d97706 !important;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3);
+}
+
+.saved-formulas-drawer {
+  background: #fffdf9;
+  border: 1px solid #e8decb;
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 18px rgba(90, 70, 45, 0.08);
+  animation: fadeInDown 0.25s ease-out;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed #e2d9c8;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+}
+
+.drawer-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.drawer-seal {
+  background: #b91c1c;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+.drawer-hint {
+  font-size: 12px;
+  color: #8c7355;
+}
+
+.btn-close-drawer {
+  background: none;
+  border: 1px solid #d6c8b4;
+  color: #78654f;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-close-drawer:hover {
+  background: #f5eedc;
+  color: #2c2419;
+}
+
+.saved-empty-box {
+  padding: 24px 16px;
+  text-align: center;
+  color: #8c7860;
+  font-size: 13.5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  background: #faf6ee;
+  border-radius: 10px;
+}
+
+.saved-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.saved-formula-card {
+  background: #ffffff;
+  border: 1px solid #ebdcc5;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 2px 6px rgba(60, 45, 20, 0.04);
+  transition: all 0.2s;
+}
+
+.saved-formula-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(60, 45, 20, 0.08);
+  border-color: #d4a373;
+}
+
+.saved-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+}
+
+.saved-date-tag {
+  color: #8c7355;
+}
+
+.saved-score-badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.saved-score-badge.good {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.saved-score-badge.fair {
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.saved-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c251d;
+  font-family: 'Noto Serif TC', serif;
+}
+
+.saved-herbs-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.saved-herb-chip {
+  background: #f7f3ea;
+  border: 1px solid #e2d5c3;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #4a3b2c;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.saved-herb-chip.role-jun {
+  border-color: #f59e0b;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.saved-herb-chip.role-chen {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.saved-herb-chip.role-zuo {
+  border-color: #10b981;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.saved-herb-chip.role-shi {
+  border-color: #8b5cf6;
+  background: #f5f3ff;
+  color: #5b21b6;
+}
+
+.saved-actions-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid #f2ede4;
+}
+
+.btn-saved-load {
+  flex: 1;
+  background: #2d6a4f;
+  color: #ffffff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-saved-load:hover {
+  background: #1b4332;
+}
+
+.btn-saved-view {
+  background: #f5eedc;
+  border: 1px solid #d8caa7;
+  color: #634d30;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-saved-view:hover {
+  background: #ebdcc0;
+}
+
+.btn-saved-delete {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-saved-delete:hover {
+  background: #fecaca;
+}
+
+/* 觸發保存按鈕強化 */
+.btn-ticket-trigger {
+  background: #fef3c7 !important;
+  border-color: #f59e0b !important;
+  color: #92400e !important;
+  font-weight: 700 !important;
+}
+
+.btn-ticket-trigger:hover:not(:disabled) {
+  background: #fde68a !important;
+  transform: translateY(-1px);
+}
+
+.recipe-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-save-ai-recipe {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #f59e0b;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-save-ai-recipe:hover {
+  background: #fde68a;
+  transform: translateY(-1px);
+}
+
+/* ========================================================= */
+/* 📜 本草私房配方箋彈窗 (Ticket Modal) */
+/* ========================================================= */
+.ticket-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(18, 22, 18, 0.65);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.ticket-modal-card {
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  background: #faf7f0;
+  border: 2px solid #d4c3a3;
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.ticket-modal-header {
+  background: linear-gradient(135deg, #2d5f4d, #1b4332);
+  color: #fff;
+  padding: 18px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ticket-seal-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ticket-red-seal {
+  background: #b91c1c;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+  padding: 4px 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+}
+
+.ticket-modal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  font-family: 'Noto Serif TC', serif;
+}
+
+.ticket-modal-subtitle {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #c5ded3;
+}
+
+.ticket-close-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.ticket-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.ticket-scroll-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #faf7f0 url('data:image/svg+xml;utf8,<svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h40v40H0z" fill="none"/><circle cx="20" cy="20" r="0.5" fill="rgba(140,115,85,0.06)"/></svg>');
+}
+
+.ticket-toast-banner {
+  background: #ecfdf5;
+  border: 1px solid #10b981;
+  color: #065f46;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+  animation: fadeInDown 0.2s ease-out;
+}
+
+.ticket-meta-box {
+  background: #ffffff;
+  border: 1px solid #e5d8c3;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ticket-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ticket-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4a3822;
+  white-space: nowrap;
+}
+
+.ticket-name-input {
+  flex: 1;
+  border: 1.5px solid #d4c5ad;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2c251d;
+  background: #fffdf9;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.ticket-name-input:focus {
+  border-color: #2d6a4f;
+  box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.12);
+}
+
+.ticket-meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.ticket-meta-tag {
+  background: #f5eedf;
+  color: #6d5438;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.ticket-meta-tag.origin {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.ticket-section-title {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #3d2f1f;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ticket-herbs-count {
+  font-size: 12px;
+  color: #8c7355;
+  font-weight: normal;
+}
+
+.ticket-herbs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.ticket-herb-card {
+  background: #ffffff;
+  border: 1px solid #ebdcc5;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ticket-herb-card.role-jun { border-left: 4px solid #f59e0b; }
+.ticket-herb-card.role-chen { border-left: 4px solid #3b82f6; }
+.ticket-herb-card.role-zuo { border-left: 4px solid #10b981; }
+.ticket-herb-card.role-shi { border-left: 4px solid #8b5cf6; }
+
+.ticket-herb-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ticket-role-badge {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.ticket-role-badge.badge-jun { background: #fef3c7; color: #92400e; }
+.ticket-role-badge.badge-chen { background: #dbeafe; color: #1e40af; }
+.ticket-role-badge.badge-zuo { background: #d1fae5; color: #065f46; }
+.ticket-role-badge.badge-shi { background: #ede9fe; color: #5b21b6; }
+
+.ticket-herb-name {
+  font-size: 15px;
+  color: #1f2937;
+}
+
+.ticket-herb-share {
+  font-size: 12px;
+  font-weight: 700;
+  color: #78350f;
+}
+
+.ticket-herb-details {
+  display: flex;
+  gap: 6px;
+  font-size: 11.5px;
+}
+
+.ticket-nature-pill,
+.ticket-channel-pill {
+  background: #f3ede2;
+  color: #63503b;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.ticket-herb-duty {
+  margin: 0;
+  font-size: 11.5px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.ticket-diagnosis-card {
+  background: #ffffff;
+  border: 1px solid #e5d8c3;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ticket-diag-score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.diag-score-badge {
+  font-size: 13px;
+  color: #4a3822;
+}
+
+.diag-score-badge strong {
+  font-size: 16px;
+  color: #b45309;
+}
+
+.diag-verdict-title {
+  background: #f5eedf;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #78350f;
+}
+
+.ticket-diag-desc {
+  margin: 0;
+  font-size: 12px;
+  color: #524230;
+  line-height: 1.45;
+}
+
+.ticket-guide-content {
+  background: #f7f3ea;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  color: #4b3e2e;
+  line-height: 1.5;
+}
+
+.ticket-note-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1.5px solid #dcd0bc;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #2c251d;
+  background: #fff;
+  resize: vertical;
+  outline: none;
+}
+
+.ticket-note-textarea:focus {
+  border-color: #2d6a4f;
+}
+
+.ticket-disclaimer-strip {
+  background: #faf2e6;
+  border: 1px dashed #ddc7a7;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: #8c7150;
+  line-height: 1.45;
+}
+
+.ticket-modal-footer {
+  background: #f5ede0;
+  border-top: 1px solid #e0d1bb;
+  padding: 14px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ticket-footer-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-ticket-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-save-storage {
+  background: #2d6a4f;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(45, 106, 79, 0.25);
+}
+
+.btn-save-storage:hover {
+  background: #1b4332;
+  transform: translateY(-1px);
+}
+
+.btn-download-file {
+  background: #d97706;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
+}
+
+.btn-download-file:hover {
+  background: #b45309;
+  transform: translateY(-1px);
+}
+
+.btn-copy-text {
+  background: #ffffff;
+  color: #4a3822;
+  border: 1px solid #d1c0a8;
+}
+
+.btn-copy-text:hover {
+  background: #f7f1e6;
+  border-color: #b8a388;
+}
+
+.btn-ticket-close {
+  background: none;
+  border: 1px solid #c9b99e;
+  color: #634f36;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-ticket-close:hover {
+  background: #ece0cd;
+  color: #1f1810;
+}
+
+@media (max-width: 640px) {
+  .ticket-modal-card {
+    max-height: 95vh;
+  }
+  .ticket-modal-header {
+    padding: 14px 16px;
+  }
+  .ticket-scroll-body {
+    padding: 14px 16px;
+  }
+  .ticket-modal-footer {
+    padding: 12px 16px;
+    flex-direction: column-reverse;
+  }
+  .ticket-footer-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+  .btn-ticket-action,
+  .btn-ticket-close {
+    width: 100%;
+    justify-content: center;
+  }
+  .ticket-herbs-grid {
+    grid-template-columns: 1fr;
+  }
+  .saved-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
+
