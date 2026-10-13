@@ -24,7 +24,7 @@
         </div>
 
         <!-- 節氣青草即時推薦方 -->
-        <div class="solar-wisdom-card">
+        <div class="solar-wisdom-card" v-if="currentSolarTerm">
           <div class="solar-wisdom-header">
             <span class="solar-icon">🍂</span>
             <strong>【節令推薦 · {{ currentSolarTerm.name }}草本養生訓】</strong>
@@ -34,7 +34,7 @@
           <div class="solar-herb-tags">
             <span class="solar-tag-label">當令推薦：</span>
             <button
-              v-for="herbName in (currentSolarTerm.herbNames || currentSolarTerm.herbs)"
+              v-for="herbName in (currentSolarTerm.herbNames || currentSolarTerm.herbs || [])"
               :key="herbName"
               class="solar-herb-pill"
               @click="onQuickSearch(herbName)"

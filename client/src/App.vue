@@ -168,7 +168,7 @@
           />
 
           <!-- 當令節令時序推薦橫幅 (Seasonal Recommendation Showcase Banner) -->
-          <div class="catalog-seasonal-card">
+          <div class="catalog-seasonal-card" v-if="currentSolarTerm">
             <div class="seasonal-card-left">
               <div class="seasonal-seal-row">
                 <span class="seasonal-seal">節令推薦</span>
@@ -185,7 +185,7 @@
               <div class="seasonal-herbs-label">當令契合本草：</div>
               <div class="seasonal-herbs-btn-group">
                 <button
-                  v-for="name in currentSolarTerm.herbNames"
+                  v-for="name in (currentSolarTerm.herbNames || [])"
                   :key="name"
                   class="btn-seasonal-herb-tag"
                   :title="`快速檢索當令本草：${name}`"
@@ -506,8 +506,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { HerbApi } from './services/api';
+
 import { audio } from './services/audioService';
 import HerbAtmosphere from './components/HerbAtmosphere.vue';
 import HerbNavbar from './components/HerbNavbar.vue';

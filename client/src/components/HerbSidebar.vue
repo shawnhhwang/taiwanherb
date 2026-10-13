@@ -12,7 +12,7 @@
     </div>
 
     <!-- 當令節令推薦 (Solar Term Recommendation) -->
-    <div class="filter-group seasonal-filter-group">
+    <div class="filter-group seasonal-filter-group" v-if="currentSolarTerm">
       <div class="filter-heading">
         <span>🍂</span>
         <span>當令節令推薦</span>
@@ -23,7 +23,7 @@
       </div>
       <div class="chip-cloud">
         <button
-          v-for="hName in currentSolarTerm.herbNames"
+          v-for="hName in (currentSolarTerm.herbNames || [])"
           :key="hName"
           class="filter-chip seasonal-chip"
           :title="`快速檢索當令本草：${hName}`"
