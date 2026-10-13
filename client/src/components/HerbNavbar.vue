@@ -1,7 +1,7 @@
 <template>
   <header class="top-navbar">
     <div class="navbar-inner">
-      <!-- 左側群組：品牌標誌 + 核心導覽標籤 -->
+      <!-- 左側群組：品牌標誌 + 核心導覽標籤 (桌機主流解析度自適應) -->
       <div class="nav-left-cluster">
         <div class="brand-section" @click="$emit('switch-tab', 'home')" title="返回台灣本草植物誌首頁">
           <div class="brand-seal">本</div>
@@ -11,8 +11,7 @@
           </div>
         </div>
 
-        <!-- 核心四大頁面導航 -->
-        <!-- 核心導航選單 -->
+        <!-- 核心導航選單 (自適應各主流桌機解析度) -->
         <nav class="nav-tabs-group">
           <button
             class="nav-tab-btn"
@@ -31,7 +30,10 @@
             @click="$emit('switch-tab', 'catalog')"
           >
             <span class="tab-icon">🌿</span>
-            <span class="tab-label">本草知識庫</span>
+            <span class="tab-label">
+              <span class="label-full">本草知識庫</span>
+              <span class="label-short">知識庫</span>
+            </span>
           </button>
 
           <button
@@ -41,7 +43,10 @@
             @click="$emit('switch-tab', 'alchemy')"
           >
             <span class="tab-icon">🧪</span>
-            <span class="tab-label">方劑實驗室</span>
+            <span class="tab-label">
+              <span class="label-full">方劑實驗室</span>
+              <span class="label-short">實驗室</span>
+            </span>
           </button>
 
           <button
@@ -51,7 +56,10 @@
             @click="$emit('switch-tab', 'shops')"
           >
             <span class="tab-icon">🏪</span>
-            <span class="tab-label">結盟青草店</span>
+            <span class="tab-label">
+              <span class="label-full">結盟青草店</span>
+              <span class="label-short">青草店</span>
+            </span>
           </button>
 
           <button
@@ -61,7 +69,10 @@
             @click="$emit('switch-tab', 'books')"
           >
             <span class="tab-icon">📚</span>
-            <span class="tab-label">草木書閣</span>
+            <span class="tab-label">
+              <span class="label-full">草木書閣</span>
+              <span class="label-short">書閣</span>
+            </span>
           </button>
 
           <button
@@ -71,7 +82,10 @@
             @click="$emit('switch-tab', 'consult')"
           >
             <span class="tab-icon">🍵</span>
-            <span class="tab-label">諮詢茶堂</span>
+            <span class="tab-label">
+              <span class="label-full">諮詢茶堂</span>
+              <span class="label-short">茶堂</span>
+            </span>
           </button>
 
           <button
@@ -81,7 +95,10 @@
             @click="$emit('switch-tab', 'admin')"
           >
             <span class="tab-icon">⚙️</span>
-            <span class="tab-label">管理後台</span>
+            <span class="tab-label">
+              <span class="label-full">管理後台</span>
+              <span class="label-short">後台</span>
+            </span>
           </button>
         </nav>
       </div>
@@ -128,7 +145,8 @@
         <!-- 今日推薦 (與當令節氣一致) -->
         <button class="nav-tool-btn btn-pill-accent" title="推薦當令節氣契合之島嶼本草" @click="$emit('random-pick')">
           <span>✨</span>
-          <span>今日推薦</span>
+          <span class="tool-btn-text-full">今日推薦</span>
+          <span class="tool-btn-text-short">推薦</span>
         </button>
 
         <!-- 藥材對照比對 (無障礙點擊，支援一鍵載入比對組合) -->
@@ -139,7 +157,7 @@
           @click="$emit('open-compare')"
         >
           <span>⚖️</span>
-          <span>比對</span>
+          <span class="tool-btn-text">比對</span>
           <span v-if="compareList.length > 0" class="compare-badge-num">{{ compareList.length }}</span>
         </button>
 
@@ -150,7 +168,8 @@
           @click="$emit('open-disclaimer')"
         >
           <span>📜</span>
-          <span>免責聲明</span>
+          <span class="tool-btn-text-full">免責聲明</span>
+          <span class="tool-btn-text-short">免責</span>
         </button>
 
         <!-- 主題與聲景膠囊 -->
@@ -206,11 +225,149 @@
           @click="$emit('open-auth')"
         >
           <span class="user-avatar-tag">{{ currentUser?.avatar || '👤' }}</span>
-          <span class="user-name-tag">{{ currentUser ? currentUser.name : '登入 / 身分' }}</span>
+          <span class="user-name-tag">{{ currentUser ? currentUser.name : '登入' }}</span>
           <span v-if="currentUser" class="user-role-pill">{{ currentUser.roleTitle || currentUser.role }}</span>
+        </button>
+
+        <!-- 行動裝置 / 平板漢堡選單開關按鈕 (<= 992px 顯示) -->
+        <button
+          class="mobile-menu-toggle-btn"
+          :class="{ active: isMobileMenuOpen }"
+          title="開啟行動導覽選單"
+          @click="toggleMobileMenu"
+        >
+          <span v-if="!isMobileMenuOpen">☰</span>
+          <span v-else>✕</span>
         </button>
       </div>
     </div>
+
+    <!-- 行動裝置下拉導航抽屜 (Mobile Nav Drawer) -->
+    <transition name="mobile-drawer-slide">
+      <div v-if="isMobileMenuOpen" class="mobile-nav-drawer">
+        <!-- 抽屜內頂部搜尋 -->
+        <div class="mobile-drawer-search" @click="$emit('open-cmd')">
+          <span class="nav-search-icon">🔍</span>
+          <input
+            type="text"
+            class="mobile-search-input"
+            placeholder="搜尋藥材、學名、經絡、功效..."
+            :value="searchQuery"
+            @input="onSearchInput"
+            @click.stop
+          />
+        </div>
+
+        <!-- 核心 7 大分頁導覽清單 -->
+        <div class="mobile-tabs-grid">
+          <button
+            class="mobile-tab-card"
+            :class="{ active: activeTab === 'home' }"
+            @click="handleMobileTabSwitch('home')"
+          >
+            <span class="m-tab-icon">🏡</span>
+            <div class="m-tab-info">
+              <span class="m-tab-title">首頁</span>
+              <span class="m-tab-desc">島嶼風土與二十四節氣時序</span>
+            </div>
+          </button>
+
+          <button
+            class="mobile-tab-card"
+            :class="{ active: activeTab === 'catalog' }"
+            @click="handleMobileTabSwitch('catalog')"
+          >
+            <span class="m-tab-icon">🌿</span>
+            <div class="m-tab-info">
+              <span class="m-tab-title">本草知識庫</span>
+              <span class="m-tab-desc">全島本草植物百科與多維檢索</span>
+            </div>
+          </button>
+
+          <button
+            class="mobile-tab-card"
+            :class="{ active: activeTab === 'alchemy' }"
+            @click="handleMobileTabSwitch('alchemy')"
+          >
+            <span class="m-tab-icon">🧪</span>
+            <div class="m-tab-info">
+              <span class="m-tab-title">方劑實驗室</span>
+              <span class="m-tab-desc">角色名方與 AI 神來一配調和</span>
+            </div>
+          </button>
+
+          <button
+            class="mobile-tab-card"
+            :class="{ active: activeTab === 'shops' }"
+            @click="handleMobileTabSwitch('shops')"
+          >
+            <span class="m-tab-icon">🏪</span>
+            <div class="m-tab-info">
+              <span class="m-tab-title">結盟青草店</span>
+              <span class="m-tab-desc">全臺結盟青草老舖地圖與採買指南</span>
+            </div>
+          </button>
+
+          <button
+            class="mobile-tab-card"
+            :class="{ active: activeTab === 'books' }"
+            @click="handleMobileTabSwitch('books')"
+          >
+            <span class="m-tab-icon">📚</span>
+            <div class="m-tab-info">
+              <span class="m-tab-title">草木書閣</span>
+              <span class="m-tab-desc">線上購書與沈浸式線上試閱</span>
+            </div>
+          </button>
+
+          <button
+            class="mobile-tab-card"
+            :class="{ active: activeTab === 'consult' }"
+            @click="handleMobileTabSwitch('consult')"
+          >
+            <span class="m-tab-icon">🍵</span>
+            <div class="m-tab-info">
+              <span class="m-tab-title">諮詢茶堂</span>
+              <span class="m-tab-desc">請益本草耆老 RAG 語意問答</span>
+            </div>
+          </button>
+
+          <button
+            class="mobile-tab-card"
+            :class="{ active: activeTab === 'admin' }"
+            @click="handleMobileTabSwitch('admin')"
+          >
+            <span class="m-tab-icon">⚙️</span>
+            <div class="m-tab-info">
+              <span class="m-tab-title">管理後台</span>
+              <span class="m-tab-desc">典藏維護、RBAC 與 LLM 引擎</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- 快捷功能區塊 -->
+        <div class="mobile-drawer-footer">
+          <div class="mobile-quick-actions">
+            <button class="mobile-action-pill" @click="handleMobileAction('random-pick')">
+              <span>✨</span>
+              <span>今日節氣推薦</span>
+            </button>
+            <button class="mobile-action-pill" @click="handleMobileAction('open-compare')">
+              <span>⚖️</span>
+              <span>藥材對照比對 ({{ compareList.length }})</span>
+            </button>
+            <button class="mobile-action-pill" @click="handleMobileAction('open-disclaimer')">
+              <span>📜</span>
+              <span>非醫療免責聲明</span>
+            </button>
+            <button v-if="isSuperAdmin" class="mobile-action-pill" @click="handleMobileAction('open-health')">
+              <span>🟢</span>
+              <span>系統節點狀態監控</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </header>
 </template>
 
@@ -249,6 +406,7 @@ const isSuperAdmin = computed(() => {
 
 const isMuted = ref(audio.isMuted);
 const isAmbientOn = ref(audio.isAmbientPlaying);
+const isMobileMenuOpen = ref(false);
 
 let debounceTimer = null;
 
@@ -280,6 +438,25 @@ const toggleAudio = () => {
 const toggleAmbientSound = () => {
   isAmbientOn.value = audio.toggleAmbient();
 };
+
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+  audio.playClick();
+};
+
+const closeMobileMenu = () => {
+  isMobileMenuOpen.value = false;
+};
+
+const handleMobileTabSwitch = (tab) => {
+  emit('switch-tab', tab);
+  closeMobileMenu();
+};
+
+const handleMobileAction = (actionEvent) => {
+  emit(actionEvent);
+  closeMobileMenu();
+};
 </script>
 
 <style scoped>
@@ -295,13 +472,13 @@ const toggleAmbientSound = () => {
 }
 
 .navbar-inner {
-  max-width: 1680px;
+  max-width: 1440px; /* 自動對齊全站 1440px 主流容器，避免 1680px 過寬突兀感 */
   margin: 0 auto;
-  padding: 10px 20px;
+  padding: 8px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: nowrap;
 }
 
@@ -309,7 +486,7 @@ const toggleAmbientSound = () => {
 .nav-left-cluster {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
   flex-shrink: 0;
 }
 
@@ -323,15 +500,15 @@ const toggleAmbientSound = () => {
 }
 
 .brand-seal {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   background: linear-gradient(135deg, var(--primary), var(--primary-deep));
   color: #fff;
   border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 900;
   box-shadow: 0 3px 8px rgba(45, 106, 79, 0.25);
   flex-shrink: 0;
@@ -344,7 +521,7 @@ const toggleAmbientSound = () => {
 
 .brand-title {
   font-family: var(--font-serif);
-  font-size: 17px;
+  font-size: 16.5px;
   font-weight: 900;
   color: var(--primary-deep);
   letter-spacing: 0.5px;
@@ -353,7 +530,7 @@ const toggleAmbientSound = () => {
 }
 
 .brand-subtitle {
-  font-size: 9.5px;
+  font-size: 9px;
   color: var(--ink-muted);
   letter-spacing: 1px;
   font-weight: 600;
@@ -364,9 +541,9 @@ const toggleAmbientSound = () => {
 .nav-tabs-group {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   background: var(--bg-subtle);
-  padding: 4px;
+  padding: 3px;
   border-radius: 24px;
   border: 1px solid var(--border-light);
   flex-shrink: 0;
@@ -376,7 +553,7 @@ const toggleAmbientSound = () => {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 13px;
+  padding: 5px 11px;
   border-radius: 18px;
   font-size: 13px;
   font-weight: 600;
@@ -411,22 +588,30 @@ const toggleAmbientSound = () => {
   letter-spacing: 0.2px;
 }
 
+.label-full {
+  display: inline;
+}
+
+.label-short {
+  display: none;
+}
+
 /* 中間：自適應模糊搜尋欄 */
 .nav-search-container {
   flex: 1;
-  min-width: 180px;
-  max-width: 360px;
+  min-width: 140px;
+  max-width: 280px;
   position: relative;
   cursor: pointer;
 }
 
 .nav-search-input {
   width: 100%;
-  padding: 8px 14px 8px 38px;
+  padding: 7px 12px 7px 34px;
   background: var(--bg-parchment);
   border: 1px solid var(--border-light);
   border-radius: 20px;
-  font-size: 13.5px;
+  font-size: 13px;
   color: var(--ink-heavy);
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -441,22 +626,22 @@ const toggleAmbientSound = () => {
 
 .nav-search-icon {
   position: absolute;
-  left: 12px;
+  left: 11px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--ink-muted);
   pointer-events: none;
-  font-size: 14px;
+  font-size: 13.5px;
 }
 
 .nav-search-actions {
   position: absolute;
-  right: 10px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .nav-search-clear {
@@ -477,8 +662,8 @@ const toggleAmbientSound = () => {
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: 4px;
-  padding: 1px 5px;
-  font-size: 11px;
+  padding: 1px 4px;
+  font-size: 10px;
   color: var(--ink-muted);
   cursor: pointer;
 }
@@ -487,7 +672,7 @@ const toggleAmbientSound = () => {
 .nav-right-cluster {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -495,10 +680,10 @@ const toggleAmbientSound = () => {
 .nav-tool-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
+  gap: 4px;
+  padding: 5px 10px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
   background: var(--bg-subtle);
   color: var(--ink-body);
@@ -521,6 +706,14 @@ const toggleAmbientSound = () => {
   cursor: not-allowed;
 }
 
+.tool-btn-text-full {
+  display: inline;
+}
+
+.tool-btn-text-short {
+  display: none;
+}
+
 .btn-pill-accent {
   background: var(--primary);
   color: #fff;
@@ -537,8 +730,8 @@ const toggleAmbientSound = () => {
 .health-status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 11px;
+  gap: 5px;
+  padding: 5px 9px;
   border-radius: 16px;
   font-size: 12px;
   font-weight: 600;
@@ -562,8 +755,8 @@ const toggleAmbientSound = () => {
 }
 
 .pulse-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #10b981;
   box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
@@ -581,9 +774,9 @@ const toggleAmbientSound = () => {
 .nav-ambient-capsule {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   background: var(--bg-subtle);
-  padding: 3px 8px;
+  padding: 3px 7px;
   border-radius: 20px;
   border: 1px solid var(--border-light);
   flex-shrink: 0;
@@ -592,12 +785,12 @@ const toggleAmbientSound = () => {
 .theme-switcher-group {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
 }
 
 .theme-dot {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;
@@ -619,15 +812,15 @@ const toggleAmbientSound = () => {
 .midnight-dot { background: #111827; }
 
 .audio-toggle-btn {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   border: 1px solid var(--border-light);
   background: var(--bg-parchment);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -647,10 +840,10 @@ const toggleAmbientSound = () => {
 .btn-user-auth {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
+  gap: 5px;
+  padding: 4px 10px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -670,21 +863,21 @@ const toggleAmbientSound = () => {
 }
 
 .user-avatar-tag {
-  font-size: 14px;
+  font-size: 13.5px;
   line-height: 1;
 }
 
 .user-name-tag {
-  font-size: 13px;
-  max-width: 80px;
+  font-size: 12.5px;
+  max-width: 75px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .user-role-pill {
-  font-size: 10px;
-  padding: 1px 6px;
+  font-size: 9.5px;
+  padding: 1px 5px;
   border-radius: 8px;
   background: rgba(45, 90, 39, 0.12);
   color: var(--primary-deep);
@@ -695,9 +888,9 @@ const toggleAmbientSound = () => {
 
 .nav-auth-divider {
   width: 1px;
-  height: 20px;
+  height: 18px;
   background: var(--border-light);
-  margin: 0 4px;
+  margin: 0 2px;
   flex-shrink: 0;
 }
 
@@ -705,8 +898,8 @@ const toggleAmbientSound = () => {
   background: var(--primary-deep);
   color: #fff;
   border-radius: 10px;
-  padding: 1px 6px;
-  font-size: 11px;
+  padding: 1px 5px;
+  font-size: 10.5px;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -718,20 +911,289 @@ const toggleAmbientSound = () => {
   font-weight: 600;
 }
 
-/* 響應式優化：避免任何小螢幕時文字變直 */
-@media (max-width: 1200px) {
+/* 行動裝置漢堡開關鈕 */
+.mobile-menu-toggle-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  color: var(--primary-deep);
+  font-size: 17px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.mobile-menu-toggle-btn:hover,
+.mobile-menu-toggle-btn.active {
+  background: var(--primary-pale);
+  border-color: var(--primary);
+  color: var(--primary-deep);
+}
+
+/* 行動導航抽屜容器 */
+.mobile-nav-drawer {
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-light);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  padding: 16px 18px 24px;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-drawer-search {
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.mobile-search-input {
+  width: 100%;
+  padding: 9px 14px 9px 36px;
+  background: var(--bg-parchment);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  font-size: 13.5px;
+  color: var(--ink-heavy);
+  outline: none;
+}
+
+.mobile-tabs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.mobile-tab-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-tab-card:hover {
+  background: #ffffff;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.mobile-tab-card.active {
+  background: var(--primary-pale);
+  border-color: var(--primary);
+  box-shadow: 0 3px 10px rgba(45, 90, 39, 0.1);
+}
+
+.m-tab-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.m-tab-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.m-tab-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--primary-deep);
+}
+
+.m-tab-desc {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  margin-top: 1px;
+}
+
+.mobile-drawer-footer {
+  border-top: 1px dashed var(--border-light);
+  padding-top: 14px;
+}
+
+.mobile-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mobile-action-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  color: var(--ink-body);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-action-pill:hover {
+  background: #ffffff;
+  color: var(--primary-deep);
+  border-color: var(--primary);
+}
+
+/* 抽屜過渡動畫 */
+.mobile-drawer-slide-enter-active,
+.mobile-drawer-slide-leave-active {
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-drawer-slide-enter-from,
+.mobile-drawer-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* ======================================================== */
+/* 🌟 主流解析度分級響應式自適應 (Responsive Breakpoints) */
+/* ======================================================== */
+
+/* 1. 1366px ~ 1440px (主流筆電、1080p 125% 縮放視窗)：精簡副標題與字距，完美無溢位 */
+@media (max-width: 1440px) {
   .brand-subtitle {
     display: none;
   }
+  .navbar-inner {
+    padding: 7px 14px;
+    gap: 10px;
+  }
+  .label-full {
+    display: none;
+  }
+  .label-short {
+    display: inline;
+  }
+  .nav-tab-btn {
+    padding: 5px 8px;
+    font-size: 12.5px;
+  }
   .nav-search-container {
-    max-width: 240px;
+    max-width: 200px;
+    min-width: 130px;
+  }
+  .tool-btn-text-full {
+    display: none;
+  }
+  .tool-btn-text-short {
+    display: inline;
   }
 }
 
+/* 2. 1100px ~ 1240px (小型筆電、iPad 橫向)：圖示化次要工具按鈕，全單行無捲軸 */
+@media (max-width: 1240px) {
+  .nav-left-cluster {
+    gap: 8px;
+  }
+  .nav-tabs-group {
+    gap: 2px;
+    padding: 2px;
+  }
+  .nav-tab-btn {
+    padding: 4px 7px;
+    font-size: 12px;
+    gap: 3px;
+  }
+  .nav-search-container {
+    max-width: 160px;
+    min-width: 110px;
+  }
+  .health-badge-label {
+    display: none;
+  }
+  .health-status-badge {
+    padding: 5px 7px;
+  }
+  .tool-btn-text-short,
+  .tool-btn-text {
+    display: none;
+  }
+  .nav-tool-btn {
+    padding: 5px 8px;
+  }
+}
+
+/* 3. 992px ~ 1100px：緊湊平板模式，依然單行整齊 */
+@media (max-width: 1100px) {
+  .nav-search-container {
+    max-width: 130px;
+    min-width: 90px;
+  }
+  .nav-search-input {
+    font-size: 12px;
+    padding-left: 28px;
+  }
+  .nav-search-icon {
+    left: 8px;
+    font-size: 12px;
+  }
+  .nav-kbd-hint {
+    display: none;
+  }
+}
+
+/* 4. <= 992px (平板直向、手機觸控端)：切換為優雅精巧 Header + 行動選單抽屜 */
 @media (max-width: 992px) {
   .top-navbar {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow-x: visible;
+  }
+  .nav-tabs-group {
+    display: none;
+  }
+  .nav-search-container {
+    display: none;
+  }
+  .nav-tool-btn {
+    display: none;
+  }
+  .health-status-badge {
+    display: none;
+  }
+  .mobile-menu-toggle-btn {
+    display: inline-flex;
+  }
+}
+
+/* 5. <= 540px (各款智慧型手機)：極致簡約 */
+@media (max-width: 540px) {
+  .navbar-inner {
+    padding: 6px 12px;
+  }
+  .brand-title {
+    font-size: 15px;
+  }
+  .brand-seal {
+    width: 32px;
+    height: 32px;
+    font-size: 17px;
+  }
+  .user-name-tag,
+  .user-role-pill {
+    display: none;
+  }
+  .btn-user-auth {
+    padding: 4px 6px;
+  }
+  .nav-auth-divider {
+    display: none;
+  }
+  .mobile-tabs-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>
