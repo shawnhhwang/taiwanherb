@@ -11,6 +11,29 @@
       </button>
     </div>
 
+    <!-- 當令節令推薦 (Solar Term Recommendation) -->
+    <div class="filter-group seasonal-filter-group">
+      <div class="filter-heading">
+        <span>🍂</span>
+        <span>當令節令推薦</span>
+        <span class="seasonal-term-badge">{{ currentSolarTerm.name }}</span>
+      </div>
+      <div class="seasonal-filter-wisdom">
+        {{ currentSolarTerm.dateRange }} · {{ currentSolarTerm.wisdom }}
+      </div>
+      <div class="chip-cloud">
+        <button
+          v-for="hName in currentSolarTerm.herbNames"
+          :key="hName"
+          class="filter-chip seasonal-chip"
+          :title="`快速檢索當令本草：${hName}`"
+          @click="$emit('select-seasonal-herb', hName)"
+        >
+          🌿 {{ hName }}
+        </button>
+      </div>
+    </div>
+
     <!-- 風土產區 (Regions) -->
     <div class="filter-group">
       <div class="filter-heading">
@@ -175,6 +198,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { getCurrentSolarTerm } from '../services/solarTerms';
 
 const props = defineProps({
   categories: { type: Array, default: () => [] },
@@ -199,8 +223,11 @@ defineEmits([
   'select-region',
   'select-folk-app',
   'select-safety-level',
+  'select-seasonal-herb',
   'reset-filters'
 ]);
+
+const currentSolarTerm = computed(() => getCurrentSolarTerm(new Date()));
 
 const hasActiveFilter = computed(() => {
   return (

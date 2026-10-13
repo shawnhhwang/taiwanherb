@@ -154,6 +154,7 @@
           @select-region="onSelectRegion"
           @select-folk-app="onSelectFolkApp"
           @select-safety-level="onSelectSafetyLevel"
+          @select-seasonal-herb="onHeroSearch"
           @reset-filters="resetFilters"
         />
 
@@ -165,6 +166,43 @@
             :all-herbs="allHerbsFullList"
             @select-region="onSelectRegion"
           />
+
+          <!-- 當令節令時序推薦橫幅 (Seasonal Recommendation Showcase Banner) -->
+          <div class="catalog-seasonal-card">
+            <div class="seasonal-card-left">
+              <div class="seasonal-seal-row">
+                <span class="seasonal-seal">節令推薦</span>
+                <span class="seasonal-title">
+                  二十四節氣 · 當令<strong>【{{ currentSolarTerm.name }}】</strong>
+                  <span class="seasonal-range">({{ currentSolarTerm.dateRange }})</span>
+                </span>
+              </div>
+              <p class="seasonal-desc">
+                {{ currentSolarTerm.wisdom }}
+              </p>
+            </div>
+            <div class="seasonal-card-right">
+              <div class="seasonal-herbs-label">當令契合本草：</div>
+              <div class="seasonal-herbs-btn-group">
+                <button
+                  v-for="name in currentSolarTerm.herbNames"
+                  :key="name"
+                  class="btn-seasonal-herb-tag"
+                  :title="`快速檢索當令本草：${name}`"
+                  @click="onHeroSearch(name)"
+                >
+                  🌿 {{ name }}
+                </button>
+                <button
+                  class="btn-seasonal-explore"
+                  title="開卷查看當令節氣推薦本草詳情"
+                  @click="fetchRandomHerb"
+                >
+                  ✨ 探索當令首選 ➔
+                </button>
+              </div>
+            </div>
+          </div>
 
           <!-- 頂部資訊與控制欄 -->
           <div class="catalog-header">
@@ -489,7 +527,7 @@ import HealthModal from './components/HealthModal.vue';
 import AuthModal from './components/AuthModal.vue';
 import AlliedShopsView from './components/AlliedShopsView.vue';
 import HerbBookshelfView from './components/HerbBookshelfView.vue';
-import { getSeasonalHerbRecommendation } from './services/solarTerms';
+import { getSeasonalHerbRecommendation, getCurrentSolarTerm } from './services/solarTerms';
 
 // 狀態定義
 const herbs = ref([]);
@@ -502,7 +540,8 @@ const regions = ref([]);
 const folkApplications = ref([]);
 const safetyLevels = ref([]);
 
-// 當令節氣推薦橫條 Toast 狀態
+// 當令節令時序與推薦狀態
+const currentSolarTerm = computed(() => getCurrentSolarTerm(new Date()));
 const seasonalToastMessage = ref('');
 const isSeasonalToastVisible = ref(false);
 
@@ -729,7 +768,7 @@ const fetchRandomHerb = async () => {
     
     if (herb && herb.id) {
       await openHerbDetail(herb.id);
-      seasonalToastMessage.value = `🍂【當令節氣 · ${term.name}（${term.dateRange}）今日推薦本草】：${herb.name} —— ${reason}`;
+      seasonalToastMessage.value = `🍂【節令推薦 · ${term.name}（${term.dateRange}）當令本草】：${herb.name} —— ${reason}`;
       isSeasonalToastVisible.value = true;
       setTimeout(() => {
         isSeasonalToastVisible.value = false;

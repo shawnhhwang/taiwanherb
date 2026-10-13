@@ -142,11 +142,11 @@
           </span>
         </button>
 
-        <!-- 今日推薦 (與當令節氣一致) -->
-        <button class="nav-tool-btn btn-pill-accent" title="推薦當令節氣契合之島嶼本草" @click="$emit('random-pick')">
-          <span>✨</span>
-          <span class="tool-btn-text-full">今日推薦</span>
-          <span class="tool-btn-text-short">推薦</span>
+        <!-- 節令推薦 (與當令節氣一致) -->
+        <button class="nav-tool-btn btn-pill-accent" title="推薦當令節氣契合之島嶼本草（依當前時序自動對應）" @click="$emit('random-pick')">
+          <span>🍂</span>
+          <span class="tool-btn-text-full">節令推薦</span>
+          <span class="tool-btn-text-short">節令</span>
         </button>
 
         <!-- 藥材對照比對 (無障礙點擊，支援一鍵載入比對組合) -->
@@ -349,8 +349,8 @@
         <div class="mobile-drawer-footer">
           <div class="mobile-quick-actions">
             <button class="mobile-action-pill" @click="handleMobileAction('random-pick')">
-              <span>✨</span>
-              <span>今日節氣推薦</span>
+              <span>🍂</span>
+              <span>節令推薦（當令二十四節氣本草）</span>
             </button>
             <button class="mobile-action-pill" @click="handleMobileAction('open-compare')">
               <span>⚖️</span>
@@ -1301,6 +1301,9 @@ const handleMobileAction = (actionEvent) => {
   .tool-btn-text-short,
   .tool-btn-text {
     display: none;
+  }
+  .btn-pill-accent .tool-btn-text-short {
+    display: inline !important;
   }
   .nav-tool-btn {
     padding: 5px 8px;

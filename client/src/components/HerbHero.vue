@@ -27,14 +27,14 @@
         <div class="solar-wisdom-card">
           <div class="solar-wisdom-header">
             <span class="solar-icon">🍂</span>
-            <strong>【{{ currentSolarTerm.name }}草本養生訓】</strong>
+            <strong>【節令推薦 · {{ currentSolarTerm.name }}草本養生訓】</strong>
             <span class="solar-select-hint">可切換探索 24 節氣</span>
           </div>
           <p class="solar-wisdom-desc">{{ currentSolarTerm.wisdom }}</p>
           <div class="solar-herb-tags">
             <span class="solar-tag-label">當令推薦：</span>
             <button
-              v-for="herbName in currentSolarTerm.herbs"
+              v-for="herbName in (currentSolarTerm.herbNames || currentSolarTerm.herbs)"
               :key="herbName"
               class="solar-herb-pill"
               @click="onQuickSearch(herbName)"
@@ -145,6 +145,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { audio } from '../services/audioService';
+import { getCurrentSolarTerm } from '../services/solarTerms';
 
 const props = defineProps({
   featuredHerb: {
@@ -183,18 +184,9 @@ const solarTerms = [
   { name: '冬至', dateRange: '12/21 - 1/04', wisdom: '陰極生陽，萬物蟄藏，以黃耆、當歸、枸杞慢火燉補，補氣升陽、固本培元。', herbs: ['黃耆', '枸杞子'] }
 ];
 
-// 計算當前節氣 (預設秋分/寒露季節)
+// 計算當前節氣 (對應真實時間之 24 節氣)
 const currentSolarTerm = computed(() => {
-  const month = new Date().getMonth() + 1;
-  if (month >= 3 && month <= 4) return solarTerms[0];
-  if (month === 5) return solarTerms[1];
-  if (month === 6) return solarTerms[2];
-  if (month === 7) return solarTerms[4];
-  if (month === 8) return solarTerms[6];
-  if (month === 9) return solarTerms[8];
-  if (month === 10) return solarTerms[9];
-  if (month === 11) return solarTerms[10];
-  return solarTerms[11];
+  return getCurrentSolarTerm(new Date());
 });
 
 // 3D 視角互動
