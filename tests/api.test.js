@@ -171,6 +171,17 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.ok(ids.includes('hakka_grandmother'));
     assert.ok(ids.includes('pharmacist_phd'));
     assert.ok(ids.includes('indigenous_forager'));
+
+    const huang = body.data.find(e => e.id === 'pharmacist_phd');
+    assert.ok(huang.name.includes('黃世勳'));
+    assert.equal(huang.isRealExpert, true);
+    assert.equal(huang.profileUrl, 'https://webap.cmu.edu.tw/TchEportfolio/index_1/sshuang');
+
+    const virtuals = body.data.filter(e => e.id !== 'pharmacist_phd');
+    virtuals.forEach(v => {
+      assert.equal(v.isRealExpert, false);
+      assert.equal(v.characterType, '虛擬人物');
+    });
   });
 
   test('POST /api/consult - 萬華青草伯 RAG 諮詢應回傳在地語意與藥材引用', async () => {
@@ -280,7 +291,7 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.equal(res.status, 200);
     const html = await res.text();
     assert.ok(html.includes('<div id="app"></div>'));
-    assert.ok(html.includes('台灣本草植物誌'));
+    assert.ok(html.includes('台灣肯信本草研究室'));
   });
 
   test('GET /herb/1 - 非 API 路由應退避提供 Vue 3 SPA index.html', async () => {

@@ -3,11 +3,11 @@
     <div class="navbar-inner">
       <!-- 左側群組：品牌標誌 + 核心導覽標籤 (桌機主流解析度自適應) -->
       <div class="nav-left-cluster">
-        <div class="brand-section" @click="$emit('switch-tab', 'home')" title="返回台灣本草植物誌首頁">
-          <div class="brand-seal">本</div>
+        <div class="brand-section" @click="$emit('switch-tab', 'home')" title="返回台灣肯信本草研究室首頁">
+          <div class="brand-seal">肯</div>
           <div class="brand-text-block">
-            <div class="brand-title">台灣本草植物誌</div>
-            <div class="brand-subtitle">TAIWAN HERB WIKI</div>
+            <div class="brand-title">台灣肯信本草研究室</div>
+            <div class="brand-subtitle">TAIWAN KENSHIN HERB LAB</div>
           </div>
         </div>
 

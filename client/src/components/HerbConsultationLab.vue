@@ -43,13 +43,23 @@
         >
           <div class="expert-card-top">
             <span class="expert-avatar">{{ exp.avatar }}</span>
-            <span class="expert-seal-stamp">{{ exp.seal || '名師' }}</span>
+            <span
+              class="expert-seal-stamp"
+              :class="exp.isRealExpert ? 'real-scholar-stamp' : 'virtual-persona-stamp'"
+            >
+              {{ exp.isRealExpert ? '🎓 真實學者' : '🎭 虛擬人物' }}
+            </span>
           </div>
           <div class="expert-name-row">
             <h4 class="expert-name">{{ exp.name }}</h4>
             <span class="expert-region-pill">{{ exp.region.split(' ')[0] }}</span>
           </div>
           <div class="expert-title">{{ exp.title }}</div>
+          <div v-if="exp.profileUrl" class="expert-profile-link-wrap">
+            <a :href="exp.profileUrl" target="_blank" rel="noopener noreferrer" class="expert-profile-link" @click.stop>
+              🔗 中國醫藥大學 Eportfolio ↗
+            </a>
+          </div>
           <div class="expert-catchphrase">{{ exp.catchphrase }}</div>
           <div class="expert-tags">
             <span v-for="tag in exp.expertise" :key="tag" class="expert-tag-item">
@@ -110,8 +120,21 @@
             <div class="result-expert-info">
               <span class="result-expert-avatar">{{ lastResult.expert.avatar }}</span>
               <div>
-                <div class="result-expert-name">{{ lastResult.expert.name }} · 開卷解方</div>
+                <div class="result-expert-name">
+                  {{ lastResult.expert.name }} · 開卷解方
+                  <span
+                    class="result-expert-badge"
+                    :class="lastResult.expert.isRealExpert ? 'real-badge' : 'virtual-badge'"
+                  >
+                    {{ lastResult.expert.isRealExpert ? '🎓 真實學者' : '🎭 虛擬人物' }}
+                  </span>
+                </div>
                 <div class="result-expert-title">{{ lastResult.expert.title }}</div>
+                <div v-if="lastResult.expert.profileUrl" class="result-expert-link-row">
+                  <a :href="lastResult.expert.profileUrl" target="_blank" rel="noopener noreferrer" class="result-expert-link">
+                    🔗 中國醫藥大學教師 Eportfolio 專頁 ↗
+                  </a>
+                </div>
               </div>
             </div>
             <div class="result-header-right">
@@ -210,9 +233,9 @@ const presetMap = {
     '阿婆，紫蘇跟桑葉在客庄家裡平時都怎麼煮成茶喝？'
   ],
   pharmacist_phd: [
-    '陳博士，魚腥草與金銀花的抗菌活性成分是什麼？高溫煎煮會破壞嗎？',
+    '黃教授，魚腥草與金銀花的抗菌活性成分是什麼？高溫煎煮會破壞嗎？',
     '有長期服用高血壓西藥的人，飲用大花咸豐草茶會有交互作用嗎？',
-    '現代生藥學如何看待穿心蓮與山苦瓜的消炎與代謝調控潛力？'
+    '從臺灣藥用植物調查考證與生藥學視角，如何看待穿心蓮與山苦瓜的消炎與代謝調控潛力？'
   ],
   indigenous_forager: [
     '督邁達人，原住民部落的刺蔥（Tana）在山林野炊都怎麼料理？',
@@ -444,6 +467,38 @@ const submitConsultation = async () => {
   font-weight: bold;
 }
 
+.expert-seal-stamp.real-scholar-stamp {
+  background: #15803d;
+  color: #ffffff;
+  border: 1px solid #166534;
+  box-shadow: 0 1px 3px rgba(21, 128, 61, 0.25);
+}
+
+.expert-seal-stamp.virtual-persona-stamp {
+  background: rgba(180, 83, 9, 0.12);
+  color: #92400e;
+  border: 1px solid rgba(180, 83, 9, 0.3);
+}
+
+.expert-profile-link-wrap {
+  margin: 4px 0 6px;
+}
+
+.expert-profile-link {
+  font-size: 11.5px;
+  color: #0369a1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.15s;
+}
+
+.expert-profile-link:hover {
+  color: #0284c7;
+}
+
 .expert-name-row {
   display: flex;
   justify-content: space-between;
@@ -637,11 +692,49 @@ const submitConsultation = async () => {
   font-size: 18px;
   font-weight: bold;
   color: var(--primary-deep);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.result-expert-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-family: var(--font-sans);
+}
+
+.result-expert-badge.real-badge {
+  background: #15803d;
+  color: #fff;
+}
+
+.result-expert-badge.virtual-badge {
+  background: rgba(180, 83, 9, 0.12);
+  color: #92400e;
+  border: 1px solid rgba(180, 83, 9, 0.3);
 }
 
 .result-expert-title {
   font-size: 12.5px;
   color: var(--ink-muted);
+}
+
+.result-expert-link-row {
+  margin-top: 4px;
+}
+
+.result-expert-link {
+  font-size: 12px;
+  color: #0369a1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.result-expert-link:hover {
+  color: #0284c7;
 }
 
 .result-header-right {

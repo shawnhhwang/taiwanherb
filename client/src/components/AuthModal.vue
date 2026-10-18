@@ -181,7 +181,7 @@
         <!-- 標籤 3: 前後台權限矩陣 -->
         <div v-if="activeAuthTab === 'matrix'" class="auth-panel">
           <div class="matrix-header">
-            <h4>📜 臺灣本草植物誌 · 角色與功能權限對照矩陣 (RBAC Matrix)</h4>
+            <h4>📜 台灣肯信本草研究室 · 角色與功能權限對照矩陣 (RBAC Matrix)</h4>
             <p>嚴格區分前台常民文化探索與後台典藏資料治理權限，杜絕越權操作。</p>
           </div>
 

@@ -409,7 +409,7 @@
 
     <!-- 頁尾宣告 -->
     <footer class="footer-bar">
-      <div>台灣本草植物 Wiki 資料庫系統 · Taiwan Herb Wiki</div>
+      <div>台灣肯信本草研究室 · Taiwan Kenshin Herb Research Lab</div>
       <div style="margin-top: 4px; font-size: 11.5px; color: var(--ink-muted);">
         榮獲數位美學與植物學知識庫設計標準 · 沉澱四百年風土草木智慧 · 純粹古早民俗文化分享 · 非醫療宣稱平台
       </div>
@@ -446,7 +446,7 @@
           <div class="disclaimer-section">
             <h4>一、文化傳承與歷史教育性質定位</h4>
             <p>
-              本「台灣本草植物誌 (Taiwan Herb Wiki)」為一聚焦於臺灣四百年常民生活風土、客家與原住民族野草採集歷史、傳統民間青草茶舖文獻之<strong>文化教育與植物學普及展示平台</strong>。本網站所有內容（包含草藥性味、十二經絡、古籍文獻記述、民俗用途、RAG 專家諮詢回答、文章專題及方劑研製），均源自古代典籍考據與民間鄉野傳承記錄，純供常民文化認知與生活生活茶飲探索參考。
+              本「台灣肯信本草研究室 (Taiwan Kenshin Herb Research Lab)」為一聚焦於臺灣四百年常民生活風土、客家與原住民族野草採集歷史、傳統民間青草茶舖文獻之<strong>文化教育與植物學普及展示平台</strong>。本網站所有內容（包含草藥性味、十二經絡、古籍文獻記述、民俗用途、RAG 專家諮詢回答、文章專題及方劑研製），均源自古代典籍考據與民間鄉野傳承記錄，純供常民文化認知與生活生活茶飲探索參考。
             </p>
           </div>
 

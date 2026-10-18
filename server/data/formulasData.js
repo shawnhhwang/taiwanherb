@@ -399,13 +399,13 @@ const characterFormulas = [
   },
 
   // ==========================================
-  // 3. 嚴敏華 博士 (臺灣大學藥用植物學教授兼臨床藥師)
+  // 3. 黃世勳 教授 (中國醫藥大學藥學院藥學系教授 / 藥學博士)
   // ==========================================
   {
     id: 'formula_phd_defense_tea',
     name: '國家中醫藥防疫清潤配方',
     expertId: 'pharmacist_phd',
-    expertName: '嚴敏華 博士',
+    expertName: '黃世勳 教授',
     type: 'herbal_tea',
     typeName: '民俗青草茶',
     badge: '科學驗證配伍',
@@ -474,7 +474,7 @@ const characterFormulas = [
     id: 'formula_phd_metabolic_tea',
     name: '低糖代謝七葉苦瓜元氣飲',
     expertId: 'pharmacist_phd',
-    expertName: '嚴敏華 博士',
+    expertName: '黃世勳 教授',
     type: 'herbal_tea',
     typeName: '民俗青草茶',
     badge: '代謝機能調控',

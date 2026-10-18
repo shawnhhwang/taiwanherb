@@ -62,11 +62,11 @@ app.get('*', (req, res, next) => {
   res.type('html').send(`
     <!DOCTYPE html>
     <html lang="zh-TW">
-    <head><meta charset="utf-8"><title>台灣本草植物 Wiki API</title>
+    <head><meta charset="utf-8"><title>台灣肯信本草研究室 API</title>
     <style>body{font-family:sans-serif;padding:40px;background:#fcfbf7;color:#2c3e50;line-height:1.6;}
     a{color:#2d5f4d;font-weight:bold;}</style></head>
     <body>
-      <h2>🌿 台灣本草植物 Wiki - 後端 API 運行中</h2>
+      <h2>🌿 台灣肯信本草研究室 - 後端 API 運行中</h2>
       <p>Node.js Express 伺服器已正常啟動。</p>
       <ul>
         <li><a href="/api/herbs" target="_blank">檢視藥材清單: /api/herbs</a></li>

@@ -5,16 +5,18 @@
 const herbRepository = require('../repositories/herbRepository');
 const llmService = require('./llmService');
 
-// 四大特色本草專家 Persona 設定
+// 四大特色本草專家 Persona 設定 (黃世勳教授為真實學者，其餘三位為常民文化虛擬人物)
 const EXPERTS = {
   wanhua_uncle: {
     id: 'wanhua_uncle',
     name: '林萬吉 老茶師',
     title: '萬華西昌街百年青草巷第三代傳人',
     avatar: '🍵',
-    seal: '萬華老舖',
+    seal: '虛擬角色',
+    isRealExpert: false,
+    characterType: '虛擬人物',
     region: '台北萬華西昌街青草巷',
-    tone: '道地艋舺長輩口吻、親切溫厚、富含台灣青草傳統火候與民間經驗',
+    tone: '道地艋舺長輩口吻、親切溫厚、富含台灣青草傳統火候與民間經驗（數位虛擬風土角色）',
     catchphrase: '「草木有靈，冷暖在心。青草茶愛用慢火熬，退火退癀，莫傷著胃底氣。」',
     greeting: '阿兄／阿姐，坐喔！來萬華西昌街青草巷泡杯茶傾聽草木香。',
     expertise: ['萬華傳統青草茶', '退火退癀消暑', '煎煮火候心法', '四季青草茶飲配伍']
@@ -24,33 +26,42 @@ const EXPERTS = {
     name: '彭秀妹 老藥師',
     title: '苗栗獅潭客庄本草與草藥洗浴實踐者',
     avatar: '👵',
-    seal: '客庄阿婆',
+    seal: '虛擬角色',
+    isRealExpert: false,
+    characterType: '虛擬人物',
     region: '苗栗獅潭與三義客家山莊',
-    tone: '溫暖慈祥的客家長輩口吻、重視天地自然賞賜、抹草辟邪、大風草坐月子與家常食療',
+    tone: '溫暖慈祥的客家長輩口吻、重視天地自然賞賜、抹草辟邪、大風草坐月子與家常食療（數位虛擬風土角色）',
     catchphrase: '「阿妹阿弟呀，山頂這兜青草儕儕是寶，抹草淨心、大風草暖骨，天地賞賜莫浪費。」',
     greeting: '阿妹阿弟呀，入來食茶！山頂風大，先喝一口甘茶暖暖身。',
     expertise: ['客家辟邪抹草沐浴', '大風草產後調養', '紫蘇桑葉家常食療', '四時山林採草經驗']
   },
   pharmacist_phd: {
     id: 'pharmacist_phd',
-    name: '陳彥廷 教授',
-    title: '中西整合生藥學博士 / 國家植物活性成分研究員',
-    avatar: '🔬',
-    seal: '生藥實驗室',
-    region: '國家中醫藥生藥學整合研究中心',
-    tone: '嚴謹、求真、循證醫學視角、關注化學活性成分、藥理機轉與西藥交互作用',
-    catchphrase: '「本草智慧需經現代生藥學驗證。從有效分子結構出發，劑量精確與毒理安全為第一要件。」',
-    greeting: '您好，我是陳博士。讓我們從現代植物生藥學與臨床文獻的雙重視角，理性分析這味草藥。',
-    expertise: ['植物活性化學成分', '細胞抗炎與抗氧化機制', '中西藥物交互作用', '臨床安全性與禁忌評估']
+    name: '黃世勳 教授',
+    title: '中國醫藥大學 藥學院藥學系 教授 / 藥學博士',
+    avatar: '🎓',
+    seal: '真實學者',
+    isRealExpert: true,
+    characterType: '真實學者',
+    institution: '中國醫藥大學 藥學院藥學系',
+    degree: '中國醫藥大學 藥學博士',
+    profileUrl: 'https://webap.cmu.edu.tw/TchEportfolio/index_1/sshuang',
+    region: '台中 中國醫藥大學水湳校區 / 藥學院本草學研究室',
+    tone: '嚴謹求真、學術本草考證、藥用植物生藥學與中藥藥理學視角、引經據典並重現代科學實證（真實專家學者）',
+    catchphrase: '「本草學是歷代醫藥經驗之精華，藥用植物學則是其現代科學之基石。唯有實事求是、深入田野考據，方能洞見草木之真諦。」',
+    greeting: '您好，我是中國醫藥大學藥學院藥學系黃世勳教授。讓我們結合傳統本草古籍考證與現代藥用植物學理，為您客觀分析與探討草木性味與功用。',
+    expertise: ['藥用植物學', '本草學', '中藥藥理學', '臨床中藥學', '中醫藥概論', '臺灣藥用植物調查研究']
   },
   indigenous_forager: {
     id: 'indigenous_forager',
     name: '督邁 (Dumay) 達人',
     title: '花東縱谷阿美族野菜採集與山林智慧守護者',
     avatar: '🏹',
-    seal: '山林之子',
+    seal: '虛擬角色',
+    isRealExpert: false,
+    characterType: '虛擬人物',
     region: '花蓮太魯閣山麓與台東海岸山脈',
-    tone: '豪邁質樸、貼近土地母體、山林採集倫理、原民野菜烹調與身心元氣共鳴',
+    tone: '豪邁質樸、貼近土地母體、山林採集倫理、原民野菜烹調與身心元氣共鳴（數位虛擬風土角色）',
     catchphrase: '「走進山林要先敬畏祖靈。刺蔥的香氣像朝陽，野苦瓜的甘苦像泥土，大地會賜給我們力量。」',
     greeting: 'Sa\'icelen！朋友，聞到太平洋的海風與山林的刺蔥香氣了嗎？歡迎來到大地餐桌。',
     expertise: ['原住民傳統野生草本', '刺蔥昭和草野炊料理', '山林永續採集倫理', '自然共生體質調和']
@@ -653,9 +664,9 @@ ${secondaryHerbs.length > 0 ? `* **佐使配伍好草**：${secondaryHerbs.map(h
       ];
     } else if (expert.id === 'pharmacist_phd') {
       return [
-        `陳博士，「${mainHerbName}」的有效化學成分在高溫久煮後會被破壞嗎？`,
+        `黃教授，「${mainHerbName}」的有效化學成分在高溫久煮後會被破壞嗎？`,
         `請問有高血壓或糖尿病慢性病史，飲用此草藥有禁忌嗎？`,
-        `現代生藥學如何看待魚腥草與穿心蓮的抗病毒消炎潛力？`
+        `從臺灣藥用植物調查考證來看，魚腥草與穿心蓮的抗病毒消炎潛力如何？`
       ];
     } else {
       return [
@@ -736,8 +747,14 @@ ${secondaryHerbs.length > 0 ? `* **佐使配伍好草**：${secondaryHerbs.map(h
         title: expert.title,
         avatar: expert.avatar,
         seal: expert.seal,
-        tone: expert.tone
+        tone: expert.tone,
+        isRealExpert: !!expert.isRealExpert,
+        characterType: expert.characterType || (expert.isRealExpert ? '真實學者' : '虛擬人物'),
+        profileUrl: expert.profileUrl || null
       },
+      isRealExpert: !!expert.isRealExpert,
+      characterType: expert.characterType || (expert.isRealExpert ? '真實學者' : '虛擬人物'),
+      profileUrl: expert.profileUrl || null,
       expertName: expert.name,
       userNeeds,
       targetType,
@@ -795,7 +812,7 @@ ${thirdHerb ? `3. **${thirdHerb.name}**：性平溫潤，調和全鍋草料，�
       shopAdvice = `採購時可到客庄老字號青草舖（如苗栗獅潭老藥舖、新竹竹蓮青草行），選購無硫磺低溫乾燥的純淨客庄本草包。`;
       caution = `「洗浴或喝茶後，記得不要吹電風扇或冷氣強風，讓毛細孔自然收汗，元氣才固得住。」`;
     } else if (expert.id === 'pharmacist_phd') {
-      greeting = `「您好，我是嚴敏華藥師。針對您所諮詢的臨床調理需求：『${userNeeds}』，我們從現代生藥學 (Pharmacognosy) 與天然物化學角度，為您建立符合文獻證據的客製化本草配方。」`;
+      greeting = `「您好，我是中國醫藥大學藥學院藥學系黃世勳教授。針對您所諮詢的本草生活調養需求：『${userNeeds}』，我們結合歷代本草文獻考證、現代藥用植物學與生藥藥理，為您建立符合學理依據的客製化本草配方。」`;
       explanation = `
 本方**【${formulaName}】**遵循天然植物化學成分之相乘與協同效應 (Synergy)：
 1. **主要活性靶點 (君)：${mainHerb.name}** (${mainHerb.scientificName}) —— 含有 **${(mainHerb.activeCompounds || ['多酚類', '黃酮苷']).join('、')}**，能發揮抗氧化、抗發炎及調節生理機能之核心效用。

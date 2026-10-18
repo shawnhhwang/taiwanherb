@@ -119,6 +119,22 @@
             </div>
             <div class="formula-expert-tag">
               傳承：<strong>{{ formula.expertName }}</strong> ({{ formula.expertTitle }})
+              <span
+                class="formula-scholar-badge"
+                :class="formula.expertId === 'pharmacist_phd' ? 'real' : 'virtual'"
+              >
+                {{ formula.expertId === 'pharmacist_phd' ? '🎓 真實學者' : '🎭 虛擬人物' }}
+              </span>
+              <a
+                v-if="formula.expertId === 'pharmacist_phd'"
+                href="https://webap.cmu.edu.tw/TchEportfolio/index_1/sshuang"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="formula-cmu-link"
+                @click.stop
+              >
+                🔗 Eportfolio ↗
+              </a>
             </div>
           </div>
 
@@ -572,9 +588,22 @@
               :class="{ active: consultExpertId === exp.id }"
               @click="consultExpertId = exp.id"
             >
-              <div class="persona-avatar">{{ exp.avatar }}</div>
+              <div class="persona-card-header">
+                <div class="persona-avatar">{{ exp.avatar }}</div>
+                <span
+                  class="persona-type-badge"
+                  :class="exp.isReal ? 'real' : 'virtual'"
+                >
+                  {{ exp.isReal ? '🎓 真實學者' : '🎭 虛擬人物' }}
+                </span>
+              </div>
               <div class="persona-name">{{ exp.name }}</div>
               <div class="persona-role">{{ exp.title }}</div>
+              <div v-if="exp.officialUrl" class="persona-official-link-wrap">
+                <a :href="exp.officialUrl" target="_blank" rel="noopener noreferrer" class="persona-official-link" @click.stop>
+                  🔗 中國醫藥大學 Eportfolio ↗
+                </a>
+              </div>
               <div class="persona-tone">風格：{{ exp.tone }}</div>
             </div>
           </div>
@@ -640,6 +669,21 @@
             <h3 class="recipe-result-title">{{ recipeResult.recipeName }}</h3>
             <div class="recipe-author-line">
               由 <strong>{{ recipeResult.expertName }}</strong> 親自辨證指導 · 建議劑型：{{ formulaTypeLabel(recipeResult.targetType) }}
+              <span
+                class="recipe-expert-type-pill"
+                :class="recipeResult.isRealExpert ? 'real' : 'virtual'"
+              >
+                {{ recipeResult.isRealExpert ? '🎓 真實學者' : '🎭 虛擬人物' }}
+              </span>
+              <a
+                v-if="recipeResult.profileUrl || recipeResult.expert?.profileUrl"
+                :href="recipeResult.profileUrl || recipeResult.expert?.profileUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="recipe-cmu-link"
+              >
+                🔗 中國醫藥大學 Eportfolio ↗
+              </a>
             </div>
           </div>
           <div class="recipe-header-actions">
@@ -709,7 +753,7 @@
           <div class="ticket-seal-group">
             <span class="ticket-red-seal">方箋</span>
             <div>
-              <h3 class="ticket-modal-title">📜 臺灣本草植物誌 · 私房配方箋</h3>
+              <h3 class="ticket-modal-title">📜 台灣肯信本草研究室 · 私房配方箋</h3>
               <p class="ticket-modal-subtitle">
                 四象法度 · 君臣佐使配伍 · 依循時序慢火細燉
               </p>
@@ -907,10 +951,10 @@ const selectedType = ref('全部');
 
 const expertOptions = [
   { id: '全部', name: '全部專家' },
-  { id: 'wanhua_uncle', name: '萬華林萬吉老茶師' },
-  { id: 'hakka_grandma', name: '客庄彭秀妹老藥師' },
-  { id: 'biotech_dr_yen', name: '嚴敏華生技博士' },
-  { id: 'bunun_hunter', name: '達亥獵人' }
+  { id: 'wanhua_uncle', name: '萬華林萬吉老茶師 (虛擬)' },
+  { id: 'hakka_grandmother', name: '客庄彭秀妹老藥師 (虛擬)' },
+  { id: 'pharmacist_phd', name: '黃世勳教授 (真實學者)' },
+  { id: 'indigenous_forager', name: '督邁山林達人 (虛擬)' }
 ];
 
 const typeOptions = [
@@ -962,7 +1006,13 @@ const resetFormulaFilters = () => {
 const filteredFormulas = computed(() => {
   let list = formulas.value;
   if (selectedExpertId.value !== '全部') {
-    list = list.filter(f => f.expertId === selectedExpertId.value);
+    const aliasMap = {
+      'hakka_grandma': 'hakka_grandmother',
+      'biotech_dr_yen': 'pharmacist_phd',
+      'bunun_hunter': 'indigenous_forager'
+    };
+    const targetId = aliasMap[selectedExpertId.value] || selectedExpertId.value;
+    list = list.filter(f => f.expertId === targetId || (aliasMap[f.expertId] || f.expertId) === targetId);
   }
   if (selectedType.value !== '全部') {
     list = list.filter(f => f.type === selectedType.value);
@@ -1494,7 +1544,7 @@ const generateTicketPlainText = (form) => {
   const originText = form.sourceType === 'consult' ? '道地專家傳承研定' : form.sourceType === 'ai_blend' ? 'AI 神來一配意圖演算' : '茶釜自主配伍';
 
   return `============================================================
-           🌿 臺灣本草植物誌 · 私房配方箋 🌿
+           🌿 台灣肯信本草研究室 · 私房配方箋 🌿
 ============================================================
 方劑名稱：【${form.name || '私房本草調和方'}】
 研製時辰：${form.createdAt || '當日吉時'}
@@ -1787,10 +1837,39 @@ const isGeneratingRecipe = ref(false);
 const recipeResult = ref(null);
 
 const expertPersonas = [
-  { id: 'wanhua_uncle', avatar: '🍵', name: '林萬吉老茶師', title: '萬華西昌街百年青草巷第三代', tone: '道地台語諺語、市井親切傳承' },
-  { id: 'hakka_grandma', avatar: '👵', name: '彭秀妹老藥師', title: '苗栗客庄草藥研究會耆老', tone: '客家阿婆親切叮嚀、野草沐浴' },
-  { id: 'biotech_dr_yen', avatar: '🔬', name: '嚴敏華博士', title: '現代中醫藥研發所首席科學家', tone: '嚴謹數據、成分機轉、藥理交互' },
-  { id: 'bunun_hunter', avatar: '🏹', name: '達亥·拿憲', title: '花東部落高山獵人兼野菜嚮導', tone: '高山原鄉、山林野趣、獵人體力' }
+  {
+    id: 'wanhua_uncle',
+    avatar: '🍵',
+    name: '林萬吉 老茶師',
+    title: '萬華西昌街百年青草巷第三代',
+    tone: '道地台語諺語、市井親切傳承',
+    isReal: false
+  },
+  {
+    id: 'hakka_grandma',
+    avatar: '👵',
+    name: '彭秀妹 老藥師',
+    title: '苗栗客庄草藥研究會耆老',
+    tone: '客家阿婆親切叮嚀、野草沐浴',
+    isReal: false
+  },
+  {
+    id: 'pharmacist_phd',
+    avatar: '🎓',
+    name: '黃世勳 教授',
+    title: '中國醫藥大學 藥學院藥學系 教授 / 藥學博士',
+    tone: '嚴謹本草考據、藥用植物生藥學與中藥藥理學視角',
+    isReal: true,
+    officialUrl: 'https://webap.cmu.edu.tw/TchEportfolio/index_1/sshuang'
+  },
+  {
+    id: 'bunun_hunter',
+    avatar: '🏹',
+    name: '督邁·達亥 達人',
+    title: '花東縱谷阿美族野菜採集與山林智慧守護者',
+    tone: '高山原鄉、山林野趣、獵人體力',
+    isReal: false
+  }
 ];
 
 const targetTypeOptions = [
@@ -2131,6 +2210,39 @@ onBeforeUnmount(() => {
 .formula-expert-tag {
   font-size: 12px;
   color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.formula-scholar-badge {
+  font-size: 10.5px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.formula-scholar-badge.real {
+  background: #15803d;
+  color: #fff;
+}
+
+.formula-scholar-badge.virtual {
+  background: rgba(180, 83, 9, 0.12);
+  color: #92400e;
+  border: 1px solid rgba(180, 83, 9, 0.25);
+}
+
+.formula-cmu-link {
+  font-size: 11px;
+  color: #0369a1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.formula-cmu-link:hover {
+  color: #0284c7;
 }
 
 .formula-name {
@@ -3321,15 +3433,61 @@ onBeforeUnmount(() => {
   box-shadow: 0 2px 8px rgba(45, 106, 79, 0.1);
 }
 
+.persona-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
 .persona-avatar {
   font-size: 20px;
-  margin-bottom: 4px;
+}
+
+.persona-type-badge {
+  font-size: 10.5px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.persona-type-badge.real {
+  background: #15803d;
+  color: #fff;
+}
+
+.persona-type-badge.virtual {
+  background: rgba(180, 83, 9, 0.12);
+  color: #92400e;
+  border: 1px solid rgba(180, 83, 9, 0.25);
 }
 
 .persona-name {
   font-size: 14.5px;
   font-weight: 800;
   color: var(--primary-deep);
+}
+
+.persona-role {
+  font-size: 12px;
+  color: var(--ink-heavy);
+  margin-bottom: 2px;
+}
+
+.persona-official-link-wrap {
+  margin: 2px 0 4px;
+}
+
+.persona-official-link {
+  font-size: 11px;
+  color: #0369a1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+}
+
+.persona-official-link:hover {
+  color: #0284c7;
 }
 
 .persona-role {
@@ -3481,7 +3639,41 @@ onBeforeUnmount(() => {
 .recipe-author-line {
   font-size: 13px;
   color: var(--ink-muted);
-  margin-top: 2px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.recipe-expert-type-pill {
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.recipe-expert-type-pill.real {
+  background: #15803d;
+  color: #fff;
+}
+
+.recipe-expert-type-pill.virtual {
+  background: rgba(180, 83, 9, 0.12);
+  color: #92400e;
+  border: 1px solid rgba(180, 83, 9, 0.25);
+}
+
+.recipe-cmu-link {
+  font-size: 12px;
+  color: #0369a1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+}
+
+.recipe-cmu-link:hover {
+  color: #0284c7;
 }
 
 .btn-load-ai-recipe {

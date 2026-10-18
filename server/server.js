@@ -8,7 +8,7 @@ const dbFactory = require('./config/dbFactory');
 
 const server = app.listen(config.port, () => {
   console.log(`====================================================`);
-  console.log(`🌿 台灣本草植物 Wiki 資料庫系統 (Taiwan Herb Wiki)`);
+  console.log(`🌿 台灣肯信本草研究室 (Taiwan Kenshin Herb Research Lab)`);
   console.log(`🚀 伺服器已成功啟動於: http://localhost:${config.port}`);
   console.log(`📦 運行環境: ${config.nodeEnv}`);
   console.log(`💾 資料庫模式: ${dbFactory.getStatus().modeDescription}`);

@@ -3,8 +3,8 @@
     <!-- 未登入狀態：古典密鑰解鎖門扉與快速角色切換 -->
     <div v-if="!isAuthenticated" class="admin-auth-gate">
       <div class="auth-card">
-        <div class="auth-seal">策</div>
-        <h3 class="auth-title">台灣本草植物誌 · 典藏管理中樞</h3>
+        <div class="auth-seal">肯</div>
+        <h3 class="auth-title">台灣肯信本草研究室 · 典藏管理中樞</h3>
         <p class="auth-desc">
           提供本草資料典藏、前後台角色權限 (RBAC)、LLM API 來源配置、專家 RAG 沙盒調校、批次匯入/線上編輯、資料匯出與專題文章生成。
         </p>
@@ -62,7 +62,7 @@
           <span class="admin-seal">{{ currentUser?.avatar || '管' }}</span>
           <div>
             <div class="admin-title">
-              台灣本草知識庫 · 後台管理與研發中樞
+              台灣肯信本草研究室 · 後台管理與研發中樞
               <span class="user-role-tag">{{ currentUser?.roleName || '管理員' }}</span>
             </div>
             <div class="admin-sub">
@@ -865,7 +865,7 @@
           <div>
             <h3 class="pane-title">📤 本草資料條件篩選匯出中樞</h3>
             <p class="pane-desc">
-              自由設定產區、分類與發布狀態條件，即時匯出標準 JSON 備份、含 UTF-8 BOM 之 CSV 試算表，或排版嚴謹的「臺灣本草植物誌 · 典藏標本手冊 (Markdown)」。
+              自由設定產區、分類與發布狀態條件，即時匯出標準 JSON 備份、含 UTF-8 BOM 之 CSV 試算表，或排版嚴謹的「台灣肯信本草研究室 · 典藏標本手冊 (Markdown)」。
             </p>
           </div>
         </div>
@@ -2152,7 +2152,7 @@ const playgroundOutput = ref(null);
 const playgroundPresets = [
   '夏天在冷氣房久坐口乾舌燥，適合喝什麼青草茶？',
   '客庄阿婆，坐月子用的大風草要怎麼洗澡？',
-  '生藥學陳博士，請從分子機制解析魚腥草抗炎效果',
+  '黃世勳教授，請從生藥學與臺灣藥用植物考證解析魚腥草抗炎效果',
   '阿美族獵人督邁，刺蔥在部落野炊怎麼煮好喝？'
 ];
 
