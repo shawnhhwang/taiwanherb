@@ -55,6 +55,9 @@
             <span class="expert-region-pill">{{ exp.region.split(' ')[0] }}</span>
           </div>
           <div class="expert-title">{{ exp.title }}</div>
+          <div v-if="exp.heritage" class="expert-heritage-badge">
+            🏛️ {{ exp.heritage }}
+          </div>
           <div v-if="exp.profileUrl" class="expert-profile-link-wrap">
             <a :href="exp.profileUrl" target="_blank" rel="noopener noreferrer" class="expert-profile-link" @click.stop>
               🔗 中國醫藥大學 Eportfolio ↗
@@ -208,20 +211,25 @@ import { audio } from '../services/audioService';
 const emit = defineEmits(['select-herb-id']);
 
 const experts = ref([]);
-const currentExpertId = ref('wanhua_uncle');
+const currentExpertId = ref('pharmacist_phd');
 const inputQuery = ref('');
 const isLoading = ref(false);
 const lastResult = ref(null);
 
 const currentExpert = computed(() => {
   return experts.value.find(e => e.id === currentExpertId.value) || {
-    name: '林萬吉 老茶師',
-    title: '萬華西昌街百年青草巷第三代傳人',
-    avatar: '🍵'
+    name: '黃世勳 教授 / 藥學博士',
+    title: '中國醫藥大學 藥學院藥學系 教授・前系主任 / 藥學博士',
+    avatar: '🎓'
   };
 });
 
 const presetMap = {
+  pharmacist_phd: [
+    '黃教授出身鹿港望族，您三十載田野踏查的經驗如何看待臺灣海島的常民濕熱體質？',
+    '從您著述上百本專著的生藥考證來看，魚腥草與大花咸豐草的抗菌消炎活性在高溫久煮後會破壞嗎？',
+    '您創立與主持多個藥學慈善社團，在日常保健茶飲上最重視哪些用藥安全與西藥交互作用？'
+  ],
   wanhua_uncle: [
     '夏天常常吹冷氣頭昏腦脹、喉嚨又乾又痛，青草伯救命！',
     '最近天天熬夜加班火氣大、嘴破長痘痘，想煮退火青草茶',
@@ -232,11 +240,6 @@ const presetMap = {
     '如果家裡有剛生產完的媳婦坐月子，大風草要怎麼煮水擦澡？',
     '阿婆，紫蘇跟桑葉在客庄家裡平時都怎麼煮成茶喝？'
   ],
-  pharmacist_phd: [
-    '黃教授，魚腥草與金銀花的抗菌活性成分是什麼？高溫煎煮會破壞嗎？',
-    '有長期服用高血壓西藥的人，飲用大花咸豐草茶會有交互作用嗎？',
-    '從臺灣藥用植物調查考證與生藥學視角，如何看待穿心蓮與山苦瓜的消炎與代謝調控潛力？'
-  ],
   indigenous_forager: [
     '督邁達人，原住民部落的刺蔥（Tana）在山林野炊都怎麼料理？',
     '台灣低海拔山野常見的山苦瓜跟昭和草，有什麼天然滋補特點？',
@@ -245,7 +248,7 @@ const presetMap = {
 };
 
 const currentPresetQuestions = computed(() => {
-  return presetMap[currentExpertId.value] || presetMap.wanhua_uncle;
+  return presetMap[currentExpertId.value] || presetMap.pharmacist_phd;
 });
 
 // 簡單 Markdown 渲染為語意 HTML
@@ -497,6 +500,18 @@ const submitConsultation = async () => {
 
 .expert-profile-link:hover {
   color: #0284c7;
+}
+
+.expert-heritage-badge {
+  font-size: 11px;
+  color: #854d0e;
+  background: #fef9c3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin: 4px 0 2px;
+  border: 1px solid #fde047;
+  display: inline-block;
+  line-height: 1.4;
 }
 
 .expert-name-row {

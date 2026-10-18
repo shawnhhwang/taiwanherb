@@ -4,19 +4,17 @@
       <!-- 左側：標題敘事與節氣日曆 -->
       <div class="hero-narrative">
         <div class="hero-top-badge">
-          <span class="solar-badge-seal">節氣</span>
-          <span class="solar-term-text">島嶼時序 · <strong>{{ currentSolarTerm.name }}</strong>（{{ currentSolarTerm.dateRange }}）</span>
+          <span class="solar-badge-seal">本草</span>
+          <span class="solar-term-text">台灣肯信本草研究室 · <strong>黃世勳教授 研審主持</strong>（鹿港望族・三十載本草踏查・著述逾百部）</span>
         </div>
 
         <h1 class="hero-main-title">
-          <span>草木有靈，人間有情</span>
-          <em class="hero-title-accent">尋訪島嶼的本草青草香</em>
+          <span>草木有靈，仁心濟世</span>
+          <em class="hero-title-accent">鹿港古風涵養 · 臺灣本草三十載踏查實錄</em>
         </h1>
 
         <p class="hero-intro-text">
-          從台北萬華西昌街百年青草巷，到中央山脈潮濕林緣與苗栗客家丘陵。
-          台灣先民依循四時節氣，採擷天地草木以調和體內陰陽。
-          在此探索 <strong>{{ totalHerbs }}</strong> 味經典島嶼本草，體驗傳統古早常民智慧與現代植物學文化分享。
+          由出身彰化縣鹿港鎮望族的黃世勳教授主持研審。黃教授秉持鹿港深厚文風與仁心濟世博愛精神，深耕臺灣本草與藥用植物研究三十餘載，親履全島山林野嶺田野考證，著述逾百本經典專著，並創立與主持多項藥學研究及慈善公益社團。在此以經籍文獻考證融會現代生藥學，解密 <strong>{{ totalHerbs }}</strong> 味經典島嶼本草之常民智慧。
         </p>
 
         <div style="font-size: 11.5px; color: var(--ink-muted); margin-bottom: 16px; background: var(--bg-hover); padding: 5px 12px; border-radius: 8px; border-left: 3px solid var(--amber-deep);">

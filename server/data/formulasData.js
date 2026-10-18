@@ -405,12 +405,12 @@ const characterFormulas = [
     id: 'formula_phd_defense_tea',
     name: '國家中醫藥防疫清潤配方',
     expertId: 'pharmacist_phd',
-    expertName: '黃世勳 教授',
+    expertName: '黃世勳 教授 / 藥學博士',
     type: 'herbal_tea',
     typeName: '民俗青草茶',
     badge: '科學驗證配伍',
     intent: '流感換季時節強化上呼吸道黏膜屏障、喉嚨沙啞緊繃、咳嗽乾癢少痰、提升防護力',
-    summary: '結合台灣國家中醫藥防疫茶文獻精髓，以魚腥草配伍桑葉、薄荷、黃耆，科學清潤抗病毒。',
+    summary: '出身彰化鹿港望族的黃世勳教授，致力臺灣本草三十餘載，結合臺灣國家中醫藥防疫文獻與逾百部典籍精華，以魚腥草配伍桑葉、薄荷、黃耆，科學清潤抗病毒，兼顧扶正祛邪之仁心濟世配伍。',
     composition: [
       {
         herbId: 2,
@@ -474,12 +474,12 @@ const characterFormulas = [
     id: 'formula_phd_metabolic_tea',
     name: '低糖代謝七葉苦瓜元氣飲',
     expertId: 'pharmacist_phd',
-    expertName: '黃世勳 教授',
+    expertName: '黃世勳 教授 / 藥學博士',
     type: 'herbal_tea',
     typeName: '民俗青草茶',
     badge: '代謝機能調控',
     intent: '大餐過後解油膩、經常外食高糖高脂、維持醣類正常代謝、退心火宿熱',
-    summary: '花蓮野生山苦瓜胜肽協同竹山高山七葉膽，以天然草本活性多酚守護現代人新陳代謝。',
+    summary: '黃世勳教授三十載山野踏查精萃，以花蓮野生山苦瓜胜肽協同竹山高山七葉膽，以天然草本活性多酚守護現代人新陳代謝，體現仁心調和之道。',
     composition: [
       {
         herbId: 24,

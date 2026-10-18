@@ -5,7 +5,7 @@
 require('dotenv').config();
 
 module.exports = {
-  port: process.env.PORT || 3000,
+  port: parseInt(process.env.PORT, 10) || 9390,
   nodeEnv: process.env.NODE_ENV || 'development',
   apiPrefix: '/api',
   database: {

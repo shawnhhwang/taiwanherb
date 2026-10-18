@@ -1830,13 +1830,22 @@ const liquidStyle = computed(() => {
 // ==============================================
 // 3. 專家 LLM AI 客製配方建議狀態
 // ==============================================
-const consultExpertId = ref('wanhua_uncle');
+const consultExpertId = ref('pharmacist_phd');
 const consultTargetType = ref('herbal_tea');
 const consultUserNeeds = ref('');
 const isGeneratingRecipe = ref(false);
 const recipeResult = ref(null);
 
 const expertPersonas = [
+  {
+    id: 'pharmacist_phd',
+    avatar: '🎓',
+    name: '黃世勳 教授 / 藥學博士',
+    title: '鹿港望族・三十載本草踏查・著述逾百部・藥學慈善社團理事長',
+    tone: '鹿港深厚文風涵養，結合三十載山野田野實證、生藥學理與仁心濟世理念',
+    isReal: true,
+    officialUrl: 'https://webap.cmu.edu.tw/TchEportfolio/index_1/sshuang'
+  },
   {
     id: 'wanhua_uncle',
     avatar: '🍵',
@@ -1852,15 +1861,6 @@ const expertPersonas = [
     title: '苗栗客庄草藥研究會耆老',
     tone: '客家阿婆親切叮嚀、野草沐浴',
     isReal: false
-  },
-  {
-    id: 'pharmacist_phd',
-    avatar: '🎓',
-    name: '黃世勳 教授',
-    title: '中國醫藥大學 藥學院藥學系 教授 / 藥學博士',
-    tone: '嚴謹本草考據、藥用植物生藥學與中藥藥理學視角',
-    isReal: true,
-    officialUrl: 'https://webap.cmu.edu.tw/TchEportfolio/index_1/sshuang'
   },
   {
     id: 'bunun_hunter',
@@ -1880,10 +1880,10 @@ const targetTypeOptions = [
 ];
 
 const quickNeedsPrompts = [
+  '請教黃教授：三十載本草踏查與百部著作精華中，針對長輩高血壓族群有哪些安全溫和的草本茶飲建議？',
   '天天熬夜火氣大、喉嚨乾痛口苦，但吹冷氣易手腳冰冷',
   '夏日戶外烈日曝曬，汗黏頭昏口渴，想要消暑解熱',
-  '客庄辟邪安神，幫助睡眠與放鬆身心的民俗沐浴包',
-  '登山野外防蟲叮咬、皮膚紅癢消腫的民俗敷膏'
+  '客庄辟邪安神，幫助睡眠與放鬆身心的民俗沐浴包'
 ];
 
 const submitConsultFormulate = async () => {
