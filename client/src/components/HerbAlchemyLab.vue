@@ -123,7 +123,7 @@
                 class="formula-scholar-badge"
                 :class="formula.expertId === 'pharmacist_phd' ? 'real' : 'virtual'"
               >
-                {{ formula.expertId === 'pharmacist_phd' ? '🎓 真實學者' : '🎭 虛擬人物' }}
+                {{ formula.expertId === 'pharmacist_phd' ? '🎓 真實學者' : '🎭 知識聊天助理' }}
               </span>
               <a
                 v-if="formula.expertId === 'pharmacist_phd'"
@@ -594,7 +594,7 @@
                   class="persona-type-badge"
                   :class="exp.isReal ? 'real' : 'virtual'"
                 >
-                  {{ exp.isReal ? '🎓 真實學者' : '🎭 虛擬人物' }}
+                  {{ exp.isReal ? '🎓 真實學者' : '🎭 知識聊天助理' }}
                 </span>
               </div>
               <div class="persona-name">{{ exp.name }}</div>
@@ -673,7 +673,7 @@
                 class="recipe-expert-type-pill"
                 :class="recipeResult.isRealExpert ? 'real' : 'virtual'"
               >
-                {{ recipeResult.isRealExpert ? '🎓 真實學者' : '🎭 虛擬人物' }}
+                {{ recipeResult.isRealExpert ? '🎓 知識聊天助理（真實學者）' : '🎭 知識聊天助理' }}
               </span>
               <a
                 v-if="recipeResult.profileUrl || recipeResult.expert?.profileUrl"
@@ -684,6 +684,9 @@
               >
                 🔗 中國醫藥大學 Eportfolio ↗
               </a>
+            </div>
+            <div class="recipe-bot-annotation">
+              💡 <strong>回答註解</strong>：本配方箋由【知識聊天助理】依據傳統本草文獻與君臣佐使法度演算生成。{{ recipeResult.isRealExpert ? '黃世勳教授為臺灣真實本草專家學者，本回答為其學術研究風格之 AI 知識聊天助理。' : '本角色為臺灣常民風土文化之 AI 知識聊天助理。' }}
             </div>
           </div>
           <div class="recipe-header-actions">
@@ -951,10 +954,10 @@ const selectedType = ref('全部');
 
 const expertOptions = [
   { id: '全部', name: '全部專家' },
-  { id: 'wanhua_uncle', name: '萬華林萬吉老茶師 (虛擬)' },
-  { id: 'hakka_grandmother', name: '客庄彭秀妹老藥師 (虛擬)' },
+  { id: 'wanhua_uncle', name: '萬華林萬吉老茶師 (知識助理)' },
+  { id: 'hakka_grandmother', name: '客庄彭秀妹老藥師 (知識助理)' },
   { id: 'pharmacist_phd', name: '黃世勳教授 (真實學者)' },
-  { id: 'indigenous_forager', name: '督邁山林達人 (虛擬)' }
+  { id: 'indigenous_forager', name: '督邁山林達人 (知識助理)' }
 ];
 
 const typeOptions = [
@@ -3674,6 +3677,17 @@ onBeforeUnmount(() => {
 
 .recipe-cmu-link:hover {
   color: #0284c7;
+}
+
+.recipe-bot-annotation {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  background: rgba(201, 162, 39, 0.08);
+  border-left: 3px solid var(--amber);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-top: 6px;
+  line-height: 1.5;
 }
 
 .btn-load-ai-recipe {

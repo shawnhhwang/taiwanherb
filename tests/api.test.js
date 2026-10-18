@@ -180,7 +180,7 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     const virtuals = body.data.filter(e => e.id !== 'pharmacist_phd');
     virtuals.forEach(v => {
       assert.equal(v.isRealExpert, false);
-      assert.equal(v.characterType, '虛擬人物');
+      assert.equal(v.characterType, '知識聊天助理');
     });
   });
 

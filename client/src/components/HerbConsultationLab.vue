@@ -47,7 +47,7 @@
               class="expert-seal-stamp"
               :class="exp.isRealExpert ? 'real-scholar-stamp' : 'virtual-persona-stamp'"
             >
-              {{ exp.isRealExpert ? '🎓 真實學者' : '🎭 虛擬人物' }}
+              {{ exp.isRealExpert ? '🎓 真實學者' : '🎭 知識聊天助理' }}
             </span>
           </div>
           <div class="expert-name-row">
@@ -129,10 +129,13 @@
                     class="result-expert-badge"
                     :class="lastResult.expert.isRealExpert ? 'real-badge' : 'virtual-badge'"
                   >
-                    {{ lastResult.expert.isRealExpert ? '🎓 真實學者' : '🎭 虛擬人物' }}
+                    {{ lastResult.expert.isRealExpert ? '🎓 知識聊天助理（真實學者）' : '🎭 知識聊天助理' }}
                   </span>
                 </div>
                 <div class="result-expert-title">{{ lastResult.expert.title }}</div>
+                <div class="result-expert-bot-annotation">
+                  💡 <strong>回答註解</strong>：本對話由本草研究室【知識聊天助理】依據專業文獻演算生成。{{ lastResult.expert.isRealExpert ? '黃世勳教授為臺灣真實本草專家學者，機器人為其學術研究理念之 AI 知識聊天助理。' : '本角色為臺灣常民風土文化之 AI 知識聊天助理。' }}
+                </div>
                 <div v-if="lastResult.expert.profileUrl" class="result-expert-link-row">
                   <a :href="lastResult.expert.profileUrl" target="_blank" rel="noopener noreferrer" class="result-expert-link">
                     🔗 中國醫藥大學教師 Eportfolio 專頁 ↗
@@ -735,6 +738,17 @@ const submitConsultation = async () => {
 .result-expert-title {
   font-size: 12.5px;
   color: var(--ink-muted);
+}
+
+.result-expert-bot-annotation {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  background: rgba(201, 162, 39, 0.08);
+  border-left: 3px solid var(--amber);
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-top: 6px;
+  line-height: 1.5;
 }
 
 .result-expert-link-row {
