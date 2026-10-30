@@ -32,7 +32,8 @@ WORKDIR /app
 
 # 設定環境變數
 ENV NODE_ENV=production \
-    PORT=3000 \
+    PORT=9390 \
+    DATA_DIR=/app/data \
     DB_FALLBACK_MEMORY=true
 
 # 安裝 curl 供 HEALTHCHECK 檢查使用
@@ -48,15 +49,19 @@ COPY --chown=node:node server/ ./server/
 # 從 Stage 1 複製已編譯完成的前端靜態資源
 COPY --chown=node:node --from=builder /app/client/dist ./client/dist
 
+# 建立持久化資料與圖片上傳目錄並指派 node 使用者讀寫權限
+RUN mkdir -p /app/data /app/client/public/images/uploads /app/client/dist/images/uploads && \
+    chown -R node:node /app/data /app/client/public /app/client/dist
+
 # 切換為安全非 root 使用者 (node)
 USER node
 
 # 暴露服務埠號
-EXPOSE 3000
+EXPOSE 9390
 
 # 容器健康狀態檢查機制
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD curl -f http://localhost:3000/api/health || exit 1
+  CMD curl -f http://localhost:9390/api/health || exit 1
 
 # 啟動服務
 CMD ["node", "server/server.js"]

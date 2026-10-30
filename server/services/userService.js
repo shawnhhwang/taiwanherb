@@ -2,24 +2,39 @@
  * server/services/userService.js
  * 前後台使用者與角色權限 (RBAC) 服務層
  */
+const crypto = require('crypto');
 const { ROLES, INITIAL_USERS } = require('../data/usersData');
+const config = require('../config/config');
+
+function timingSafeEqualStr(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
 
 class UserService {
   constructor() {
     this.roles = { ...ROLES };
     // 使用記憶體深拷貝維護使用者狀態
     this.users = JSON.parse(JSON.stringify(INITIAL_USERS));
-    // 活躍 Sessions 映射表 (token -> user)
+    // 活躍 Sessions 映射表 (token -> { user, token, createdAt, expiresAt })
     this.sessions = new Map();
+    this.SESSION_TTL_MS = 24 * 60 * 60 * 1000; // 24 小時有效期限
 
-    // 預設將既有相容 Token 綁定至 super_admin
-    const defaultAdmin = this.users.find(u => u.username === 'admin');
-    if (defaultAdmin) {
-      this.sessions.set('taiwanherb-admin-session-active', {
-        user: defaultAdmin,
-        token: 'taiwanherb-admin-session-active',
-        createdAt: new Date().toISOString()
-      });
+    // 僅在測試環境或 DEMO 模式下啟用相容 Token
+    const isDevOrTest = process.env.NODE_ENV === 'test' || config.demoMode || config.nodeEnv === 'development';
+    if (isDevOrTest) {
+      const defaultAdmin = this.users.find(u => u.username === 'admin');
+      if (defaultAdmin) {
+        this.sessions.set('taiwanherb-admin-session-active', {
+          user: this.sanitizeUser(defaultAdmin),
+          token: 'taiwanherb-admin-session-active',
+          createdAt: new Date().toISOString(),
+          expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000 // 測試專用長效
+        });
+      }
     }
   }
 
@@ -77,12 +92,12 @@ class UserService {
       if (!targetUser) {
         throw new Error(`找不到使用者帳號「${username}」`);
       }
-      if (targetUser.password !== password) {
+      if (!timingSafeEqualStr(targetUser.password, password)) {
         throw new Error('登入密碼不正確，請重新檢查');
       }
     } else {
       // 舊版單密碼登入相容邏輯：尋找密碼相符的後台使用者
-      targetUser = this.users.find(u => u.password === password);
+      targetUser = this.users.find(u => timingSafeEqualStr(u.password, password));
       if (!targetUser) {
         throw new Error('管理通行碼不正確，請重新檢查');
       }
@@ -95,14 +110,19 @@ class UserService {
     // 更新最後登入時間
     targetUser.lastLoginAt = new Date().toISOString();
 
-    // 簽發 Session Token
-    const token = `herb_session_${targetUser.username}_${Date.now()}`;
+    // 簽發密碼學安全的隨機 Session Token
+    const randomHex = crypto.randomBytes(24).toString('hex');
+    const token = `herb_${targetUser.username}_${randomHex}`;
     const sanitized = this.sanitizeUser(targetUser);
+
+    // 清理過期的舊 sessions
+    this.cleanExpiredSessions();
 
     this.sessions.set(token, {
       user: sanitized,
       token,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      expiresAt: Date.now() + this.SESSION_TTL_MS
     });
 
     return {
@@ -114,6 +134,25 @@ class UserService {
   }
 
   /**
+   * 清理過期或過多的 Sessions
+   */
+  cleanExpiredSessions() {
+    const now = Date.now();
+    for (const [token, session] of this.sessions.entries()) {
+      if (session.expiresAt && now > session.expiresAt) {
+        this.sessions.delete(token);
+      }
+    }
+    // 若超過 1000 筆，刪除最舊的
+    if (this.sessions.size > 1000) {
+      const keys = Array.from(this.sessions.keys());
+      for (let i = 0; i < keys.length - 800; i++) {
+        this.sessions.delete(keys[i]);
+      }
+    }
+  }
+
+  /**
    * 驗證請求 Token 並取得當前使用者與權限
    */
   verifyToken(token) {
@@ -122,20 +161,30 @@ class UserService {
     // 清理 Bearer 前綴
     const cleanToken = token.replace(/^Bearer\s+/i, '').trim();
 
-    // 檢查舊版相容 Token
+    // 檢查舊版相容 Token (僅限開發/測試/DEMO)
     if (cleanToken === 'taiwanherb-admin-session-active') {
-      const admin = this.users.find(u => u.username === 'admin');
-      if (admin) {
-        return {
-          user: this.sanitizeUser(admin),
-          role: this.getRole(admin.role),
-          permissions: this.getRole(admin.role)?.permissions || []
-        };
+      const isDevOrTest = process.env.NODE_ENV === 'test' || config.demoMode || config.nodeEnv === 'development';
+      if (isDevOrTest) {
+        const admin = this.users.find(u => u.username === 'admin');
+        if (admin) {
+          return {
+            user: this.sanitizeUser(admin),
+            role: this.getRole(admin.role),
+            permissions: this.getRole(admin.role)?.permissions || []
+          };
+        }
       }
+      return null;
     }
 
     const session = this.sessions.get(cleanToken);
     if (!session) return null;
+
+    // 檢查 Token 是否過期
+    if (session.expiresAt && Date.now() > session.expiresAt) {
+      this.sessions.delete(cleanToken);
+      return null;
+    }
 
     const role = this.getRole(session.user.role);
     return {
@@ -161,7 +210,11 @@ class UserService {
     const role = this.getRole(roleKey);
     if (!role) return false;
     if (role.permissions.includes('all') || role.key === 'super_admin') return true;
-    return role.permissions.includes(action);
+    if (role.permissions.includes(action)) return true;
+    if (action.startsWith('herbs:') && role.permissions.includes('herbs:write')) return true;
+    if (action === 'herbs:read' && (role.permissions.includes('herbs:write') || role.permissions.includes('herbs:read'))) return true;
+    if (action === 'stats:read' && (role.permissions.includes('audit:read') || role.permissions.includes('stats:read'))) return true;
+    return false;
   }
 
   /**

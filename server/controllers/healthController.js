@@ -3,6 +3,7 @@
  * 系統健康狀態與 Failover 節點監控
  */
 const dbFactory = require('../config/dbFactory');
+const config = require('../config/config');
 const ApiResponse = require('../utils/apiResponse');
 
 class HealthController {
@@ -17,6 +18,7 @@ class HealthController {
       uptimeSeconds,
       environment: process.env.NODE_ENV || 'development',
       nodeVersion: process.version,
+      demoMode: config.demoMode,
       memoryUsage: {
         rss: `${Math.round(process.memoryUsage().rss / 1024 / 1024)} MB`,
         heapUsed: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`,

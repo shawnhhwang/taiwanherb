@@ -32,3 +32,10 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Runtime persistence & dynamic uploads
+data/*.json
+!data/.gitkeep
+client/public/images/uploads/*
+!client/public/images/uploads/.gitkeep
+

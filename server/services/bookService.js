@@ -5,12 +5,13 @@
  */
 
 const { initialBooks, initialOrders } = require('../data/booksData');
+const persistence = require('../config/persistence');
 
 class BookService {
   constructor() {
-    // 複製種子資料以利記憶體中持久操作
-    this.books = JSON.parse(JSON.stringify(initialBooks));
-    this.orders = JSON.parse(JSON.stringify(initialOrders));
+    // 透過持久化模組載入書目與訂單
+    this.books = persistence.load('books', initialBooks);
+    this.orders = persistence.load('orders', initialOrders);
   }
 
   /**
@@ -19,6 +20,8 @@ class BookService {
   reset() {
     this.books = JSON.parse(JSON.stringify(initialBooks));
     this.orders = JSON.parse(JSON.stringify(initialOrders));
+    persistence.save('books', this.books);
+    persistence.save('orders', this.orders);
   }
 
   /**
@@ -211,6 +214,8 @@ class BookService {
     };
 
     this.orders.unshift(newOrder);
+    persistence.debounceSave('orders', this.orders);
+    persistence.debounceSave('books', this.books);
 
     return {
       order: newOrder,
@@ -227,12 +232,28 @@ class BookService {
   }
 
   /**
-   * 查詢使用者個人訂單 (依 Email 或手機)
+   * 脫敏訂單隱私敏感資訊 (防範 IDOR 個資外洩)
+   */
+  maskSensitiveOrder(order) {
+    if (!order) return null;
+    const copy = { ...order };
+    if (copy.buyerPhone && copy.buyerPhone.length >= 8) {
+      copy.buyerPhone = copy.buyerPhone.slice(0, 4) + '****' + copy.buyerPhone.slice(-2);
+    }
+    if (copy.shippingAddress && copy.shippingAddress.length > 6) {
+      copy.shippingAddress = copy.shippingAddress.slice(0, 6) + '******';
+    }
+    return copy;
+  }
+
+  /**
+   * 查詢使用者個人訂單 (依 Email 查詢，輸出經遮罩脫敏處理)
    */
   async getMyOrders(email) {
     if (!email) return [];
     const normalized = email.trim().toLowerCase();
-    return this.orders.filter(o => o.buyerEmail.toLowerCase() === normalized);
+    const matched = this.orders.filter(o => o.buyerEmail.toLowerCase() === normalized);
+    return matched.map(o => this.maskSensitiveOrder(o));
   }
 
   /**
@@ -326,6 +347,7 @@ class BookService {
     };
 
     this.books.unshift(newBook);
+    persistence.debounceSave('books', this.books);
     return newBook;
   }
 
@@ -366,6 +388,7 @@ class BookService {
     };
 
     this.books[bookIndex] = updated;
+    persistence.debounceSave('books', this.books);
     return updated;
   }
 
@@ -379,6 +402,7 @@ class BookService {
     }
 
     const deleted = this.books.splice(bookIndex, 1)[0];
+    persistence.debounceSave('books', this.books);
     return deleted;
   }
 
@@ -408,6 +432,7 @@ class BookService {
       previewNotice: previewNotice?.trim() || '線上試閱篇章已告一段落。欲閱讀全本請購買實體書或電子書！'
     };
 
+    persistence.debounceSave('books', this.books);
     return book.samplePreview;
   }
 
@@ -430,8 +455,73 @@ class BookService {
     if (orderStatus) order.orderStatus = orderStatus;
     if (trackingNumber) order.trackingNumber = trackingNumber;
     if (paymentStatus) order.paymentStatus = paymentStatus;
+    persistence.debounceSave('orders', this.orders);
 
     return order;
+  }
+
+  /**
+   * 批次匯入書庫藏書
+   */
+  async batchImportBooks(items, operatorName = 'Curator') {
+    if (!Array.isArray(items) || items.length === 0) {
+      throw new Error('未提供欲匯入的書目資料項目');
+    }
+
+    const insertedBooks = [];
+    const errors = [];
+
+    for (const item of items) {
+      try {
+        const bookPayload = {
+          ...item,
+          pricing: {
+            physical: {
+              price: parseInt(item.price || item.pricing?.physical?.price, 10) || 450,
+              originalPrice: parseInt(item.originalPrice || item.pricing?.physical?.originalPrice, 10) || 550,
+              stock: parseInt(item.stock || item.pricing?.physical?.stock, 10) || 50,
+              format: item.format || '平裝全彩'
+            },
+            ebook: {
+              price: Math.round((parseInt(item.price || item.pricing?.physical?.price, 10) || 450) * 0.7),
+              originalPrice: parseInt(item.originalPrice || item.pricing?.physical?.originalPrice, 10) || 550,
+              format: 'EPUB / PDF',
+              instantAccess: true
+            }
+          },
+          summary: item.summary || item.description || '暫無內容簡介',
+          coverImage: item.coverImage || item.imageUrl || item.image || '/images/uploads/default_book.jpg',
+          samplePreview: item.samplePreview || {
+            available: true,
+            previewTitle: `【線上試閱】《${item.title}》`,
+            previewSubtitle: '精選試閱章節',
+            readTimeMinutes: 5,
+            chapters: [
+              {
+                chapterId: 'ch1',
+                title: '前言與試閱章節',
+                content: item.trialNotice || item.description || '本書由專家團隊編纂，記錄道地草木生活文化智慧。'
+              }
+            ],
+            previewNotice: item.trialNotice || '線上試閱篇章已告一段落。欲閱讀全本請購買實體書或電子書！'
+          }
+        };
+
+        const created = await this.adminCreateBook(bookPayload);
+        insertedBooks.push(created);
+      } catch (err) {
+        errors.push({ title: item.title || '未命名書籍', error: err.message });
+      }
+    }
+
+    return {
+      success: true,
+      totalRequested: items.length,
+      insertedCount: insertedBooks.length,
+      errorCount: errors.length,
+      insertedBooks,
+      errors
+    };
   }
 }
 

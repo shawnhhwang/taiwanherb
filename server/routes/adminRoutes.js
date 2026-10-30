@@ -31,13 +31,16 @@ router.delete('/experts/:id', adminController.deleteExpert.bind(adminController)
 router.post('/experts/reset', adminController.resetExperts.bind(adminController));
 router.post('/experts/playground', adminController.testExpertPlayground.bind(adminController));
 
-// 5. 資料匯入 (範例下載、文字/CSV解析預覽、線上編輯與批次寫入)
+// 5. 資料匯入 (範例下載、文字/CSV/Excel解析預覽、線上編輯、圖片上傳/解壓與批次寫入)
 router.get('/import/sample', adminController.getImportSample.bind(adminController));
 router.post('/import/preview', adminController.previewImport.bind(adminController));
 router.post('/import/commit', adminController.commitImport.bind(adminController));
+router.post('/upload-image', adminController.uploadImage.bind(adminController));
+router.post('/import/images', adminController.importImageArchive.bind(adminController));
 
-// 6. 條件篩選資料匯出 (JSON / CSV / Markdown)
+// 6. 條件篩選資料匯出 (JSON / CSV / Markdown) 與資料庫下載備份
 router.get('/export', adminController.exportData.bind(adminController));
+router.get('/database/backup', adminController.backupDatabase.bind(adminController));
 
 // 7. LLM 本草專題文章生成實驗室
 router.get('/articles/options', adminController.getArticleOptions.bind(adminController));

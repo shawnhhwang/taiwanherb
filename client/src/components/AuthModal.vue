@@ -6,7 +6,10 @@
         <div class="header-seal-wrap">
           <span class="auth-seal">令</span>
           <div>
-            <h3 class="auth-modal-title">臺灣本草 · 使用者身分登入與權限中樞</h3>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <h3 class="auth-modal-title">臺灣本草 · 使用者身分登入與權限中樞</h3>
+              <span v-if="demoMode" class="demo-status-pill">⚡ DEMO 模式</span>
+            </div>
             <div class="auth-modal-subtitle">User Authentication & Role-Based Access Control (RBAC)</div>
           </div>
         </div>
@@ -24,6 +27,7 @@
           <span>帳號登入</span>
         </button>
         <button
+          v-if="demoMode"
           class="auth-tab-btn"
           :class="{ active: activeAuthTab === 'roles' }"
           @click="activeAuthTab = 'roles'"
@@ -96,7 +100,7 @@
                 v-model="loginForm.username"
                 type="text"
                 class="custom-input"
-                placeholder="例如: admin / curator_lin / expert_chen / auditor_wang / member_liao"
+                :placeholder="demoMode ? '例如: admin / curator_lin / expert_chen / auditor_wang / member_liao' : '請輸入使用者帳號'"
                 required
               />
             </div>
@@ -107,7 +111,7 @@
                 v-model="loginForm.password"
                 type="password"
                 class="custom-input"
-                placeholder="請輸入密碼 (預設: taiwanherb2026 或 角色名稱+2026)"
+                :placeholder="demoMode ? '請輸入密碼 (預設: taiwanherb2026 或 角色名稱+2026)' : '請輸入登入密碼'"
                 required
               />
             </div>
@@ -117,9 +121,9 @@
             </button>
           </form>
 
-          <!-- 快速指引提示 -->
-          <div class="quick-credentials-hint">
-            <div class="hint-title">💡 快速測試帳密備忘：</div>
+          <!-- 快速指引提示 (僅在 DEMO 模式下顯示) -->
+          <div v-if="demoMode" class="quick-credentials-hint">
+            <div class="hint-title">💡 快速測試帳密備忘 (DEMO 模式)：</div>
             <div class="hint-grid">
               <div class="hint-item" @click="fillCreds('admin', 'taiwanherb2026')">
                 👑 <strong>admin</strong> / <code>taiwanherb2026</code> (至高管理員)
@@ -288,18 +292,27 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { HerbApi } from '../services/api';
 import { audio } from '../services/audioService';
 
 const props = defineProps({
   isOpen: { type: Boolean, default: false },
-  currentUser: { type: Object, default: null }
+  currentUser: { type: Object, default: null },
+  demoMode: { type: Boolean, default: false }
 });
 
 const emit = defineEmits(['close', 'login-success', 'logout', 'switch-to-admin']);
 
 const activeAuthTab = ref('login'); // 'login' | 'roles' | 'matrix'
+
+// 當 demoMode 為關閉狀態時，自動將分頁切換回帳號登入
+watch(() => props.demoMode, (isDemo) => {
+  if (!isDemo && activeAuthTab.value === 'roles') {
+    activeAuthTab.value = 'login';
+  }
+}, { immediate: true });
+
 const isSubmitting = ref(false);
 const errorMessage = ref('');
 const successMessage = ref('');
@@ -1068,5 +1081,18 @@ const enterAdmin = () => {
     font-size: 11.5px;
     padding: 8px 10px;
   }
+}
+
+.demo-status-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  background: rgba(217, 119, 6, 0.15);
+  color: #b45309;
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  border-radius: 12px;
+  letter-spacing: 0.5px;
 }
 </style>

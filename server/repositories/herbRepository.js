@@ -351,6 +351,7 @@ class HerbRepository {
       updatedAt: new Date().toISOString()
     };
     data.push(newHerb);
+    dbFactory.saveMemoryStore();
 
     this.addAuditLog('CREATE_HERB', `Herb #${newHerb.id}`, `新增藥材「${newHerb.name}」(${newHerb.scientificName || ''})`);
     return newHerb;
@@ -372,6 +373,7 @@ class HerbRepository {
       id: targetId,
       updatedAt: new Date().toISOString()
     };
+    dbFactory.saveMemoryStore();
 
     this.addAuditLog('UPDATE_HERB', `Herb #${targetId}`, `更新藥材「${data[index].name}」(原名: ${oldName})`);
     return data[index];
@@ -388,6 +390,7 @@ class HerbRepository {
 
     const deleted = data[index];
     data.splice(index, 1);
+    dbFactory.saveMemoryStore();
 
     this.addAuditLog('DELETE_HERB', `Herb #${targetId}`, `刪除藥材「${deleted.name}」`);
     return true;
@@ -412,6 +415,10 @@ class HerbRepository {
       details
     };
     this.auditLogs.push(log);
+    // 限制審計日誌容量上限 (Ring Buffer，最多保留最新 1,000 筆) 防範記憶體洩漏
+    if (this.auditLogs.length > 1000) {
+      this.auditLogs.splice(0, this.auditLogs.length - 1000);
+    }
   }
 
   /**
@@ -422,6 +429,7 @@ class HerbRepository {
     store.length = 0;
     const cloned = JSON.parse(JSON.stringify(initialHerbs));
     store.push(...cloned);
+    dbFactory.saveMemoryStore();
 
     this.addAuditLog('RESET_DATABASE', 'All Herbs', `重置資料庫為預設種子資料 (${cloned.length}味藥材)`);
     return store.length;

@@ -7,8 +7,12 @@ process.env.NODE_ENV = 'test';
 const { test, describe, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('http');
+const xlsx = require('xlsx');
+const AdmZip = require('adm-zip');
 const app = require('../server/app');
 const dbFactory = require('../server/config/dbFactory');
+const shopService = require('../server/services/shopService');
+const bookService = require('../server/services/bookService');
 
 let server;
 let baseUrl;
@@ -262,7 +266,10 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
 
     const createRes = await fetchJson('/api/admin/herbs', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      },
       body: JSON.stringify(newHerb)
     });
 
@@ -272,14 +279,21 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
 
     // 刪除
     const deleteRes = await fetchJson(`/api/admin/herbs/${createdId}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      }
     });
     assert.equal(deleteRes.status, 200);
     assert.equal(deleteRes.body.data.id, createdId);
   });
 
   test('GET /api/admin/logs - 應正確回傳系統審計日誌', async () => {
-    const { status, body } = await fetchJson('/api/admin/logs');
+    const { status, body } = await fetchJson('/api/admin/logs', {
+      headers: {
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      }
+    });
     assert.equal(status, 200);
     assert.equal(body.success, true);
     assert.ok(Array.isArray(body.data));
@@ -447,7 +461,10 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     // 3.3 沙盒測試
     const pgRes = await fetchJson('/api/admin/experts/playground', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      },
       body: JSON.stringify({
         expertId: customExpert.id,
         query: '夏天炎熱口渴，有什麼解熱解燥的茶飲？',
@@ -469,44 +486,186 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
   // ========================================================
   // 4. 資料匯入範例、預覽線上編輯與批次入庫驗證
   // ========================================================
-  test('Data Import: 下載範例資料、解析預覽與批次寫入本草庫', async () => {
-    // 4.1 取得 JSON 範例
-    const sampleJsonRes = await fetchJson('/api/admin/import/sample?format=json');
-    assert.equal(sampleJsonRes.status, 200);
-    assert.ok(Array.isArray(sampleJsonRes.body.data.content));
-    assert.ok(sampleJsonRes.body.data.content.length >= 3);
+  // ========================================================
+  // 4. 資料匯入範例、預覽線上編輯與批次入庫驗證 (含草藥、店家、書籍與 Excel/圖片)
+  // ========================================================
+  test('Data Import: 下載範例資料 (草藥/店家/書籍之 JSON, CSV, Excel)', async () => {
+    // 4.1 草藥範例 (JSON & CSV)
+    const herbJsonRes = await fetchJson('/api/admin/import/sample?targetType=herbs&format=json');
+    assert.equal(herbJsonRes.status, 200);
+    assert.ok(Array.isArray(herbJsonRes.body.data.content));
 
-    // 4.2 取得 CSV 範例
-    const sampleCsvRes = await fetchJson('/api/admin/import/sample?format=csv');
-    assert.equal(sampleCsvRes.status, 200);
-    assert.ok(sampleCsvRes.body.data.content.includes('名稱'));
+    const herbCsvRes = await fetchJson('/api/admin/import/sample?targetType=herbs&format=csv');
+    assert.equal(herbCsvRes.status, 200);
+    assert.ok(herbCsvRes.body.data.content.includes('冇骨消'));
 
-    // 4.3 解析預覽
-    const previewRes = await fetchJson('/api/admin/import/preview', {
+    // 4.2 店家範例 (CSV)
+    const shopCsvRes = await fetchJson('/api/admin/import/sample?targetType=shops&format=csv');
+    assert.equal(shopCsvRes.status, 200);
+    assert.ok(shopCsvRes.body.data.content.includes('店家名稱'));
+    assert.ok(shopCsvRes.body.data.content.includes('三寶堂青草茶莊'));
+
+    // 4.3 書籍範例 (Excel .xlsx 下載)
+    const bookXlsxRaw = await fetch(`${baseUrl}/api/admin/import/sample?targetType=books&format=xlsx&download=true`);
+    assert.equal(bookXlsxRaw.status, 200);
+    const bookXlsxBuf = Buffer.from(await bookXlsxRaw.arrayBuffer());
+    assert.equal(bookXlsxBuf[0], 0x50); // PK (ZIP/XLSX header)
+    assert.equal(bookXlsxBuf[1], 0x4B);
+
+    // 透過 xlsx 解析驗證生成的 Excel 可被讀取
+    const wb = xlsx.read(bookXlsxBuf, { type: 'buffer' });
+    assert.ok(wb.SheetNames.length > 0);
+  });
+
+  test('Data Import: 支援 Excel (.xlsx) 與 CSV 之解析預覽與批次入庫 (草藥、店家、書籍)', async () => {
+    // 4.4 草藥 CSV 解析預覽與批次入庫
+    const herbCsvRes = await fetchJson('/api/admin/import/sample?targetType=herbs&format=csv');
+    const previewHerbRes = await fetchJson('/api/admin/import/preview', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        content: sampleJsonRes.body.data.content.slice(0, 2),
-        format: 'json'
+        content: herbCsvRes.body.data.content,
+        format: 'csv',
+        targetType: 'herbs'
       })
     });
-    assert.equal(previewRes.status, 200);
-    assert.equal(previewRes.body.data.total, 2);
-    assert.equal(previewRes.body.data.validCount, 2);
+    assert.equal(previewHerbRes.status, 200);
+    assert.equal(previewHerbRes.body.data.targetType, 'herbs');
+    assert.ok(previewHerbRes.body.data.validCount >= 3);
 
-    // 4.4 批次入庫
-    const commitRes = await fetchJson('/api/admin/import/commit', {
+    const commitHerbRes = await fetchJson('/api/admin/import/commit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer taiwanherb-admin-session-active'
       },
       body: JSON.stringify({
-        items: previewRes.body.data.items
+        items: previewHerbRes.body.data.items.slice(0, 2),
+        targetType: 'herbs'
       })
     });
-    assert.equal(commitRes.status, 200);
-    assert.equal(commitRes.body.data.insertedCount, 2);
+    assert.equal(commitHerbRes.status, 200);
+    assert.equal(commitHerbRes.body.data.insertedCount, 2);
+
+    // 4.5 店家 CSV 解析預覽與批次入庫
+    const shopCsvRes = await fetchJson('/api/admin/import/sample?targetType=shops&format=csv');
+    const previewShopRes = await fetchJson('/api/admin/import/preview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: shopCsvRes.body.data.content,
+        format: 'csv',
+        targetType: 'shops'
+      })
+    });
+    assert.equal(previewShopRes.status, 200);
+    assert.equal(previewShopRes.body.data.targetType, 'shops');
+    assert.ok(previewShopRes.body.data.validCount >= 2);
+
+    const commitShopRes = await fetchJson('/api/admin/import/commit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      },
+      body: JSON.stringify({
+        items: previewShopRes.body.data.items,
+        targetType: 'shops'
+      })
+    });
+    assert.equal(commitShopRes.status, 200);
+    assert.equal(commitShopRes.body.data.insertedCount, 2);
+
+    // 4.6 書籍 Excel (.xlsx) 產生、解析預覽與批次入庫
+    const bookRows = [
+      {
+        '書名': '台灣本草圖說測試典藏',
+        '副標題': '實用青草生活指南',
+        '作者': '黃世勳 教授',
+        '作者頭銜': '生藥學博士',
+        '分類代碼': 'botany_herbs',
+        '定價': 520,
+        '原價': 650,
+        '封面圖片路徑': '/images/uploads/test_book_cover.jpg'
+      }
+    ];
+    const ws = xlsx.utils.json_to_sheet(bookRows);
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Books');
+    const excelBuf = xlsx.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    const excelBase64 = excelBuf.toString('base64');
+
+    const previewBookRes = await fetchJson('/api/admin/import/preview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        base64Data: excelBase64,
+        format: 'xlsx',
+        targetType: 'books'
+      })
+    });
+    assert.equal(previewBookRes.status, 200);
+    assert.equal(previewBookRes.body.data.targetType, 'books');
+    assert.equal(previewBookRes.body.data.validCount, 1);
+    assert.equal(previewBookRes.body.data.items[0].title, '台灣本草圖說測試典藏');
+
+    const commitBookRes = await fetchJson('/api/admin/import/commit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      },
+      body: JSON.stringify({
+        items: previewBookRes.body.data.items,
+        targetType: 'books'
+      })
+    });
+    assert.equal(commitBookRes.status, 200);
+    assert.equal(commitBookRes.body.data.insertedCount, 1);
+
+    // 重設店家與書籍狀態，確保後續查詢測試獨立無副作用
+    shopService.reset();
+    bookService.reset();
+  });
+
+  test('Image Management: 支援單張圖片上傳更換與整包圖片 ZIP 批次解壓匯入', async () => {
+    // 4.7 單張圖片上傳
+    const samplePngBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+    const uploadRes = await fetchJson('/api/admin/upload-image', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      },
+      body: JSON.stringify({
+        filename: 'test_single_herb.png',
+        base64Data: samplePngBase64
+      })
+    });
+    assert.equal(uploadRes.status, 200);
+    assert.equal(uploadRes.body.success, true);
+    assert.ok(uploadRes.body.data.url.startsWith('/images/uploads/test_single_herb_'));
+
+    // 4.8 圖片包 ZIP 批次解壓匯入
+    const zip = new AdmZip();
+    const pngBuf = Buffer.from(samplePngBase64, 'base64');
+    zip.addFile('batch_shop_sample.png', pngBuf);
+    zip.addFile('batch_book_sample.png', pngBuf);
+    const zipBase64 = zip.toBuffer().toString('base64');
+
+    const zipRes = await fetchJson('/api/admin/import/images', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer taiwanherb-admin-session-active'
+      },
+      body: JSON.stringify({ zipBase64 })
+    });
+    assert.equal(zipRes.status, 200);
+    assert.equal(zipRes.body.success, true);
+    assert.equal(zipRes.body.data.totalExtracted, 2);
+    assert.ok(zipRes.body.data.images.some(img => img.filename === 'batch_shop_sample.png'));
+    assert.ok(zipRes.body.data.images.some(img => img.filename === 'batch_book_sample.png'));
   });
 
   // ========================================================
@@ -949,6 +1108,61 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
       headers: { 'Authorization': 'Bearer taiwanherb-admin-session-active' }
     });
     assert.equal(delBookRes.status, 200);
+  });
+
+  test('Database Backup: 支援單獨下載各庫或全庫完整快照至本地端 (JSON)', async () => {
+    const adminHeaders = { 'Authorization': 'Bearer taiwanherb-admin-session-active' };
+
+    // 1. 全庫完整備份下載
+    const fullRes = await fetch(`${baseUrl}/api/admin/database/backup?type=all`, { headers: adminHeaders });
+    assert.equal(fullRes.status, 200);
+    assert.ok(fullRes.headers.get('content-type').includes('application/json'));
+    assert.ok(fullRes.headers.get('content-disposition').includes('attachment; filename="taiwanherb_full_database_backup_'));
+    const fullJson = await fullRes.json();
+    assert.ok(fullJson.system);
+    assert.equal(fullJson.system.name, '台灣肯信本草研究室');
+    assert.ok(fullJson.collections);
+    assert.ok(Array.isArray(fullJson.collections.herbs));
+    assert.ok(Array.isArray(fullJson.collections.formulas));
+    assert.ok(Array.isArray(fullJson.collections.books));
+    assert.ok(Array.isArray(fullJson.collections.shops));
+    assert.ok(Array.isArray(fullJson.collections.experts));
+    assert.ok(fullJson.collections.herbs.length >= 70);
+
+    // 2. 單獨下載：本草資料庫
+    const herbsRes = await fetch(`${baseUrl}/api/admin/database/backup?type=herbs`, { headers: adminHeaders });
+    assert.equal(herbsRes.status, 200);
+    assert.ok(herbsRes.headers.get('content-disposition').includes('taiwanherb_herbs_db_'));
+    const herbsJson = await herbsRes.json();
+    assert.equal(herbsJson.database, 'herbs');
+    assert.ok(herbsJson.totalRecords >= 70);
+    assert.ok(Array.isArray(herbsJson.records));
+
+    // 3. 單獨下載：方劑資料庫
+    const formulasRes = await fetch(`${baseUrl}/api/admin/database/backup?type=formulas`, { headers: adminHeaders });
+    assert.equal(formulasRes.status, 200);
+    assert.ok(formulasRes.headers.get('content-disposition').includes('taiwanherb_formulas_db_'));
+    const formulasJson = await formulasRes.json();
+    assert.equal(formulasJson.database, 'formulas');
+    assert.ok(Array.isArray(formulasJson.records));
+
+    // 4. 單獨下載：書閣資料庫
+    const booksRes = await fetch(`${baseUrl}/api/admin/database/backup?type=books`, { headers: adminHeaders });
+    assert.equal(booksRes.status, 200);
+    assert.ok(booksRes.headers.get('content-disposition').includes('taiwanherb_books_db_'));
+    const booksJson = await booksRes.json();
+    assert.equal(booksJson.database, 'books');
+    assert.ok(Array.isArray(booksJson.records));
+  });
+
+  test('DEMO Mode & Security: 健康狀態與後台狀態端點應如實回傳 demoMode 屬性', async () => {
+    const healthRes = await fetchJson('/api/health');
+    assert.equal(healthRes.status, 200);
+    assert.equal(typeof healthRes.body.data.demoMode, 'boolean');
+
+    const statusRes = await fetchJson('/api/admin/status');
+    assert.equal(statusRes.status, 200);
+    assert.equal(typeof statusRes.body.data.demoMode, 'boolean');
   });
 });
 

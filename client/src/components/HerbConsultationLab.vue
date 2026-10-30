@@ -254,17 +254,26 @@ const currentPresetQuestions = computed(() => {
   return presetMap[currentExpertId.value] || presetMap.pharmacist_phd;
 });
 
-// 簡單 Markdown 渲染為語意 HTML
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// 簡單 Markdown 渲染為語意 HTML (含 XSS 跳脫消毒)
 const renderedReplyHtml = computed(() => {
   if (!lastResult.value?.reply) return '';
-  const text = lastResult.value.reply;
+  const escaped = escapeHtml(lastResult.value.reply);
   
   // 基礎替換
-  let html = text
+  let html = escaped
     .replace(/^### (.*$)/gim, '<h4 class="md-h4">$1</h4>')
     .replace(/^## (.*$)/gim, '<h3 class="md-h3">$1</h3>')
     .replace(/^# (.*$)/gim, '<h2 class="md-h2">$1</h2>')
-    .replace(/^\> (.*$)/gim, '<blockquote class="md-quote">$1</blockquote>')
+    .replace(/^&gt;\s?(.*$)/gim, '<blockquote class="md-quote">$1</blockquote>')
     .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/gim, '<em>$1</em>')
     .replace(/^- (.*$)/gim, '<li class="md-li">$1</li>')

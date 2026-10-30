@@ -5,14 +5,14 @@
       <div class="shops-banner-content">
         <div class="shops-seal-badge">
           <span class="banner-seal">青草舖</span>
-          <span class="banner-badge-text">TAIWAN ALLIED HERB SHOPS · 全台結盟青草店與採買避坑指引</span>
+          <span class="banner-badge-text">TAIWAN HERB APOTHECARY MAP · 全臺青草名店文化地圖與常民採買指南</span>
         </div>
         <h2 class="shops-main-title">
           <span>穿街走巷尋草香，</span>
-          <em>全臺在地結盟青草老舖採買指引</em>
+          <em>全臺在地老牌青草名店採買指引</em>
         </h2>
         <p class="shops-subtitle">
-          收錄艋舺西昌街、客家山城、鹿港老街至花東原鄉 12 家特約老牌青草店，提供生鮮現採、古法烘乾與客製代熬指引，守護常民草本生活品質。
+          收錄艋舺西昌街、客家山城、鹿港老街至花東原鄉 12 家指標性老牌青草店與原鄉產銷班，客觀整理生鮮現採、古法烘乾與常民煎煮指引，傳承臺灣草木生活文化。
         </p>
       </div>
     </div>
@@ -22,7 +22,7 @@
       <div class="strip-icon">⚖️</div>
       <div class="strip-text">
         <strong>【常民採買與非醫療聲明】</strong>
-        本指引所列店家為臺灣民間傳統青草、茶飲與民俗藥浴原料販售店家。所售草本植物皆屬民間常民茶飲、膳食料理與生活文化用途，<strong>非屬醫療院所或中西藥處方，絕不宣稱任何疾病療效</strong>。身體不適請務必尋求合格醫師診治。
+        本指引所列店家為臺灣民間傳統青草、茶飲與民俗外洗原料販售店家，屬常民文化與公開黃頁之客觀整理收錄。所列草本植物皆屬民間常民茶飲、膳食料理與生活文化用途，<strong>非屬醫療院所或中西藥處方，絕不宣稱任何疾病療效</strong>。實體農產草料之品質與檢驗報告請洽各獨立營業店家。
       </div>
     </div>
 

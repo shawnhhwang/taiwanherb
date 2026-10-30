@@ -10,6 +10,8 @@ const llmService = require('../services/llmService');
 const importExportService = require('../services/importExportService');
 const articleService = require('../services/articleService');
 const bookService = require('../services/bookService');
+const shopService = require('../services/shopService');
+const config = require('../config/config');
 const ApiResponse = require('../utils/apiResponse');
 
 class AdminController {
@@ -87,7 +89,8 @@ class AdminController {
         user: session ? session.user : null,
         role: session ? session.role : null,
         permissions: session ? session.permissions : [],
-        defaultPasscodeHint: 'taiwanherb2026'
+        demoMode: Boolean(config.demoMode),
+        defaultPasscodeHint: config.demoMode ? 'taiwanherb2026' : null
       }, '管理者權限檢查完畢'));
     } catch (err) {
       next(err);
@@ -104,6 +107,9 @@ class AdminController {
    */
   async getUsers(req, res, next) {
     try {
+      const session = this.checkPermission(req, res, 'users:manage');
+      if (!session) return;
+
       const users = userService.getUsers();
       const roles = userService.getRoles();
       return res.json(ApiResponse.ok({
@@ -304,6 +310,9 @@ class AdminController {
    */
   async testExpertPlayground(req, res, next) {
     try {
+      const session = this.checkPermission(req, res, 'experts:write');
+      if (!session) return;
+
       const { expertId, query, systemPromptOverride, topK } = req.body;
       const result = await ragService.testPlayground({
         expertId,
@@ -323,20 +332,31 @@ class AdminController {
 
   /**
    * GET /api/admin/import/sample
-   * 取得標準範例資料 (JSON 或 CSV)
+   * 取得標準範例資料 (支援 草藥 herbs、草藥店 shops、書庫 books；格式支援 JSON、CSV、Excel .xlsx)
    */
   async getImportSample(req, res, next) {
     try {
-      const { format = 'json' } = req.query;
-      const sample = importExportService.getSample(format);
+      const { format = 'json', targetType = 'herbs' } = req.query;
+      const sample = importExportService.getSample(format, targetType);
 
       if (req.query.download === 'true') {
         res.setHeader('Content-Type', sample.contentType);
-        res.setHeader('Content-Disposition', `attachment; filename=${sample.filename}`);
+        res.setHeader('Content-Disposition', `attachment; filename="${sample.filename}"`);
+        if (format === 'xlsx') {
+          return res.send(sample.buffer);
+        }
         return res.send(sample.content);
       }
 
-      return res.json(ApiResponse.ok(sample, '成功取得本草匯入標準示範資料'));
+      if (format === 'xlsx') {
+        return res.json(ApiResponse.ok({
+          format: 'xlsx',
+          filename: sample.filename,
+          base64: sample.buffer.toString('base64')
+        }, '成功取得 Excel 示範資料'));
+      }
+
+      return res.json(ApiResponse.ok(sample, `成功取得 ${targetType} 匯入標準示範資料`));
     } catch (err) {
       next(err);
     }
@@ -344,13 +364,13 @@ class AdminController {
 
   /**
    * POST /api/admin/import/preview
-   * 解析並驗證匯入文本，回傳線上工作台可編輯格式
+   * 解析並驗證匯入資料 (Excel / CSV / JSON)，回傳線上工作台可編輯格式
    */
   async previewImport(req, res, next) {
     try {
-      const { content, format = 'json' } = req.body;
-      const previewResult = importExportService.parseAndValidate(content, format);
-      return res.json(ApiResponse.ok(previewResult, `成功解析 ${previewResult.total} 筆本草資料列，請在線上工作台審閱編輯`));
+      const { content, base64Data, format = 'json', targetType = 'herbs' } = req.body;
+      const previewResult = importExportService.parseAndValidate({ content, base64Data, format, targetType });
+      return res.json(ApiResponse.ok(previewResult, `成功解析 ${previewResult.total} 筆資料列，請在線上工作台審閱編輯`));
     } catch (err) {
       return res.status(400).json(ApiResponse.fail(err.message, 400));
     }
@@ -358,18 +378,54 @@ class AdminController {
 
   /**
    * POST /api/admin/import/commit
-   * 批次確認寫入本草庫
+   * 批次確認寫入草藥庫、草藥店或書閣
    */
   async commitImport(req, res, next) {
     try {
       const session = this.checkPermission(req, res, 'import:write');
       if (!session) return;
 
-      const { items } = req.body;
+      const { items, targetType = 'herbs' } = req.body;
       const operatorName = session.user?.name || '管理員';
-      const commitResult = await importExportService.commitBatch(items, operatorName);
+      const commitResult = await importExportService.commitBatch(items, operatorName, targetType);
 
-      return res.json(ApiResponse.ok(commitResult, `成功匯入並典藏 ${commitResult.insertedCount} 味新草藥至知識庫`));
+      return res.json(ApiResponse.ok(commitResult, `成功匯入並典藏 ${commitResult.insertedCount} 筆項目至資料庫`));
+    } catch (err) {
+      return res.status(400).json(ApiResponse.fail(err.message, 400));
+    }
+  }
+
+  /**
+   * POST /api/admin/upload-image
+   * 單張圖片上傳/更換 (供線上工作台即時上傳更換草藥/店家/書籍封面圖)
+   */
+  async uploadImage(req, res, next) {
+    try {
+      const session = this.checkPermission(req, res, 'import:write');
+      if (!session) return;
+
+      const { filename, base64Data } = req.body;
+      const result = await importExportService.saveUploadedImage({ filename, base64Data });
+
+      return res.json(ApiResponse.ok(result, '圖片上傳成功'));
+    } catch (err) {
+      return res.status(400).json(ApiResponse.fail(err.message, 400));
+    }
+  }
+
+  /**
+   * POST /api/admin/import/images
+   * 圖片包 (ZIP Archive) 批次解壓匯入
+   */
+  async importImageArchive(req, res, next) {
+    try {
+      const session = this.checkPermission(req, res, 'import:write');
+      if (!session) return;
+
+      const { zipBase64 } = req.body;
+      const result = await importExportService.extractImageArchive({ zipBase64 });
+
+      return res.json(ApiResponse.ok(result, `成功解壓並匯入 ${result.totalExtracted} 張圖片至圖庫`));
     } catch (err) {
       return res.status(400).json(ApiResponse.fail(err.message, 400));
     }
@@ -402,6 +458,37 @@ class AdminController {
       }
 
       return res.send(exportResult.content);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  /**
+   * GET /api/admin/database/backup
+   * 資料庫下載備份 (支援單獨下載指定資料庫或全庫完整備份快照回本地端)
+   */
+  async backupDatabase(req, res, next) {
+    try {
+      const session = this.checkPermission(req, res, 'audit:read');
+      if (!session) return;
+
+      const { type = 'all' } = req.query;
+      const operatorName = session?.user?.name || '系統管理員';
+
+      const backupResult = await importExportService.exportDatabase({
+        type,
+        operatorName
+      });
+
+      await herbService.addAuditLog(
+        'DATABASE_BACKUP',
+        `下載資料庫備份 [類別: ${type}] (共 ${backupResult.totalRecords} 筆資料)`,
+        session?.user?.username || 'admin'
+      );
+
+      res.setHeader('Content-Type', backupResult.contentType);
+      res.setHeader('Content-Disposition', `attachment; filename="${backupResult.filename}"`);
+      return res.send(backupResult.content);
     } catch (err) {
       next(err);
     }
@@ -496,6 +583,9 @@ class AdminController {
    */
   async createHerb(req, res, next) {
     try {
+      const session = this.checkPermission(req, res, 'herbs:write');
+      if (!session) return;
+
       const herbData = req.body;
       if (!herbData.name || !herbData.category) {
         return res.status(400).json(ApiResponse.fail('藥材名稱與分類為必填欄位', 400));
@@ -513,6 +603,9 @@ class AdminController {
    */
   async updateHerb(req, res, next) {
     try {
+      const session = this.checkPermission(req, res, 'herbs:write');
+      if (!session) return;
+
       const { id } = req.params;
       const herbData = req.body;
       const updated = await herbService.updateHerb(id, herbData);
@@ -530,6 +623,9 @@ class AdminController {
    */
   async deleteHerb(req, res, next) {
     try {
+      const session = this.checkPermission(req, res, 'herbs:write');
+      if (!session) return;
+
       const { id } = req.params;
       const success = await herbService.deleteHerb(id);
       if (!success) {
@@ -546,6 +642,9 @@ class AdminController {
    */
   async getAuditLogs(req, res, next) {
     try {
+      const session = this.checkPermission(req, res, 'audit:read');
+      if (!session) return;
+
       const logs = await herbService.getAuditLogs(60);
       return res.json(ApiResponse.ok(logs, '成功取得系統審計日誌'));
     } catch (err) {
@@ -558,7 +657,12 @@ class AdminController {
    */
   async resetDatabase(req, res, next) {
     try {
+      const session = this.checkPermission(req, res, 'system:reset');
+      if (!session) return;
+
       const count = await herbService.resetToInitial();
+      shopService.reset();
+      bookService.reset();
       return res.json(ApiResponse.ok({ restoredCount: count }, `成功重置資料庫，恢復 ${count} 味經典本草`));
     } catch (err) {
       next(err);
@@ -634,6 +738,9 @@ class AdminController {
 
   async getBookOrders(req, res, next) {
     try {
+      const session = this.checkPermission(req, res, 'herbs:write');
+      if (!session) return;
+
       const orders = await bookService.adminGetOrders();
       return res.json(ApiResponse.ok(orders, '成功取得全站購書訂單'));
     } catch (err) {

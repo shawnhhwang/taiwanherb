@@ -454,24 +454,71 @@ export const HerbApi = {
     return res.data;
   },
 
-  // 4. 資料匯入 (範例、文字/CSV預覽編輯與批次存檔)
-  async getImportSample(format = 'json') {
-    const res = await this.request(`/admin/import/sample?format=${format}`);
+  // 4. 資料匯入 (範例、文字/CSV/Excel預覽編輯、圖片上傳/解壓與批次存檔)
+  async getImportSample(format = 'json', targetType = 'herbs') {
+    const res = await this.request(`/admin/import/sample?format=${format}&targetType=${targetType}`);
     return res.data;
   },
 
-  async previewImport(content, format = 'json') {
+  async previewImport(input, format = 'json', targetType = 'herbs') {
+    let payload = { format, targetType };
+    if (typeof input === 'object' && input !== null) {
+      payload = { ...payload, ...input };
+    } else {
+      payload.content = input;
+    }
     const res = await this.request('/admin/import/preview', {
       method: 'POST',
-      body: JSON.stringify({ content, format })
+      body: JSON.stringify(payload)
     });
     return res.data;
   },
 
-  async commitImport(items) {
+  async commitImport(items, targetType = 'herbs') {
     const res = await this.request('/admin/import/commit', {
       method: 'POST',
-      body: JSON.stringify({ items })
+      body: JSON.stringify({ items, targetType })
+    });
+    return res.data;
+  },
+
+  /**
+   * 上傳單張圖片 (供草藥/店家/書籍線上更換封面圖)
+   * @param {File} file 
+   */
+  async uploadImage(file) {
+    const base64Data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    const res = await this.request('/admin/upload-image', {
+      method: 'POST',
+      body: JSON.stringify({
+        filename: file.name,
+        base64Data
+      })
+    });
+    return res.data;
+  },
+
+  /**
+   * 批次匯入圖片壓縮包 (ZIP Archive)
+   * @param {File} file 
+   */
+  async importImageArchive(file) {
+    const zipBase64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+
+    const res = await this.request('/admin/import/images', {
+      method: 'POST',
+      body: JSON.stringify({ zipBase64 })
     });
     return res.data;
   },
@@ -539,5 +586,38 @@ export const HerbApi = {
       body: JSON.stringify(payload)
     });
     return res.data;
+  },
+
+  /**
+   * 後台資料庫下載備份 (支援單獨下載或全庫完整快照至本地端)
+   */
+  async downloadDatabaseBackup(type = 'all') {
+    const token = this.getAuthToken();
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`${API_BASE}/admin/database/backup?type=${encodeURIComponent(type)}`, {
+      headers
+    });
+    if (!res.ok) {
+      const errJson = await res.json().catch(() => ({}));
+      throw new Error(errJson.message || `下載資料庫備份失敗 (${res.status})`);
+    }
+
+    const blob = await res.blob();
+    const contentDisposition = res.headers.get('Content-Disposition') || '';
+    let filename = `taiwanherb_${type}_db_backup.json`;
+    const match = contentDisposition.match(/filename="?([^";]+)"?/);
+    if (match && match[1]) filename = match[1];
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    return { success: true, filename };
   }
 };

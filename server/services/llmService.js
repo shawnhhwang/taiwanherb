@@ -6,11 +6,13 @@
 const { DEFAULT_LLM_CONFIG } = require('../data/llmConfig');
 
 let insecureAgent = null;
-try {
-  const { Agent } = require('undici');
-  insecureAgent = new Agent({ connect: { rejectUnauthorized: false } });
-} catch (e) {
-  // undici fallback
+if (process.env.ALLOW_INSECURE_LLM_TLS === 'true') {
+  try {
+    const { Agent } = require('undici');
+    insecureAgent = new Agent({ connect: { rejectUnauthorized: false } });
+  } catch (e) {
+    // undici fallback
+  }
 }
 
 class LlmService {
@@ -68,7 +70,7 @@ class LlmService {
 
     return {
       activeProvider: this.config.activeProvider,
-      activeProviderInfo: this.config.providers[this.config.activeProvider],
+      activeProviderInfo: maskedProviders[this.config.activeProvider],
       temperature: this.config.temperature,
       maxTokens: this.config.maxTokens,
       timeoutMs: this.config.timeoutMs,
@@ -101,6 +103,13 @@ class LlmService {
           }
 
           const isKeyless = key === 'builtin' || key === 'ollama' || this.isKeylessAllowed({ ...this.config.providers[key], ...p, apiKey: updatedApiKey });
+
+          if (p.baseUrl) {
+            const lowerUrl = p.baseUrl.toLowerCase();
+            if (lowerUrl.includes('169.254.169.254') || lowerUrl.includes('metadata.google.internal')) {
+              throw new Error('安全性限制：禁止存取雲端執行個體敏感 Metadata 端點');
+            }
+          }
 
           this.config.providers[key] = {
             ...this.config.providers[key],

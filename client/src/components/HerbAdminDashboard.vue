@@ -4,14 +4,15 @@
     <div v-if="!isAuthenticated" class="admin-auth-gate">
       <div class="auth-card">
         <div class="auth-seal">肯</div>
+        <div v-if="effectiveDemoMode" class="demo-gate-pill">⚡ DEMO 模式開啟</div>
         <h3 class="auth-title">台灣肯信本草研究室 · 典藏管理中樞</h3>
         <p class="auth-desc">
-          提供本草資料典藏、前後台角色權限 (RBAC)、LLM API 來源配置、專家 RAG 沙盒調校、批次匯入/線上編輯、資料匯出與專題文章生成。
+          提供本草資料典藏、前後台角色權限 (RBAC)、LLM API 來源配置、專家 RAG 沙盒調校、批次匯入/線上編輯、資料下載備份與專題文章生成。
         </p>
 
-        <!-- 快速示範角色切換按鈕組 -->
-        <div class="demo-accounts-picker">
-          <div class="picker-label">快速切換體驗角色 (點擊即可自動填入)：</div>
+        <!-- 快速示範角色切換按鈕組 (僅在 DEMO 模式下顯示) -->
+        <div v-if="effectiveDemoMode" class="demo-accounts-picker">
+          <div class="picker-label">⚡ 快速切換體驗角色 (DEMO 模式)：</div>
           <div class="roles-chips">
             <button
               v-for="acc in demoAccounts"
@@ -33,14 +34,14 @@
             v-model="inputUsername"
             type="text"
             class="auth-input"
-            placeholder="管理員帳號 (預設: admin)"
+            :placeholder="effectiveDemoMode ? '管理員帳號 (預設: admin)' : '請輸入管理員帳號'"
             @keydown.enter="handleLogin"
           />
           <input
             v-model="inputPasscode"
             type="password"
             class="auth-input"
-            placeholder="管理密碼 (預設: taiwanherb2026)"
+            :placeholder="effectiveDemoMode ? '管理密碼 (預設: taiwanherb2026)' : '請輸入管理密碼'"
             @keydown.enter="handleLogin"
           />
           <button class="auth-submit-btn" :disabled="isLoggingIn" @click="handleLogin">
@@ -48,8 +49,11 @@
           </button>
         </div>
 
-        <div class="auth-hint">
+        <div v-if="effectiveDemoMode" class="auth-hint">
           💡 提示：至高管理員 <code>admin / taiwanherb2026</code> 具備全權限；策展師 <code>curator_lin</code>、生藥顧問 <code>expert_chen</code>、觀察員 <code>auditor_wang</code> 可體驗不同前後台權限等級。
+        </div>
+        <div v-else class="auth-hint auth-secure-hint">
+          🔒 系統已啟用正常登入驗證：請輸入具備管理權限之帳號與密碼登入典藏中樞。
         </div>
       </div>
     </div>
@@ -72,6 +76,13 @@
         </div>
 
         <div class="admin-actions-group">
+          <button
+            class="admin-tool-btn highlight-backup-btn"
+            title="單獨下載指定資料庫或一鍵下載全庫備份 (JSON)"
+            @click="openBackupModal"
+          >
+            💾 資料庫下載備份
+          </button>
           <button
             class="admin-tool-btn"
             title="快捷切換至專題文章生成實驗室"
@@ -686,30 +697,117 @@
       <!-- 分頁四：📥 本草資料匯入、範例與線上工作台編輯 -->
       <!-- ======================================================== -->
       <div v-if="currentTab === 'import'" class="admin-tab-pane">
+        <!-- 隱藏的列更換圖片 input -->
+        <input
+          type="file"
+          ref="rowImageFileInput"
+          accept="image/*"
+          class="file-input-hidden"
+          @change="handleRowImageSelected"
+        />
+
         <div class="pane-header-box">
           <div>
-            <h3 class="pane-title">📥 本草資料批次匯入與線上編輯工作台</h3>
+            <h3 class="pane-title">📥 本草資料、草藥老舖與書庫批次匯入及線上編輯工作台</h3>
             <p class="pane-desc">
-              支援 JSON 或 CSV (含 UTF-8 BOM) 檔案上傳與純文字貼入。解析後進入線上表格直接編輯、驗證必填欄位，確認無誤後一鍵寫入資料庫。
+              支援 Excel (.xlsx / .xls)、CSV (含 UTF-8 BOM) 與 JSON 檔案匯入。支援整包圖片 ZIP 壓縮檔批次匯入解壓，或於工作台線上即時更換圖檔。
             </p>
           </div>
           <div class="header-btns">
             <button class="btn-primary-action" @click="loadSampleImportData">
               <span>🌱</span>
-              <span>載入標準示範資料 (5味野生草藥)</span>
+              <span>載入標準示範資料 ({{ targetTypeName }})</span>
             </button>
             <a
-              href="/api/admin/import/sample?format=json&download=true"
+              :href="`/api/admin/import/sample?targetType=${importTargetType}&format=json&download=true`"
               class="btn-secondary-action"
             >
               📄 下載範例 JSON
             </a>
             <a
-              href="/api/admin/import/sample?format=csv&download=true"
+              :href="`/api/admin/import/sample?targetType=${importTargetType}&format=csv&download=true`"
               class="btn-secondary-action"
             >
               📊 下載範例 CSV
             </a>
+            <a
+              :href="`/api/admin/import/sample?targetType=${importTargetType}&format=xlsx&download=true`"
+              class="btn-secondary-action"
+            >
+              📗 下載範例 Excel (.xlsx)
+            </a>
+          </div>
+        </div>
+
+        <!-- 匯入目標類別選擇器 (Target Type Switcher) -->
+        <div class="import-target-selector">
+          <button
+            type="button"
+            class="target-tab-btn"
+            :class="{ active: importTargetType === 'herbs' }"
+            @click="switchImportTarget('herbs')"
+          >
+            🌿 草藥資料庫 (Herbs)
+          </button>
+          <button
+            type="button"
+            class="target-tab-btn"
+            :class="{ active: importTargetType === 'shops' }"
+            @click="switchImportTarget('shops')"
+          >
+            🏪 結盟草藥店 (Shops)
+          </button>
+          <button
+            type="button"
+            class="target-tab-btn"
+            :class="{ active: importTargetType === 'books' }"
+            @click="switchImportTarget('books')"
+          >
+            📚 草木書閣藏書 (Books)
+          </button>
+        </div>
+
+        <!-- 批次圖片包匯入輔助卡片 (ZIP Archive Importer) -->
+        <div class="image-archive-import-card">
+          <div class="archive-header">
+            <div class="archive-icon">📦</div>
+            <div class="archive-info">
+              <h5 class="archive-title">批次圖片包匯入 (ZIP 壓縮包)</h5>
+              <p class="archive-desc">
+                若匯入之 Excel / CSV 中包含圖片檔名，可將圖片打包為 <code>.zip</code> 壓縮包在此上傳，系統將自動解壓並儲存至伺服器圖庫；亦可在下方工作台每列直接點擊「📷 更換」即時單張上傳。
+              </p>
+              <p class="archive-copyright-hint" style="margin-top: 6px; font-size: 12px; color: #b45309; line-height: 1.4;">
+                ⚖️ <strong>圖片版權宣告叮嚀</strong>：請確認上傳之植物或店面圖片為原創自攝、公眾領域 (CC0) 或具備合法商業使用授權，避免侵害第三方著作權。
+              </p>
+            </div>
+            <div class="archive-actions">
+              <input
+                type="file"
+                accept=".zip,application/zip,application/x-zip-compressed"
+                class="file-input-hidden"
+                id="imageZipInput"
+                @change="handleZipUpload"
+              />
+              <label for="imageZipInput" class="btn-zip-upload" :class="{ 'btn-disabled': isUploadingZip }">
+                {{ isUploadingZip ? '正在解壓上傳圖包...' : '📤 上傳圖片 ZIP 壓縮包' }}
+              </label>
+            </div>
+          </div>
+
+          <!-- 解壓完成後的縮圖預覽與一鍵自動匹配 -->
+          <div v-if="uploadedImagesList.length > 0" class="extracted-images-preview">
+            <div class="extracted-summary-bar">
+              <span>已成功解壓 <strong>{{ uploadedImagesList.length }}</strong> 張圖片至圖庫：</span>
+              <button class="btn-auto-match" @click="autoMatchImagesToTable">
+                🔗 一鍵自動匹配圖片至工作台各列
+              </button>
+            </div>
+            <div class="extracted-thumbnails-grid">
+              <div v-for="(img, i) in uploadedImagesList" :key="i" class="extracted-img-item" :title="img.filename">
+                <img :src="img.url" :alt="img.filename" class="extracted-thumb-img" />
+                <span class="extracted-img-name">{{ img.filename }}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -718,15 +816,15 @@
           <div class="upload-dropzone">
             <input
               type="file"
-              accept=".json,.csv,text/csv,application/json"
+              accept=".xlsx,.xls,.json,.csv,text/csv,application/json,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
               class="file-input-hidden"
               id="herbFileInput"
               @change="handleFileUpload"
             />
             <label for="herbFileInput" class="dropzone-label">
               <span class="upload-icon">📂</span>
-              <span class="upload-title">點擊選擇本草檔案 (.json 或 .csv) 或直接拖曳至此</span>
-              <span class="upload-sub">支援標準本草欄位：名稱、學名、產區、分類、性味、功效、安全等級</span>
+              <span class="upload-title">點擊選擇檔案 (支援 Excel .xlsx / .xls、CSV、JSON) 或直接拖曳至此</span>
+              <span class="upload-sub">支援{{ targetTypeName }}所有標準欄位與圖片路徑設定</span>
             </label>
           </div>
 
@@ -746,7 +844,7 @@
               v-model="rawImportText"
               rows="6"
               class="paste-textarea"
-              placeholder="在此貼入待匯入的本草文字內容..."
+              :placeholder="`在此貼入待匯入的${targetTypeName}文字內容...`"
             ></textarea>
             <div class="paste-footer">
               <button
@@ -764,7 +862,7 @@
         <div v-if="stagedHerbs.length > 0" class="staged-editor-card">
           <div class="staged-header-row">
             <div>
-              <h4>📝 本草線上編輯審查工作台</h4>
+              <h4>📝 {{ targetTypeName }} 線上編輯審查工作台</h4>
               <div class="staged-stats">
                 共解析 <strong>{{ stagedHerbs.length }}</strong> 筆 ‧
                 合格：<span class="text-success">{{ stagedValidCount }} 筆</span> ‧
@@ -774,7 +872,7 @@
 
             <div class="staged-actions">
               <button class="btn-tool-secondary" @click="addNewStagedRow">
-                ➕ 新增一行草藥
+                ➕ 新增一行
               </button>
               <button class="btn-tool-secondary" @click="stagedHerbs = []">
                 🗑️ 清空工作台
@@ -785,7 +883,7 @@
                 :disabled="isCommittingImport"
                 @click="commitStagedHerbs"
               >
-                {{ isCommittingImport ? '正在寫入本草庫...' : '🌿 確認批次典藏入庫 (Commit to DB) ➔' }}
+                {{ isCommittingImport ? '正在寫入資料庫...' : `🌿 確認批次寫入 ${targetTypeName} ➔` }}
               </button>
               <div v-else class="perm-notice-tag">
                 🔒 僅具備 import:write 權限者可確認寫入
@@ -794,10 +892,12 @@
           </div>
 
           <div class="staged-table-wrap">
-            <table class="staged-table">
+            <!-- 1. 草藥典藏庫表格 (Herbs) -->
+            <table v-if="importTargetType === 'herbs'" class="staged-table">
               <thead>
                 <tr>
                   <th style="width: 45px;">狀態</th>
+                  <th style="width: 130px;">圖片預覽 / 更換</th>
                   <th style="width: 140px;">藥材名稱 *</th>
                   <th style="width: 150px;">學名</th>
                   <th style="width: 140px;">風土產區</th>
@@ -805,7 +905,7 @@
                   <th style="width: 80px;">藥性</th>
                   <th>功效描述</th>
                   <th style="width: 120px;">安全等級</th>
-                  <th style="width: 70px; text-align: center;">操作</th>
+                  <th style="width: 60px; text-align: center;">操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -814,6 +914,31 @@
                     <span :title="item.errors?.join('; ')">
                       {{ item.name && item.category ? '✅' : '⚠️' }}
                     </span>
+                  </td>
+                  <td>
+                    <div class="cell-image-preview-group">
+                      <img
+                        :src="getItemImage(item)"
+                        :alt="item.name"
+                        class="cell-thumb-img"
+                        @error="(e) => (e.target.src = '/images/herbs/default_herb.svg')"
+                      />
+                      <div class="cell-image-actions">
+                        <input
+                          v-model="item.imageUrl"
+                          class="cell-input cell-img-path-input"
+                          placeholder="/images/..."
+                        />
+                        <button
+                          type="button"
+                          class="btn-cell-img-upload"
+                          title="選擇本地圖片上傳更換"
+                          @click="triggerRowImageUpload(item)"
+                        >
+                          📷 更換
+                        </button>
+                      </div>
+                    </div>
                   </td>
                   <td>
                     <input v-model="item.name" class="cell-input" placeholder="必填藥名" />
@@ -834,6 +959,7 @@
                       <option value="寒">寒</option>
                       <option value="涼">涼</option>
                       <option value="微溫">微溫</option>
+                      <option value="微涼">微涼</option>
                     </select>
                   </td>
                   <td>
@@ -846,6 +972,162 @@
                       <option value="依體質酌量">依體質酌量</option>
                       <option value="需經炮製">需經炮製</option>
                     </select>
+                  </td>
+                  <td style="text-align: center;">
+                    <button class="btn-cell-delete" @click="stagedHerbs.splice(idx, 1)">✕</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- 2. 結盟草藥店表格 (Shops) -->
+            <table v-else-if="importTargetType === 'shops'" class="staged-table">
+              <thead>
+                <tr>
+                  <th style="width: 45px;">狀態</th>
+                  <th style="width: 130px;">圖片預覽 / 更換</th>
+                  <th style="width: 160px;">店家名稱 *</th>
+                  <th style="width: 140px;">風土區域</th>
+                  <th style="width: 100px;">縣市</th>
+                  <th style="width: 180px;">詳細地址</th>
+                  <th style="width: 120px;">聯絡電話</th>
+                  <th>招牌特色</th>
+                  <th style="width: 80px; text-align: center;">支援宅配</th>
+                  <th style="width: 60px; text-align: center;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, idx) in stagedHerbs" :key="item.tempId || idx">
+                  <td style="text-align: center;">
+                    <span :title="item.errors?.join('; ')">
+                      {{ item.name ? '✅' : '⚠️' }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="cell-image-preview-group">
+                      <img
+                        :src="getItemImage(item)"
+                        :alt="item.name"
+                        class="cell-thumb-img"
+                        @error="(e) => (e.target.src = '/images/uploads/default_shop.jpg')"
+                      />
+                      <div class="cell-image-actions">
+                        <input
+                          v-model="item.imageUrl"
+                          class="cell-input cell-img-path-input"
+                          placeholder="/images/..."
+                        />
+                        <button
+                          type="button"
+                          class="btn-cell-img-upload"
+                          title="選擇本地圖片更換"
+                          @click="triggerRowImageUpload(item)"
+                        >
+                          📷 更換
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <input v-model="item.name" class="cell-input" placeholder="店家名稱" />
+                  </td>
+                  <td>
+                    <input v-model="item.region" class="cell-input" placeholder="北部/中部/南部..." />
+                  </td>
+                  <td>
+                    <input v-model="item.city" class="cell-input" placeholder="縣市" />
+                  </td>
+                  <td>
+                    <input v-model="item.address" class="cell-input" placeholder="詳細地址" />
+                  </td>
+                  <td>
+                    <input v-model="item.phone" class="cell-input" placeholder="電話" />
+                  </td>
+                  <td>
+                    <input v-model="item.specialties" class="cell-input" placeholder="招牌特色" />
+                  </td>
+                  <td style="text-align: center;">
+                    <input type="checkbox" v-model="item.shippingAvailable" />
+                  </td>
+                  <td style="text-align: center;">
+                    <button class="btn-cell-delete" @click="stagedHerbs.splice(idx, 1)">✕</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- 3. 草木書閣藏書表格 (Books) -->
+            <table v-else-if="importTargetType === 'books'" class="staged-table">
+              <thead>
+                <tr>
+                  <th style="width: 45px;">狀態</th>
+                  <th style="width: 130px;">封面預覽 / 更換</th>
+                  <th style="width: 180px;">書籍名稱 *</th>
+                  <th style="width: 150px;">副標題</th>
+                  <th style="width: 130px;">作者 *</th>
+                  <th style="width: 120px;">分類代碼</th>
+                  <th style="width: 80px;">定價</th>
+                  <th style="width: 80px;">原價</th>
+                  <th style="width: 70px;">頁數</th>
+                  <th style="width: 140px;">國際書號 (ISBN)</th>
+                  <th style="width: 60px; text-align: center;">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, idx) in stagedHerbs" :key="item.tempId || idx">
+                  <td style="text-align: center;">
+                    <span :title="item.errors?.join('; ')">
+                      {{ item.title && item.author ? '✅' : '⚠️' }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="cell-image-preview-group">
+                      <img
+                        :src="getItemImage(item)"
+                        :alt="item.title"
+                        class="cell-thumb-img"
+                        @error="(e) => (e.target.src = '/images/uploads/default_book.jpg')"
+                      />
+                      <div class="cell-image-actions">
+                        <input
+                          v-model="item.coverImage"
+                          class="cell-input cell-img-path-input"
+                          placeholder="/images/..."
+                        />
+                        <button
+                          type="button"
+                          class="btn-cell-img-upload"
+                          title="選擇本地圖片更換"
+                          @click="triggerRowImageUpload(item)"
+                        >
+                          📷 更換
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <input v-model="item.title" class="cell-input" placeholder="書名" />
+                  </td>
+                  <td>
+                    <input v-model="item.subtitle" class="cell-input" placeholder="副標題" />
+                  </td>
+                  <td>
+                    <input v-model="item.author" class="cell-input" placeholder="作者姓名" />
+                  </td>
+                  <td>
+                    <input v-model="item.category" class="cell-input" placeholder="botany_herbs" />
+                  </td>
+                  <td>
+                    <input type="number" v-model.number="item.price" class="cell-input" placeholder="定價" />
+                  </td>
+                  <td>
+                    <input type="number" v-model.number="item.originalPrice" class="cell-input" placeholder="原價" />
+                  </td>
+                  <td>
+                    <input type="number" v-model.number="item.pages" class="cell-input" placeholder="頁數" />
+                  </td>
+                  <td>
+                    <input v-model="item.isbn" class="cell-input" placeholder="ISBN" />
                   </td>
                   <td style="text-align: center;">
                     <button class="btn-cell-delete" @click="stagedHerbs.splice(idx, 1)">✕</button>
@@ -867,6 +1149,150 @@
             <p class="pane-desc">
               自由設定產區、分類與發布狀態條件，即時匯出標準 JSON 備份、含 UTF-8 BOM 之 CSV 試算表，或排版嚴謹的「台灣肯信本草研究室 · 典藏標本手冊 (Markdown)」。
             </p>
+          </div>
+        </div>
+
+        <!-- 💾 資料庫單獨下載與完整備份中樞 (Database Backup & Download) -->
+        <div class="db-backup-panel-card">
+          <div class="backup-card-header">
+            <div class="backup-title-block">
+              <span class="backup-icon">💾</span>
+              <div>
+                <h4 class="backup-card-title">系統資料庫單獨下載與完整備份中樞</h4>
+                <p class="backup-card-subtitle">
+                  可將本草典藏庫、方劑配方庫、草木書閣、結盟老舖、專家 Persona 單獨下載回本地端，或一鍵匯出全庫完整 JSON 備份快照。
+                </p>
+              </div>
+            </div>
+            <button
+              class="btn-full-backup-cta"
+              :disabled="isDownloadingBackup"
+              @click="handleDownloadBackup('all')"
+            >
+              <span>📦</span>
+              <span>{{ isDownloadingBackup ? '下載備份中...' : '一鍵下載全庫完整備份 (.json)' }}</span>
+            </button>
+          </div>
+
+          <div v-if="backupDownloadProgress" class="backup-progress-banner">
+            <span>ℹ️</span>
+            <span>{{ backupDownloadProgress }}</span>
+          </div>
+
+          <div class="backup-collections-grid">
+            <!-- 1. 本草庫 -->
+            <div class="backup-col-item">
+              <div class="col-head">
+                <span class="col-icon">🌿</span>
+                <div>
+                  <div class="col-name">典藏本草資料庫</div>
+                  <small class="col-meta">共 {{ stats.totalHerbs || 70 }} 味本草植物</small>
+                </div>
+              </div>
+              <p class="col-desc">含性味歸經、四氣五味、六大風土產區、活性化合物與民間生活應用。</p>
+              <button
+                class="btn-col-download"
+                :disabled="isDownloadingBackup"
+                @click="handleDownloadBackup('herbs')"
+              >
+                📥 單獨下載本草庫 (JSON)
+              </button>
+            </div>
+
+            <!-- 2. 方劑庫 -->
+            <div class="backup-col-item">
+              <div class="col-head">
+                <span class="col-icon">🧪</span>
+                <div>
+                  <div class="col-name">方劑與傳承名方庫</div>
+                  <small class="col-meta">7 首名師傳承方劑 + 調配規則</small>
+                </div>
+              </div>
+              <p class="col-desc">名家傳承方劑、青草茶比例、君臣佐使法度、臟腑受納與古法三階熬煮。</p>
+              <button
+                class="btn-col-download"
+                :disabled="isDownloadingBackup"
+                @click="handleDownloadBackup('formulas')"
+              >
+                📥 單獨下載方劑庫 (JSON)
+              </button>
+            </div>
+
+            <!-- 3. 書閣庫 -->
+            <div class="backup-col-item">
+              <div class="col-head">
+                <span class="col-icon">📚</span>
+                <div>
+                  <div class="col-name">草木書閣藏書庫</div>
+                  <small class="col-meta">共 {{ adminBooks.length || 6 }} 部著作 + 試閱章節</small>
+                </div>
+              </div>
+              <p class="col-desc">黃世勳教授考證錄、百草圖鑑、在線購買試閱章節與全書目錄。</p>
+              <button
+                class="btn-col-download"
+                :disabled="isDownloadingBackup"
+                @click="handleDownloadBackup('books')"
+              >
+                📥 單獨下載書閣庫 (JSON)
+              </button>
+            </div>
+
+            <!-- 4. 老舖庫 -->
+            <div class="backup-col-item">
+              <div class="col-head">
+                <span class="col-icon">🏪</span>
+                <div>
+                  <div class="col-name">結盟青草老舖庫</div>
+                  <small class="col-meta">全臺 12 家結盟名店 + 採買指南</small>
+                </div>
+              </div>
+              <p class="col-desc">全島青草巷百年老舖、特色主打草藥、地址聯絡資訊與採買避坑指南。</p>
+              <button
+                class="btn-col-download"
+                :disabled="isDownloadingBackup"
+                @click="handleDownloadBackup('shops')"
+              >
+                📥 單獨下載老舖庫 (JSON)
+              </button>
+            </div>
+
+            <!-- 5. 專家庫 -->
+            <div class="backup-col-item">
+              <div class="col-head">
+                <span class="col-icon">🍵</span>
+                <div>
+                  <div class="col-name">專家 Persona 庫</div>
+                  <small class="col-meta">共 {{ expertList.length || 4 }} 席 RAG 顧問 Persona</small>
+                </div>
+              </div>
+              <p class="col-desc">黃世勳教授、萬華老茶師、客庄阿婆等名師 RAG 語意 Prompt 與檢索權重。</p>
+              <button
+                class="btn-col-download"
+                :disabled="isDownloadingBackup"
+                @click="handleDownloadBackup('experts')"
+              >
+                📥 單獨下載專家庫 (JSON)
+              </button>
+            </div>
+
+            <!-- 6. 使用者庫 -->
+            <div class="backup-col-item">
+              <div class="col-head">
+                <span class="col-icon">👥</span>
+                <div>
+                  <div class="col-name">使用者與權限庫 (RBAC)</div>
+                  <small class="col-meta">共 {{ usersList.length || 5 }} 位系統角色</small>
+                </div>
+              </div>
+              <p class="col-desc">前後台五大角色權限對照矩陣、帳號分發與操作範疇（已脫敏處理）。</p>
+              <button
+                class="btn-col-download"
+                :disabled="isDownloadingBackup"
+                @click="handleDownloadBackup('users')"
+              >
+                📥 單獨下載使用者庫 (JSON)
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1944,6 +2370,103 @@
         </div>
       </div>
     </div>
+
+    <!-- 💾 資料庫下載備份彈窗 (可在任意分頁點擊頂部快捷呼叫) -->
+    <div v-if="isBackupModalOpen" class="backup-modal-overlay" @click.self="closeBackupModal">
+      <div class="backup-modal-card">
+        <div class="backup-modal-header">
+          <div class="header-seal-wrap">
+            <span class="backup-modal-seal">備</span>
+            <div>
+              <h3 class="backup-modal-title">💾 台灣肯信本草研究室 · 資料庫下載備份中樞</h3>
+              <div class="backup-modal-subtitle">Download & Backup System Database to Local Machine (JSON)</div>
+            </div>
+          </div>
+          <button class="modal-close" title="關閉" @click="closeBackupModal">✕</button>
+        </div>
+
+        <div class="backup-modal-body">
+          <div class="backup-modal-intro">
+            <p>
+              請點選下方項目，即可將伺服器端資料庫單獨或完整以標準 JSON 格式直接下載保存回您的本地端電腦。
+            </p>
+            <button
+              class="btn-modal-full-backup"
+              :disabled="isDownloadingBackup"
+              @click="handleDownloadBackup('all')"
+            >
+              <span>📦</span>
+              <span>{{ isDownloadingBackup ? '正在打包全庫中...' : '一鍵下載【完整全庫資料庫快照】(.json)' }}</span>
+            </button>
+          </div>
+
+          <div v-if="backupDownloadProgress" class="backup-progress-banner">
+            <span>ℹ️</span>
+            <span>{{ backupDownloadProgress }}</span>
+          </div>
+
+          <div class="backup-grid-modal">
+            <div class="backup-grid-card" @click="handleDownloadBackup('herbs')">
+              <span class="card-icon">🌿</span>
+              <div class="card-info">
+                <strong>典藏本草資料庫</strong>
+                <small>共 {{ stats.totalHerbs || 70 }} 味本草植物數據</small>
+              </div>
+              <button class="btn-card-action">下載 JSON ➔</button>
+            </div>
+
+            <div class="backup-grid-card" @click="handleDownloadBackup('formulas')">
+              <span class="card-icon">🧪</span>
+              <div class="card-info">
+                <strong>方劑與傳承名方庫</strong>
+                <small>7 首傳承名方與配伍規則</small>
+              </div>
+              <button class="btn-card-action">下載 JSON ➔</button>
+            </div>
+
+            <div class="backup-grid-card" @click="handleDownloadBackup('books')">
+              <span class="card-icon">📚</span>
+              <div class="card-info">
+                <strong>草木書閣藏書庫</strong>
+                <small>共 {{ adminBooks.length || 6 }} 部著作與試閱</small>
+              </div>
+              <button class="btn-card-action">下載 JSON ➔</button>
+            </div>
+
+            <div class="backup-grid-card" @click="handleDownloadBackup('shops')">
+              <span class="card-icon">🏪</span>
+              <div class="card-info">
+                <strong>結盟青草老舖庫</strong>
+                <small>全臺 12 家老舖與指南</small>
+              </div>
+              <button class="btn-card-action">下載 JSON ➔</button>
+            </div>
+
+            <div class="backup-grid-card" @click="handleDownloadBackup('experts')">
+              <span class="card-icon">🍵</span>
+              <div class="card-info">
+                <strong>專家 Persona 庫</strong>
+                <small>名師 RAG 語意 Prompt 與權重</small>
+              </div>
+              <button class="btn-card-action">下載 JSON ➔</button>
+            </div>
+
+            <div class="backup-grid-card" @click="handleDownloadBackup('users')">
+              <span class="card-icon">👥</span>
+              <div class="card-info">
+                <strong>使用者與權限庫</strong>
+                <small>前後台 RBAC 角色對照表</small>
+              </div>
+              <button class="btn-card-action">下載 JSON ➔</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="backup-modal-footer">
+          <button class="btn-cancel" @click="closeBackupModal">關閉視窗</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -1952,12 +2475,57 @@ import { ref, computed, onMounted } from 'vue';
 import { HerbApi } from '../services/api';
 import { audio } from '../services/audioService';
 
+const props = defineProps({
+  demoMode: { type: Boolean, default: false }
+});
+
+const isDemoModeFromApi = ref(false);
+const effectiveDemoMode = computed(() => {
+  return props.demoMode || isDemoModeFromApi.value;
+});
+
 // 認證與使用者狀態
 const isAuthenticated = ref(!!HerbApi.getAuthToken());
-const inputUsername = ref('admin');
-const inputPasscode = ref('taiwanherb2026');
+const inputUsername = ref('');
+const inputPasscode = ref('');
 const isLoggingIn = ref(false);
 const currentUser = ref(null);
+
+// ==========================================
+// 資料庫下載備份 (Database Backup)
+// ==========================================
+const isBackupModalOpen = ref(false);
+const isDownloadingBackup = ref(false);
+const backupDownloadProgress = ref('');
+
+const openBackupModal = () => {
+  isBackupModalOpen.value = true;
+  audio.playClick();
+};
+
+const closeBackupModal = () => {
+  isBackupModalOpen.value = false;
+};
+
+const handleDownloadBackup = async (type = 'all') => {
+  try {
+    isDownloadingBackup.value = true;
+    backupDownloadProgress.value = `正在封裝 [${type}] 資料庫備份檔...`;
+    audio.playClick();
+    const res = await HerbApi.downloadDatabaseBackup(type);
+    audio.playStamp();
+    backupDownloadProgress.value = `✓ 成功下載備份檔：${res.filename}`;
+    setTimeout(() => {
+      backupDownloadProgress.value = '';
+    }, 4000);
+  } catch (err) {
+    audio.playClick();
+    alert(`下載備份失敗：${err.message}`);
+    backupDownloadProgress.value = '';
+  } finally {
+    isDownloadingBackup.value = false;
+  }
+};
 
 const demoAccounts = [
   { username: 'admin', name: '神農至高統籌', roleName: '至高管理員', passcode: 'taiwanherb2026', avatar: '👑' },
@@ -2233,19 +2801,47 @@ const resetExperts = async () => {
 // ==========================================
 // 4. 資料匯入與線上編輯
 // ==========================================
+const importTargetType = ref('herbs'); // 'herbs' | 'shops' | 'books'
 const importFormat = ref('json');
 const rawImportText = ref('');
 const isParsingImport = ref(false);
 const stagedHerbs = ref([]);
 const isCommittingImport = ref(false);
 
+const isUploadingZip = ref(false);
+const uploadedImagesList = ref([]);
+const activeUploadItem = ref(null);
+const rowImageFileInput = ref(null);
+
+const targetTypeName = computed(() => {
+  if (importTargetType.value === 'shops') return '結盟草藥店';
+  if (importTargetType.value === 'books') return '草木書閣';
+  return '野生草藥';
+});
+
+const getItemImage = (item) => {
+  return item.coverImage || item.imageUrl || item.thumbnailUrl || (importTargetType.value === 'shops' ? '/images/uploads/default_shop.jpg' : (importTargetType.value === 'books' ? '/images/uploads/default_book.jpg' : '/images/herbs/default_herb.svg'));
+};
+
+const switchImportTarget = (target) => {
+  importTargetType.value = target;
+  stagedHerbs.value = [];
+  rawImportText.value = '';
+};
+
 const stagedValidCount = computed(() => {
+  if (importTargetType.value === 'shops') {
+    return stagedHerbs.value.filter(s => s.name && s.name.trim()).length;
+  }
+  if (importTargetType.value === 'books') {
+    return stagedHerbs.value.filter(b => b.title && b.title.trim() && b.author && b.author.trim()).length;
+  }
   return stagedHerbs.value.filter(h => h.name && h.category).length;
 });
 
 const loadSampleImportData = async () => {
   try {
-    const res = await HerbApi.getImportSample('json');
+    const res = await HerbApi.getImportSample('json', importTargetType.value);
     rawImportText.value = JSON.stringify(res.content, null, 2);
     importFormat.value = 'json';
     await parseAndOpenEditor();
@@ -2259,11 +2855,38 @@ const handleFileUpload = (e) => {
   const file = e.target.files?.[0];
   if (!file) return;
 
+  const fileNameLower = file.name.toLowerCase();
+  if (fileNameLower.endsWith('.xlsx') || fileNameLower.endsWith('.xls')) {
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      const base64Data = evt.target.result;
+      isParsingImport.value = true;
+      try {
+        const res = await HerbApi.previewImport({
+          base64Data,
+          format: 'xlsx',
+          targetType: importTargetType.value
+        });
+        stagedHerbs.value = res.items || [];
+        importFormat.value = 'xlsx';
+        audio.playClick();
+      } catch (err) {
+        alert('Excel 解析失敗：' + err.message);
+      } finally {
+        isParsingImport.value = false;
+        e.target.value = '';
+      }
+    };
+    reader.readAsDataURL(file);
+    return;
+  }
+
   const reader = new FileReader();
   reader.onload = async (evt) => {
     rawImportText.value = evt.target.result;
-    importFormat.value = file.name.endsWith('.csv') ? 'csv' : 'json';
+    importFormat.value = fileNameLower.endsWith('.csv') ? 'csv' : 'json';
     await parseAndOpenEditor();
+    e.target.value = '';
   };
   reader.readAsText(file);
 };
@@ -2272,7 +2895,11 @@ const parseAndOpenEditor = async () => {
   if (!rawImportText.value.trim()) return;
   isParsingImport.value = true;
   try {
-    const res = await HerbApi.previewImport(rawImportText.value, importFormat.value);
+    const res = await HerbApi.previewImport({
+      content: rawImportText.value,
+      format: importFormat.value,
+      targetType: importTargetType.value
+    });
     stagedHerbs.value = res.items || [];
     audio.playClick();
   } catch (err) {
@@ -2283,25 +2910,131 @@ const parseAndOpenEditor = async () => {
 };
 
 const addNewStagedRow = () => {
-  stagedHerbs.value.push({
-    tempId: `row_${Date.now()}`,
-    name: '',
-    scientificName: '',
-    region: '全島平野',
-    category: '民間草藥類',
-    nature: '平',
-    efficacy: '',
-    safetyLevel: '無毒常服'
-  });
+  if (importTargetType.value === 'shops') {
+    stagedHerbs.value.push({
+      tempId: `row_shop_${Date.now()}`,
+      name: '',
+      region: '北部 (萬華/淡水河/雙北)',
+      city: '台北市',
+      district: '',
+      address: '',
+      phone: '',
+      specialties: '消暑退火茶、生鮮青草',
+      shippingAvailable: true,
+      imageUrl: '/images/uploads/default_shop.jpg'
+    });
+  } else if (importTargetType.value === 'books') {
+    stagedHerbs.value.push({
+      tempId: `row_book_${Date.now()}`,
+      title: '',
+      subtitle: '',
+      author: '黃世勳 教授',
+      category: 'botany_herbs',
+      price: 450,
+      originalPrice: 550,
+      pages: 200,
+      isbn: '',
+      coverImage: '/images/uploads/default_book.jpg'
+    });
+  } else {
+    stagedHerbs.value.push({
+      tempId: `row_herb_${Date.now()}`,
+      name: '',
+      scientificName: '',
+      region: '全島平野',
+      category: '民間草藥類',
+      nature: '平',
+      efficacy: '',
+      safetyLevel: '無毒常服',
+      imageUrl: '/images/herbs/default_herb.svg',
+      thumbnailUrl: '/images/herbs/default_herb.svg'
+    });
+  }
+};
+
+const triggerRowImageUpload = (item) => {
+  activeUploadItem.value = item;
+  if (rowImageFileInput.value) {
+    rowImageFileInput.value.click();
+  }
+};
+
+const handleRowImageSelected = async (e) => {
+  const file = e.target.files?.[0];
+  if (!file || !activeUploadItem.value) return;
+
+  try {
+    const res = await HerbApi.uploadImage(file);
+    if (importTargetType.value === 'books') {
+      activeUploadItem.value.coverImage = res.url;
+    } else {
+      activeUploadItem.value.imageUrl = res.url;
+      activeUploadItem.value.thumbnailUrl = res.url;
+    }
+    audio.playChime(660);
+  } catch (err) {
+    alert('圖片上傳更換失敗：' + err.message);
+  } finally {
+    e.target.value = '';
+    activeUploadItem.value = null;
+  }
+};
+
+const handleZipUpload = async (e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  isUploadingZip.value = true;
+  try {
+    const res = await HerbApi.importImageArchive(file);
+    uploadedImagesList.value = res.images || [];
+    audio.playChime(660);
+    alert(`成功解壓並匯入 ${res.totalExtracted} 張圖片至圖庫！可點擊「一鍵自動匹配圖片至工作台各列」快速關聯。`);
+  } catch (err) {
+    alert('圖片壓縮包解壓上傳失敗：' + err.message);
+  } finally {
+    isUploadingZip.value = false;
+    e.target.value = '';
+  }
+};
+
+const autoMatchImagesToTable = () => {
+  if (uploadedImagesList.value.length === 0 || stagedHerbs.value.length === 0) return;
+  let matchedCount = 0;
+
+  for (const item of stagedHerbs.value) {
+    const itemName = (item.name || item.title || '').trim().toLowerCase();
+    const curImg = (item.imageUrl || item.coverImage || '').toLowerCase();
+
+    const match = uploadedImagesList.value.find(img => {
+      const fn = img.filename.toLowerCase();
+      const orig = (img.originalName || '').toLowerCase();
+      return (itemName && (fn.includes(itemName) || orig.includes(itemName))) ||
+             (curImg && (curImg.includes(fn) || fn.includes(curImg)));
+    });
+
+    if (match) {
+      if (importTargetType.value === 'books') {
+        item.coverImage = match.url;
+      } else {
+        item.imageUrl = match.url;
+        item.thumbnailUrl = match.url;
+      }
+      matchedCount++;
+    }
+  }
+
+  audio.playChime(550);
+  alert(`自動匹配完成：成功為 ${matchedCount} 筆項目匹配到已上傳圖片！`);
 };
 
 const commitStagedHerbs = async () => {
   if (stagedHerbs.value.length === 0) return;
   isCommittingImport.value = true;
   try {
-    const res = await HerbApi.commitImport(stagedHerbs.value);
+    const res = await HerbApi.commitImport(stagedHerbs.value, importTargetType.value);
     audio.playStamp();
-    alert(`成功匯入 ${res.insertedCount} 味本草！`);
+    alert(`成功匯入 ${res.insertedCount} 筆${targetTypeName.value}至資料庫！`);
     stagedHerbs.value = [];
     rawImportText.value = '';
     await loadDashboardData();
@@ -2921,7 +3654,19 @@ const loadDashboardData = async () => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
+  try {
+    const status = await HerbApi.getAdminStatus();
+    if (status && status.demoMode !== undefined) {
+      isDemoModeFromApi.value = Boolean(status.demoMode);
+    }
+  } catch (err) {}
+
+  if (effectiveDemoMode.value && !inputUsername.value) {
+    inputUsername.value = 'admin';
+    inputPasscode.value = 'taiwanherb2026';
+  }
+
   if (isAuthenticated.value) {
     loadDashboardData();
   }
@@ -3992,6 +4737,210 @@ onMounted(() => {
   font-weight: bold;
 }
 
+/* 匯入目標類別切換鈕 */
+.import-target-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+  background: var(--bg-card);
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-card);
+}
+
+.target-tab-btn {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--ink-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.target-tab-btn:hover {
+  border-color: var(--primary-deep);
+  color: var(--primary-deep);
+}
+
+.target-tab-btn.active {
+  background: var(--primary-deep);
+  color: #fff;
+  border-color: var(--primary-deep);
+  box-shadow: 0 2px 8px rgba(45, 95, 77, 0.25);
+}
+
+/* 批次圖片包匯入輔助卡片 */
+.image-archive-import-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin-bottom: 20px;
+}
+
+.archive-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.archive-icon {
+  font-size: 32px;
+  background: var(--bg-hover);
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.archive-info {
+  flex: 1;
+}
+
+.archive-title {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--primary-deep);
+}
+
+.archive-desc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+.btn-zip-upload {
+  display: inline-block;
+  background: var(--primary-deep);
+  color: #fff;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.btn-zip-upload:hover {
+  background: var(--primary-medium);
+}
+
+.btn-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.extracted-images-preview {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border-light);
+}
+
+.extracted-summary-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--primary-deep);
+  margin-bottom: 10px;
+}
+
+.btn-auto-match {
+  background: var(--amber-deep);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-auto-match:hover {
+  opacity: 0.9;
+}
+
+.extracted-thumbnails-grid {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.extracted-img-item {
+  flex: 0 0 80px;
+  text-align: center;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.extracted-thumb-img {
+  width: 72px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.extracted-img-name {
+  display: block;
+  font-size: 10px;
+  color: var(--ink-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+/* 表格內的圖片群組 */
+.cell-image-preview-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cell-thumb-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--border-light);
+  flex-shrink: 0;
+  background: #fff;
+}
+
+.cell-image-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.cell-img-path-input {
+  font-size: 10px !important;
+  padding: 2px 4px !important;
+}
+
+.btn-cell-img-upload {
+  background: var(--bg-hover);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+  cursor: pointer;
+  color: var(--primary-deep);
+  font-weight: bold;
+}
+
+.btn-cell-img-upload:hover {
+  background: var(--border-light);
+}
+
 /* 匯出頁面 */
 .export-workspace-grid {
   display: grid;
@@ -4675,5 +5624,385 @@ onMounted(() => {
   input, select, textarea {
     font-size: 16px !important;
   }
+}
+
+/* ======================================================== */
+/* 💾 資料庫下載備份 (Database Backup) & DEMO 模式樣式 */
+/* ======================================================== */
+.demo-gate-pill {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 4px 12px;
+  background: rgba(217, 119, 6, 0.15);
+  color: #b45309;
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.auth-secure-hint {
+  color: #047857 !important;
+  background: rgba(4, 120, 87, 0.08) !important;
+  border-color: rgba(4, 120, 87, 0.2) !important;
+}
+
+.highlight-backup-btn {
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%) !important;
+  color: #ffffff !important;
+  border-color: #047857 !important;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(4, 120, 87, 0.25);
+  transition: all 0.2s ease;
+}
+
+.highlight-backup-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(4, 120, 87, 0.35);
+}
+
+.db-backup-panel-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-card);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.backup-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 20px;
+}
+
+.backup-title-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.backup-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.backup-card-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-deep);
+  margin: 0 0 4px 0;
+}
+
+.backup-card-subtitle {
+  font-size: 13px;
+  color: var(--ink-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.btn-full-backup-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(5, 150, 105, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-full-backup-cta:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(5, 150, 105, 0.4);
+}
+
+.btn-full-backup-cta:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.backup-progress-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #065f46;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+.backup-collections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.backup-col-item {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.backup-col-item:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.col-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.col-icon {
+  font-size: 24px;
+}
+
+.col-name {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary-deep);
+}
+
+.col-meta {
+  color: var(--ink-muted);
+  font-size: 11.5px;
+}
+
+.col-desc {
+  font-size: 12.5px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  margin: 0 0 14px 0;
+  flex: 1;
+}
+
+.btn-col-download {
+  width: 100%;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  color: var(--primary-deep);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.btn-col-download:hover:not(:disabled) {
+  background: var(--primary-deep);
+  color: #ffffff;
+  border-color: var(--primary-deep);
+}
+
+.btn-col-download:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 彈窗樣式 */
+.backup-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 24, 20, 0.65);
+  backdrop-filter: blur(5px);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.backup-modal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 20px;
+  max-width: 780px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  padding: 28px;
+}
+
+.backup-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.backup-modal-seal {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+  color: #fff;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.backup-modal-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-deep);
+  margin: 0;
+}
+
+.backup-modal-subtitle {
+  font-size: 11.5px;
+  color: var(--ink-muted);
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.backup-modal-intro {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.backup-modal-intro p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+  flex: 1;
+  min-width: 240px;
+}
+
+.btn-modal-full-backup {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 24px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(5, 150, 105, 0.25);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-modal-full-backup:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(5, 150, 105, 0.35);
+}
+
+.backup-grid-modal {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.backup-grid-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.backup-grid-card:hover {
+  border-color: #059669;
+  background: var(--bg-card);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.backup-grid-card .card-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.backup-grid-card .card-info strong {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  color: var(--primary-deep);
+  margin-bottom: 2px;
+}
+
+.backup-grid-card .card-info small {
+  color: var(--ink-muted);
+  font-size: 11px;
+}
+
+.btn-card-action {
+  margin-top: 12px;
+  padding: 6px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 6px;
+  color: var(--primary-deep);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.backup-grid-card:hover .btn-card-action {
+  background: #059669;
+  color: #fff;
+  border-color: #059669;
+}
+
+.backup-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 16px;
 }
 </style>

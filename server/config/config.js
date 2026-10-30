@@ -8,6 +8,7 @@ module.exports = {
   port: parseInt(process.env.PORT, 10) || 9390,
   nodeEnv: process.env.NODE_ENV || 'development',
   apiPrefix: '/api',
+  demoMode: process.env.DEMO_MODE === 'true' || process.env.DEMO_MODE === '1',
   database: {
     // 主資料庫 (Primary)
     primary: {

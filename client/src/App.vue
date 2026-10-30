@@ -90,7 +90,7 @@
 
       <!-- 標籤頁二：典藏後台與數據中心 (Admin Dashboard) - 純淨整潔，無首頁資訊 -->
       <div v-else-if="!selectedHerbId && activeTab === 'admin'" style="grid-column: 1 / -1;">
-        <HerbAdminDashboard />
+        <HerbAdminDashboard :demo-mode="isDemoMode" />
       </div>
 
       <!-- 標籤頁三：青草茶方劑調配研製所 (Alchemy Lab) - 純淨整潔，無首頁資訊 -->
@@ -387,6 +387,7 @@
     <AuthModal
       :is-open="isAuthModalOpen"
       :current-user="currentUser"
+      :demo-mode="isDemoMode"
       @close="isAuthModalOpen = false"
       @login-success="handleLoginSuccess"
       @logout="handleLogout"
@@ -506,7 +507,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, defineAsyncComponent } from 'vue';
 import { HerbApi } from './services/api';
 
 import { audio } from './services/audioService';
@@ -517,17 +518,20 @@ import HerbSidebar from './components/HerbSidebar.vue';
 import TaiwanTerroirMap from './components/TaiwanTerroirMap.vue';
 import HerbCard from './components/HerbCard.vue';
 import HerbDetail from './components/HerbDetail.vue';
-import HerbConsultationLab from './components/HerbConsultationLab.vue';
-import HerbAdminDashboard from './components/HerbAdminDashboard.vue';
-import HerbAlchemyLab from './components/HerbAlchemyLab.vue';
-import HerbMeridianMap from './components/HerbMeridianMap.vue';
 import FavoritesCabinet from './components/FavoritesCabinet.vue';
 import CommandPalette from './components/CommandPalette.vue';
-import HerbCompareModal from './components/HerbCompareModal.vue';
 import HealthModal from './components/HealthModal.vue';
 import AuthModal from './components/AuthModal.vue';
-import AlliedShopsView from './components/AlliedShopsView.vue';
-import HerbBookshelfView from './components/HerbBookshelfView.vue';
+
+// 異步按需載入重型模組 (Code Splitting 最佳化首屏載入效能)
+const HerbConsultationLab = defineAsyncComponent(() => import('./components/HerbConsultationLab.vue'));
+const HerbAdminDashboard = defineAsyncComponent(() => import('./components/HerbAdminDashboard.vue'));
+const HerbAlchemyLab = defineAsyncComponent(() => import('./components/HerbAlchemyLab.vue'));
+const HerbMeridianMap = defineAsyncComponent(() => import('./components/HerbMeridianMap.vue'));
+const HerbCompareModal = defineAsyncComponent(() => import('./components/HerbCompareModal.vue'));
+const AlliedShopsView = defineAsyncComponent(() => import('./components/AlliedShopsView.vue'));
+const HerbBookshelfView = defineAsyncComponent(() => import('./components/HerbBookshelfView.vue'));
+
 import { getSeasonalHerbRecommendation, getCurrentSolarTerm } from './services/solarTerms';
 
 // 狀態定義
@@ -571,6 +575,7 @@ const shakeDisclaimerAgreement = ref(false);
 // 使用者身分與前後台權限狀態 (RBAC)
 const isAuthModalOpen = ref(false);
 const currentUser = ref(null);
+const isDemoMode = ref(false);
 
 const openDisclaimerModal = () => {
   isDisclaimerAgreed.value = false;
@@ -707,6 +712,9 @@ const loadTaxonomy = async () => {
 const loadHealth = async () => {
   try {
     healthInfo.value = await HerbApi.getHealth();
+    if (healthInfo.value && healthInfo.value.demoMode !== undefined) {
+      isDemoMode.value = Boolean(healthInfo.value.demoMode);
+    }
   } catch (err) {
     console.error('取得健康狀態失敗:', err);
   }
@@ -998,6 +1006,9 @@ const onKeyDown = (e) => {
 const checkUserAuth = async () => {
   try {
     const res = await HerbApi.getAdminStatus();
+    if (res && res.demoMode !== undefined) {
+      isDemoMode.value = Boolean(res.demoMode);
+    }
     if (res && res.authenticated && res.user) {
       currentUser.value = {
         ...res.user,

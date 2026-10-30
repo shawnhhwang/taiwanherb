@@ -34,3 +34,20 @@
 - [x] 建立生產級多階段 `Dockerfile` (Alpine 輕量化、非 root 安全使用者、健康檢查探針)、`.dockerignore` 與一鍵編排 `docker-compose.yml`。
 - [x] 撰寫詳盡 Docker 容器化打包、構建、運行、環境變數與 Nginx 反向代理說明於 `README.md`。
 - [x] 全面更新 `Spec.md`、`TASK_LIST.md`、`Temple.md` 與 `README.md`。
+
+## Phase 7: 商業營利合規、企業級資安加固與系統架構優化
+- [x] **產學合作確認**：確認並標註與中國醫藥大學 藥學系黃世勳教授之產學合作典藏與專題著作。
+- [x] **青草名店文化地圖合規化**：調整老舖標籤與說明為常民文化地圖與黃頁整理，加入食品法規與採買非醫療免責宣告。
+- [x] **醫事法規隔離**：將藥理詞彙轉為傳統文化飲食描述，落實常駐法律免責聲明與非醫療處方條款。
+- [x] **消保法規合規**：草木書閣結帳流程新增消保法第 19 條第 2 項數位內容排除條款與退換貨政策同意勾選。
+- [x] **圖片上傳著作權叮嚀**：管理後台圖片與壓縮包上傳介面加入版權來源合規提醒。
+- [x] **後台管理 API 權限全覆蓋**：所有敏感管理端點（增刪改、重置、資料庫備份、訂單審查）嚴格實施 RBAC 權限守衛。
+- [x] **金鑰安全脫敏**：修復 `llmService` 之 API 金鑰明文外洩漏洞。
+- [x] **密碼學安全 Token & Timing-safe 比對**：採用 `crypto.randomBytes` 簽發 Token、加入 24 小時 TTL 與 `timingSafeEqual` 密碼校驗。
+- [x] **XSS 與 SSRF 防護**：圖片上傳移除 `.svg`，前端 Markdown 渲染實施 HTML 實體跳脫消毒，阻斷雲端 Metadata IP 存取。
+- [x] **訂單 IDOR 個資保護**：個人訂單查詢實施電話與地址敏感資訊脫敏遮罩。
+- [x] **安全 HTTP 標頭與限流**：配置 `X-Content-Type-Options: nosniff`、`X-Frame-Options` 等安全標頭，實施登入與 AI 諮詢速率限制 (`rateLimiter`)。
+- [x] **檔案持久化引擎 (`Persistence Engine`)**：建置零依賴 `./data/*.json` 磁碟同步儲存，容器重啟資料不遺失。
+- [x] **Docker Volume 持久化掛載**：更新 `Dockerfile` 與 `docker-compose.yml` 之權限配置與掛載路徑。
+- [x] **前端 Code Splitting**：使用 `defineAsyncComponent` 拆分重型元件，首屏主 JS 封裝體積由 366 kB 劇降至 180 kB（縮減逾 50%）。
+- [x] **全自動化整合測試**：擴展至 38 項全自動化測試，100% 通過。

@@ -520,6 +520,16 @@
             </div>
           </div>
 
+          <!-- 消費者保護法規與退換貨條款勾選 -->
+          <div class="consumer-terms-box">
+            <label class="terms-checkbox-label">
+              <input type="checkbox" v-model="agreeConsumerTerms" />
+              <span>
+                我已閱讀並同意<strong>《服務條款與退換貨政策》</strong>：實體書享有消保法 7 日鑑賞期；電子書屬「非以有形媒介提供之數位內容」，一經授權即時交付閱讀，依消保法第 19 條第 2 項排除 7 日解除權。
+              </span>
+            </label>
+          </div>
+
           <!-- 錯誤訊息提示 -->
           <div v-if="orderError" class="order-error-banner">
             ⚠️ {{ orderError }}
@@ -713,6 +723,7 @@ const activeBuyBook = ref(null);
 const isSubmittingOrder = ref(false);
 const orderError = ref('');
 const orderSuccessData = ref(null);
+const agreeConsumerTerms = ref(true);
 
 const buyForm = ref({
   purchaseType: 'ebook',
@@ -766,6 +777,10 @@ const submitOrder = async () => {
   }
   if (buyForm.value.purchaseType !== 'ebook' && !buyForm.value.shippingAddress.trim()) {
     orderError.value = '實體書籍請填寫收件寄送地址';
+    return;
+  }
+  if (!agreeConsumerTerms.value) {
+    orderError.value = '請閱讀並同意服務條款與退換貨政策';
     return;
   }
 

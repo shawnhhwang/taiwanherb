@@ -4,6 +4,7 @@
  */
 const EventEmitter = require('events');
 const initialHerbs = require('../data/herbsData');
+const persistence = require('./persistence');
 
 class DbFactory extends EventEmitter {
   constructor(config) {
@@ -13,11 +14,16 @@ class DbFactory extends EventEmitter {
     this.failoverCount = 0;
     this.lastFailoverTime = null;
     this.isMemoryMode = true; // 預設使用內存種子資料，無須額外依賴即可執行
-    this.memoryData = JSON.parse(JSON.stringify(initialHerbs));
+    // 透過持久化模組載入（若重啟或更新容器，自動還原已儲存之本草）
+    this.memoryData = persistence.load('herbs', initialHerbs);
     this.pool = null;
 
     // 嘗試初始化 MySQL 連線 (若環境有設定 DB_PRIMARY_HOST 且非預設值)
     this.initDatabase();
+  }
+
+  saveMemoryStore() {
+    persistence.debounceSave('herbs', this.memoryData);
   }
 
   async initDatabase() {

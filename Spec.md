@@ -98,6 +98,8 @@ taiwanherb/
 │   │       ├── HerbConsultationLab.vue # 本草名醫與風土達人諮詢茶堂 (RAG 專家語意系統)
 │   │       ├── HerbAdminDashboard.vue  # 典藏後台與數據中樞 (CRUD、即時標本卡預覽、審計日誌)
 │   │       ├── HerbCard.vue            # 3D 傾斜圖鑑卡片 (流光層、標本號、收藏星號)
+│   │       ├── HerbBookshelfView.vue   # 青草專題典籍展閱與線上結帳書閣 (合規退換宣告)
+│   │       ├── AlliedShopsView.vue     # 全台青草友善聚落與老字號青草行風土名錄
 │   │       ├── HerbDetail.vue          # 展卷詳情頁 (科屬、方言俗名、活性成分、風土故事、安全等級)
 │   │       ├── HerbAlchemyLab.vue      # 青草茶方劑研製所 (陰陽指針、五味圖譜、煎煮計時)
 │   │       ├── HerbMeridianMap.vue     # 五行臟腑經絡氣血引導圖
@@ -106,7 +108,7 @@ taiwanherb/
 │   │       ├── HerbCompareModal.vue    # 跨藥材多維橫向對照表
 │   │       └── HealthModal.vue         # 系統健康狀態與線上 Failover 演練
 └── tests/
-    └── api.test.js              # 22 項 API 整合測試、RAG 諮詢、Admin 管理與 SPA 託管驗證
+    └── api.test.js              # 38 項全覆蓋整合測試 (RAG、RBAC、典藏、書籍、老店、Failover)
 ```
 
 ---
@@ -116,9 +118,14 @@ taiwanherb/
 - [x] 擴充收錄 25 款指標性台灣本土草藥（含客家抹草、大風草、關西仙草、白鶴靈芝、南投狗尾草、原民刺蔥、昭和草、花蓮山苦瓜等）。
 - [x] 實作台灣本土草藥多維度檢索（風土產區、民間生活情境、入藥部位、用藥安全分級、台客語俗名模糊搜尋）。
 - [x] 實作 `TaiwanTerroirMap.vue` 台灣風土產區互動探索卡。
-- [x] 實作 `HerbConsultationLab.vue` 專家諮詢茶堂（萬華青草伯、客庄阿婆、生藥學博士、原民野菜獵人 4 大 Persona）。
+- [x] 實作 `HerbConsultationLab.vue` 專家諮詢茶堂（萬華青草伯、客庄阿婆、生藥學博士、原民野菜獵人 4 大 Persona，含中醫大黃世勳教授產學合作典藏專欄）。
 - [x] 實作 RAG 檢索增強生成核心，精準輸出專家口吻回答與可點擊開卷之 Citations 本草標本卡。
 - [x] 實作 `HerbAdminDashboard.vue` 典藏管理後台（安全密鑰登入、本草 CRUD、所見即所得之即時標本票卡預覽、專家 Persona 微調、JSON/CSV 備份與審計日誌）。
+- [x] 實作 `HerbBookshelfView.vue` 與 `AlliedShopsView.vue` 專題書閣與全台風土青草名錄。
 - [x] 實作 `audioService.js` 原生 Web Audio 聲學設計（含印章用印、展卷微響、竹音、清磬、沸水、松風）。
-- [x] 22 項自動化測試全數通過，Vite 生產環境建置成功。
+- [x] 全面標準化對外服務埠號為 **9390**。
+- [x] 實作後端防禦縱深與安全防護（OWASP Top 10、RBAC 權限校驗、API Key 脫敏、Rate Limiting 限流、XSS/SSRF 防範）。
+- [x] 實作零依賴 JSON 檔案持久化機制 (`data/*.json`) 與 Docker 磁碟卷持久化掛載。
+- [x] 實作前端動態異步載入 (`defineAsyncComponent`)，核心 JS 體積瘦身 50%。
+- [x] 38 項自動化測試全數通過，Vite 生產環境建置成功。
 - [x] 全面更新對應文檔。
