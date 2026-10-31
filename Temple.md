@@ -14,8 +14,9 @@
   │
   ├── [ 標籤頁視圖 (Tab Views) ]
   │     ├── [ HerbConsultationLab.vue (本草名醫與風土達人諮詢茶堂) ]
-  │     │     ├── 四大專家切換抽屜卡 (萬華老茶師 / 客庄阿婆 / 生藥博士 / 野菜獵人)
-  │     │     ├── 風土情境快捷問題推薦 Chips
+  │     │     ├── 五大專家切換抽屜卡 (萬華老茶師 / 客庄阿婆 / 生藥博士 / 野菜獵人 / 肯信導航員)
+  │     │     ├── 系統功能情境快速前往按鈕列 (System Action Buttons)
+  │     │     ├── 風土情境與平台導航快捷問題推薦 Chips
   │     │     ├── RAG 檢索增強生成回覆 (Markdown 渲染)
   │     │     ├── Citations 本草標本引證卡廊 (點擊直接開卷查閱詳情)
   │     │     └── 專家追問建議問題列表
@@ -63,6 +64,7 @@
   ├── [ HerbDetail.vue (展卷詳情頁：科屬、方言俗名、活性成分、風土故事、安全等級) ]
   ├── [ CommandPalette.vue (全域 Ctrl+K 快捷命令搜尋盤，支援方言俗名檢索) ]
   ├── [ HerbCompareModal.vue (跨藥材多維橫向對照表) ]
+  ├── [ UserManualModal.vue (完整使用者操作手冊彈窗：13大模組圖文指南、10大情境速查矩陣) ]
   └── [ HealthModal.vue (系統健康狀態與 Failover 節點演練) ]
 ```
 

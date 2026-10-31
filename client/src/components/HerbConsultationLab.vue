@@ -156,6 +156,26 @@
           <!-- 回答主文 (支援豐富排版) -->
           <div class="result-body markdown-rendered" v-html="renderedReplyHtml"></div>
 
+          <!-- 系統功能快捷導引按鈕列 (System Action Buttons) -->
+          <div v-if="lastResult.systemActions && lastResult.systemActions.length" class="system-actions-bar">
+            <div class="system-actions-header">
+              <span class="action-compass-icon">🧭</span>
+              <strong>系統功能快速前往：</strong>
+              <span class="action-hint">（點擊按鈕直接開啟對應工具）</span>
+            </div>
+            <div class="system-actions-buttons">
+              <button
+                v-for="act in lastResult.systemActions"
+                :key="act.label"
+                class="btn-system-action"
+                @click="triggerSystemAction(act)"
+              >
+                <span>{{ act.label }}</span>
+                <span class="action-arrow">➔</span>
+              </button>
+            </div>
+          </div>
+
           <!-- RAG 引證本草知識卡 (Citations Cards) -->
           <div v-if="lastResult.citations && lastResult.citations.length" class="citations-section">
             <div class="citations-header">
@@ -211,7 +231,7 @@ import { ref, computed, onMounted } from 'vue';
 import { HerbApi } from '../services/api';
 import { audio } from '../services/audioService';
 
-const emit = defineEmits(['select-herb-id']);
+const emit = defineEmits(['select-herb-id', 'switch-tab', 'open-manual', 'open-compare']);
 
 const experts = ref([]);
 const currentExpertId = ref('pharmacist_phd');
@@ -228,6 +248,14 @@ const currentExpert = computed(() => {
 });
 
 const presetMap = {
+  kenshin_guide: [
+    '這套系統有哪些核心功能與使用情境？',
+    '我想自己調配青草茶飲，系統有什麼工具能用？',
+    '如何查詢全台各地老字號青草行與採買指南？',
+    '草木書閣如何線上試閱與購買書籍？',
+    '我想橫向比對兩種草藥的性味與歸經，怎麼操作？',
+    '典藏後台支援哪些管理功能與資料匯入？'
+  ],
   pharmacist_phd: [
     '黃教授出身鹿港望族，您三十載田野踏查的經驗如何看待臺灣海島的常民濕熱體質？',
     '從您著述上百本專著的生藥考證來看，魚腥草與大花咸豐草的抗菌消炎活性在高溫久煮後會破壞嗎？',
@@ -328,9 +356,89 @@ const submitConsultation = async () => {
     isLoading.value = false;
   }
 };
+
+const triggerSystemAction = (act) => {
+  audio.playClick();
+  if (act.tab) {
+    emit('switch-tab', act.tab);
+  } else if (act.action === 'manual') {
+    emit('open-manual');
+  } else if (act.action === 'compare') {
+    emit('open-compare');
+  }
+};
+
+const askQuestion = (queryText) => {
+  inputQuery.value = queryText;
+  currentExpertId.value = 'kenshin_guide';
+  submitConsultation();
+};
+
+defineExpose({ askQuestion, selectExpert });
 </script>
 
 <style scoped>
+/* 系統功能快捷導引工具列 */
+.system-actions-bar {
+  margin: 18px 0 24px;
+  padding: 16px 20px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-gold);
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.system-actions-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 13.5px;
+  color: var(--primary-deep);
+}
+
+.action-compass-icon {
+  font-size: 18px;
+}
+
+.action-hint {
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+
+.system-actions-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn-system-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--primary-deep);
+  border-radius: 8px;
+  color: var(--primary-deep);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-system-action:hover {
+  background: var(--primary-deep);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.25);
+}
+
+.action-arrow {
+  font-weight: bold;
+}
+
 .consult-lab-container {
   display: flex;
   flex-direction: column;

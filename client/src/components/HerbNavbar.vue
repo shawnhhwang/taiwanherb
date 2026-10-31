@@ -161,6 +161,17 @@
           <span v-if="compareList.length > 0" class="compare-badge-num">{{ compareList.length }}</span>
         </button>
 
+        <!-- 使用者操作說明手冊 -->
+        <button
+          class="nav-tool-btn btn-pill-manual"
+          title="查閱完整使用者操作說明手冊 (支援情境速查與直接跳轉)"
+          @click="$emit('open-manual')"
+        >
+          <span>📖</span>
+          <span class="tool-btn-text-full">操作手冊</span>
+          <span class="tool-btn-text-short">手冊</span>
+        </button>
+
         <!-- 免責聲明 -->
         <button
           class="nav-tool-btn"
@@ -356,6 +367,10 @@
               <span>⚖️</span>
               <span>藥材對照比對 ({{ compareList.length }})</span>
             </button>
+            <button class="mobile-action-pill" @click="handleMobileAction('open-manual')">
+              <span>📖</span>
+              <span>使用者操作說明手冊</span>
+            </button>
             <button class="mobile-action-pill" @click="handleMobileAction('open-disclaimer')">
               <span>📜</span>
               <span>非醫療免責聲明</span>
@@ -445,6 +460,7 @@ const emit = defineEmits([
   'open-health',
   'open-cmd',
   'open-disclaimer',
+  'open-manual',
   'change-theme',
   'switch-tab',
   'open-auth'

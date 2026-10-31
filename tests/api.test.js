@@ -164,28 +164,33 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.ok(found);
   });
 
-  test('GET /api/consult/experts - 應回傳 4 大專家 Persona 名錄', async () => {
+  test('GET /api/consult/experts - 應回傳 5 大專家 Persona 名錄 (含系統導航小助手)', async () => {
     const { status, body } = await fetchJson('/api/consult/experts');
     assert.equal(status, 200);
     assert.equal(body.success, true);
     assert.ok(Array.isArray(body.data));
-    assert.equal(body.data.length, 4);
+    assert.equal(body.data.length, 5);
     const ids = body.data.map(e => e.id);
     assert.ok(ids.includes('wanhua_uncle'));
     assert.ok(ids.includes('hakka_grandmother'));
     assert.ok(ids.includes('pharmacist_phd'));
     assert.ok(ids.includes('indigenous_forager'));
+    assert.ok(ids.includes('kenshin_guide'));
 
     const huang = body.data.find(e => e.id === 'pharmacist_phd');
     assert.ok(huang.name.includes('黃世勳'));
     assert.equal(huang.isRealExpert, true);
     assert.equal(huang.profileUrl, 'https://webap.cmu.edu.tw/TchEportfolio/index_1/sshuang');
 
-    const virtuals = body.data.filter(e => e.id !== 'pharmacist_phd');
+    const virtuals = body.data.filter(e => e.id !== 'pharmacist_phd' && e.id !== 'kenshin_guide');
     virtuals.forEach(v => {
       assert.equal(v.isRealExpert, false);
       assert.equal(v.characterType, '知識聊天助理');
     });
+
+    const kenshin = body.data.find(e => e.id === 'kenshin_guide');
+    assert.ok(kenshin);
+    assert.equal(kenshin.characterType, '系統功能問答與操作領航員');
   });
 
   test('POST /api/consult - 萬華青草伯 RAG 諮詢應回傳在地語意與藥材引用', async () => {
@@ -225,6 +230,44 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.ok(body.data.reply.includes('阿婆') || body.data.reply.includes('阿妹阿弟'));
     const hasMoCao = body.data.citations.some(c => c.name === '抹草' || c.name === '艾草');
     assert.ok(hasMoCao);
+  });
+
+  test('POST /api/consult - AGENT 系統導航小助手功能情境問答與快捷跳轉', async () => {
+    const payload = {
+      expertId: 'kenshin_guide',
+      message: '我想自己調配青草茶飲，系統有什麼工具能用？'
+    };
+    const { status, body } = await fetchJson('/api/consult', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    assert.ok(body.data.reply.includes('方劑研製所'));
+    assert.ok(body.data.reply.includes('君臣佐使'));
+    assert.ok(Array.isArray(body.data.systemActions));
+    assert.ok(body.data.systemActions.some(a => a.tab === 'alchemy'));
+    assert.ok(body.data.systemActions.some(a => a.action === 'manual'));
+  });
+
+  test('POST /api/consult - 詢問老茶師系統全站功能時亦能正確導引說明手冊', async () => {
+    const payload = {
+      expertId: 'wanhua_uncle',
+      message: '這套系統有哪些功能可以用？'
+    };
+    const { status, body } = await fetchJson('/api/consult', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    assert.ok(body.data.reply.includes('本草知識庫') || body.data.reply.includes('方劑實驗室'));
+    assert.ok(Array.isArray(body.data.systemActions));
+    assert.ok(body.data.systemActions.some(a => a.action === 'manual'));
   });
 
   test('POST /api/admin/login - 管理密碼登入驗證', async () => {

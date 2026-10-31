@@ -86,11 +86,35 @@
           </button>
           <button
             class="hero-nav-pill"
+            :class="{ active: currentTab === 'shops' }"
+            @click="$emit('switch-tab', 'shops')"
+          >
+            <span>🏪</span>
+            <span>結盟青草店</span>
+          </button>
+          <button
+            class="hero-nav-pill"
+            :class="{ active: currentTab === 'books' }"
+            @click="$emit('switch-tab', 'books')"
+          >
+            <span>📚</span>
+            <span>草木書閣</span>
+          </button>
+          <button
+            class="hero-nav-pill"
             :class="{ active: currentTab === 'admin' }"
             @click="$emit('switch-tab', 'admin')"
           >
             <span>⚙️</span>
             <span>典藏管理後台</span>
+          </button>
+          <button
+            class="hero-nav-pill hero-pill-manual"
+            title="查閱完整使用者操作手冊"
+            @click="$emit('open-manual')"
+          >
+            <span>📖</span>
+            <span>操作手冊</span>
           </button>
         </div>
       </div>
@@ -164,7 +188,7 @@ const props = defineProps({
   currentTab: { type: String, default: 'catalog' }
 });
 
-const emit = defineEmits(['switch-tab', 'view-herb', 'search-term']);
+const emit = defineEmits(['switch-tab', 'view-herb', 'search-term', 'open-manual']);
 
 // 二十四節氣知識庫 (依據當前月份或時序動態映射)
 const solarTerms = [

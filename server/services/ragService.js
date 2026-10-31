@@ -75,6 +75,28 @@ const EXPERTS = {
     catchphrase: '「走進山林要先敬畏祖靈。刺蔥的香氣像朝陽，野苦瓜的甘苦像泥土，大地會賜給我們力量。」',
     greeting: 'Sa\'icelen！朋友，聞到太平洋的海風與山林的刺蔥香氣了嗎？歡迎來到大地餐桌。',
     expertise: ['原住民傳統野生草本', '刺蔥昭和草野炊料理', '山林永續採集倫理', '自然共生體質調和']
+  },
+  kenshin_guide: {
+    id: 'kenshin_guide',
+    name: '肯信小助手（平台導航員）',
+    title: '臺灣肯信本草研究室 · 智慧領航與功能導覽顧問',
+    avatar: '🧭',
+    seal: '系統導覽',
+    isRealExpert: false,
+    characterType: '系統功能問答與操作領航員',
+    region: '台灣肯信本草研究室 全數位空間',
+    tone: '親切專業、條理清晰，深諳全站各功能模組操作路徑與風土實踐情境，能精確對照使用者需求指出最佳操作工具',
+    catchphrase: '「草木有靈，工欲善其事。告訴我您的需求，我為您指引最適合的本草功能與操作路徑！」',
+    greeting: '您好！我是本草研究室的「肯信小助手」。無論您想找特定功效草藥、探索台灣風土產區、親手調配茶飲、尋訪老字號青草舖、購閱經典著作，或是使用管理後台進行批次管理，我都隨時為您導覽最合適的功能！請問您今天想完成什麼需求呢？',
+    expertise: [
+      '全站 10 大功能模組導覽',
+      '需求情境最佳工具配對',
+      '本草知識庫多維篩選教學',
+      '方劑實驗室調配與計時指引',
+      '青草名店文化名錄與採買避坑',
+      '草木書閣試閱與購書流程',
+      '管理後台批次匯入與文章生成'
+    ]
   }
 };
 
@@ -153,9 +175,9 @@ class RagService {
       throw new Error(`找不到 ID 為 ${expertId} 的專家`);
     }
 
-    const builtInIds = ['wanhua_uncle', 'hakka_grandmother', 'pharmacist_phd', 'indigenous_forager'];
+    const builtInIds = ['wanhua_uncle', 'hakka_grandmother', 'pharmacist_phd', 'indigenous_forager', 'kenshin_guide'];
     if (builtInIds.includes(expertId)) {
-      throw new Error('系統內建四大核心風土專家不可刪除，僅可微調設定');
+      throw new Error('系統內建核心風土專家與導航助手不可刪除，僅可微調設定');
     }
 
     delete this.experts[expertId];
@@ -362,49 +384,63 @@ class RagService {
       taiwanHeritage: herb.taiwanHeritage
     }));
 
+    // 檢查是否為系統功能模組與使用情境詢問
+    const scenario = this.detectSystemScenario(message, expert.id);
+    let systemActions = [];
+
     // 專家風格回答合成 (Persona-Driven Grounded Synthesis)
     let replyMarkdown = '';
     let engineUsed = '臺灣本草內建語意特徵引擎 (Zero-Dependency Grounded)';
     const llmCfg = llmService.config;
 
-    console.log(`\n=================== [RAG 語意檢索與後端資料拋接] ===================`);
-    console.log(`[RAG Consult] 使用者提問: "${message}"`);
-    console.log(`[RAG Consult] 指定專家: ${expert.name} (${expert.title})`);
-    console.log(`[RAG Consult] 資料庫命中 ${retrieved.length} 味草藥 (Grounded Data):`);
-    retrieved.forEach((r, idx) => {
-      console.log(`  [草藥 ${idx + 1}] ${r.herb.name} (${r.herb.scientificName}) | 產區: ${r.herb.region} | 得分: ${r.score} | 理由: ${r.reason}`);
-    });
-    console.log(`[RAG Consult] 當前配置之活躍 LLM: ${llmCfg ? llmCfg.activeProvider : 'unknown'}`);
+    if (scenario) {
+      console.log(`\n=================== [系統功能情境導引匹配] ===================`);
+      console.log(`[Scenario Guide] 提問匹配到系統情境: ${scenario.name} (Key: ${scenario.key})`);
+      console.log(`[Scenario Guide] 指定專家: ${expert.name}`);
+      console.log(`==============================================================\n`);
+      replyMarkdown = this.synthesizeScenarioReply(scenario, expert, message);
+      systemActions = scenario.actions || [];
+      engineUsed = '臺灣本草系統智慧領航特徵引擎 (Scenario Navigator)';
+    } else {
+      console.log(`\n=================== [RAG 語意檢索與後端資料拋接] ===================`);
+      console.log(`[RAG Consult] 使用者提問: "${message}"`);
+      console.log(`[RAG Consult] 指定專家: ${expert.name} (${expert.title})`);
+      console.log(`[RAG Consult] 資料庫命中 ${retrieved.length} 味草藥 (Grounded Data):`);
+      retrieved.forEach((r, idx) => {
+        console.log(`  [草藥 ${idx + 1}] ${r.herb.name} (${r.herb.scientificName}) | 產區: ${r.herb.region} | 得分: ${r.score} | 理由: ${r.reason}`);
+      });
+      console.log(`[RAG Consult] 當前配置之活躍 LLM: ${llmCfg ? llmCfg.activeProvider : 'unknown'}`);
 
-    // 若啟用外部 LLM (例如 Ollama 或其他提供商)，優先嘗試即時 LLM 推理生成
-    if (llmCfg && llmCfg.activeProvider !== 'builtin') {
-      const prov = llmCfg.providers[llmCfg.activeProvider];
-      console.log(`[RAG Consult] 正在將資料庫欄位組裝進 Prompt，拋給後端 LLM API (${prov?.name || llmCfg.activeProvider} / ${prov?.model || 'default'})...`);
-      const startTime = Date.now();
-      try {
-        const prompt = this.buildConsultPrompt(expert, message, retrieved);
-        const externalResult = await llmService.callLlm({
-          providerId: llmCfg.activeProvider,
-          prompt,
-          systemPrompt: `你是一位深諳臺灣本土草藥文化的本草耆老，請完全融入以下專家 Persona 口吻回覆：${expert.name}（${expert.title}）。請嚴守不宣稱任何醫療效果，純粹分享民間傳統古早知識。`
-        });
-        if (externalResult && externalResult.trim() !== '') {
-          const duration = ((Date.now() - startTime) / 1000).toFixed(1);
-          replyMarkdown = externalResult;
-          engineUsed = `${prov ? prov.name : llmCfg.activeProvider} (${prov ? prov.model : 'Live LLM'}) 即時推理`;
-          console.log(`[RAG Consult] 後端 LLM API 即時推理成功！耗時: ${duration}s，產出字數: ${externalResult.length}`);
+      // 若啟用外部 LLM (例如 Ollama 或其他提供商)，優先嘗試即時 LLM 推理生成
+      if (llmCfg && llmCfg.activeProvider !== 'builtin') {
+        const prov = llmCfg.providers[llmCfg.activeProvider];
+        console.log(`[RAG Consult] 正在將資料庫欄位組裝進 Prompt，拋給後端 LLM API (${prov?.name || llmCfg.activeProvider} / ${prov?.model || 'default'})...`);
+        const startTime = Date.now();
+        try {
+          const prompt = this.buildConsultPrompt(expert, message, retrieved);
+          const externalResult = await llmService.callLlm({
+            providerId: llmCfg.activeProvider,
+            prompt,
+            systemPrompt: `你是一位深諳臺灣本土草藥文化的本草耆老，請完全融入以下專家 Persona 口吻回覆：${expert.name}（${expert.title}）。請嚴守不宣稱任何醫療效果，純粹分享民間傳統古早知識。`
+          });
+          if (externalResult && externalResult.trim() !== '') {
+            const duration = ((Date.now() - startTime) / 1000).toFixed(1);
+            replyMarkdown = externalResult;
+            engineUsed = `${prov ? prov.name : llmCfg.activeProvider} (${prov ? prov.model : 'Live LLM'}) 即時推理`;
+            console.log(`[RAG Consult] 後端 LLM API 即時推理成功！耗時: ${duration}s，產出字數: ${externalResult.length}`);
+            console.log(`====================================================================\n`);
+          }
+        } catch (err) {
+          console.warn(`[RagService] External LLM consult failed (${err.message}), fallback to builtin synthesis.`);
           console.log(`====================================================================\n`);
         }
-      } catch (err) {
-        console.warn(`[RagService] External LLM consult failed (${err.message}), fallback to builtin synthesis.`);
-        console.log(`====================================================================\n`);
       }
-    }
 
-    if (!replyMarkdown) {
-      console.log(`[RAG Consult] 使用系統內建離線知識特徵引擎進行道地語意生成`);
-      console.log(`====================================================================\n`);
-      replyMarkdown = this.synthesizeExpertReply(expert, message, retrieved);
+      if (!replyMarkdown) {
+        console.log(`[RAG Consult] 使用系統內建離線知識特徵引擎進行道地語意生成`);
+        console.log(`====================================================================\n`);
+        replyMarkdown = this.synthesizeExpertReply(expert, message, retrieved);
+      }
     }
 
     // 確保附帶免責聲明
@@ -436,8 +472,308 @@ class RagService {
       reply: replyMarkdown,
       citations,
       suggestedQuestions,
+      systemActions,
       engineUsed
     };
+  }
+
+  /**
+   * 偵測使用者提問是否為系統功能模組與使用情境詢問
+   */
+  detectSystemScenario(message, expertId) {
+    const q = (message || '').toLowerCase();
+    const isGuideAgent = expertId === 'kenshin_guide';
+    const hasToolIntent = /工具|功能|怎麼用|如何使用|哪裡查|在哪裡|有什麼可以用|有哪些可用|有哪些模組|操作方式|怎麼操作|如何操作|怎麼買|如何買|怎麼比對|後台|rbac|批次匯入|匯出|說明手冊|操作手冊|使用手冊|手冊|有哪些/.test(q);
+
+    // 非導覽專員時，必須具備明確的功能或工具詢問意圖，避免將純粹的草藥性味生活提問誤判為系統操作
+    if (!isGuideAgent && !hasToolIntent) {
+      return null;
+    }
+
+    // 1. 方劑研製所 / 青草茶調配 / 熬煮計時
+    if (/方劑|調配|自己配|配茶|配方|茶釜|君臣佐使|陰陽指針|滋味光譜|煎煮計時|熬煮|計時器/.test(q)) {
+      return {
+        key: 'alchemy',
+        name: '方劑研製所 · 青草茶調配實驗室',
+        tab: 'alchemy',
+        actions: [
+          { label: '🧪 立即前往【方劑研製所】', tab: 'alchemy' },
+          { label: '📖 查閱【調配操作手冊】', action: 'manual' }
+        ]
+      };
+    }
+
+    // 2. 青草名店文化名錄 / 實體老舖採買避坑
+    if (/青草店|青草行|哪裡買|老舖|老字號|採買指南|青草巷|避坑|買青草|名店|實體店/.test(q)) {
+      return {
+        key: 'shops',
+        name: '全臺青草名店文化地圖與採買指南',
+        tab: 'shops',
+        actions: [
+          { label: '🏪 立即前往【青草名店文化地圖】', tab: 'shops' },
+          { label: '📖 查閱【採買避坑指南】', action: 'manual' }
+        ]
+      };
+    }
+
+    // 3. 草木書閣 / 試閱 / 線上購書 / 黃教授專著 / 消保法
+    if (/書閣|買書|購書|試閱|電子書|實體書|黃教授著作|生化與草本的對話|書籍|消保法|訂單|結帳/.test(q)) {
+      return {
+        key: 'books',
+        name: '草木書閣 · 典籍展閱、試閱與線上購書',
+        tab: 'books',
+        actions: [
+          { label: '📚 立即前往【草木書閣】', tab: 'books' },
+          { label: '📖 查閱【購書與消保法條款】', action: 'manual' }
+        ]
+      };
+    }
+
+    // 4. 藥材橫向多維對照比對
+    if (/比對|對照|比較兩味|比較藥材|差異|橫向比對|差別/.test(q)) {
+      return {
+        key: 'compare',
+        name: '藥材多方橫向對照比對視窗',
+        action: 'compare',
+        actions: [
+          { label: '⚖️ 開啟【藥材橫向比對視窗】', action: 'compare' },
+          { label: '🌿 前往【本草知識庫】勾選比對', tab: 'catalog' }
+        ]
+      };
+    }
+
+    // 5. 五行臟腑經絡引導圖
+    if (/經絡|五行|臟腑|歸經圖|入經|穴位/.test(q)) {
+      return {
+        key: 'meridian',
+        name: '五行臟腑經絡氣血引導圖',
+        tab: 'meridian',
+        actions: [
+          { label: '🫀 立即前往【五行經絡圖】', tab: 'meridian' },
+          { label: '📖 查閱【經絡導引說明】', action: 'manual' }
+        ]
+      };
+    }
+
+    // 6. 典藏管理後台 / RBAC / 批次匯入 / 匯出 / 文章工作室 / 金鑰
+    if (/後台|管理後台|rbac|權限|批次匯入|匯出|csv|json|文章生成|文章工作室|api金鑰|備份|審計日誌|重置資料庫/.test(q)) {
+      return {
+        key: 'admin',
+        name: '典藏管理後台與數據中樞',
+        tab: 'admin',
+        actions: [
+          { label: '⚙️ 立即前往【典藏管理後台】', tab: 'admin' },
+          { label: '📖 查閱【後台操作指南】', action: 'manual' }
+        ]
+      };
+    }
+
+    // 7. 本草知識庫與風土產區探索
+    if (/風土地圖|產區|客家青草|原民野菜|抹草|大風草|刺蔥|客庄|篩選草藥|知識庫|圖鑑/.test(q) && (/哪裡查|怎麼查|在哪裡|有什麼工具|如何篩選|怎麼找/.test(q) || expertId === 'kenshin_guide')) {
+      return {
+        key: 'catalog_terroir',
+        name: '本草知識庫與臺灣風土產區地圖',
+        tab: 'catalog',
+        actions: [
+          { label: '🌿 立即前往【本草知識庫】', tab: 'catalog' },
+          { label: '📖 查閱【風土探索手冊】', action: 'manual' }
+        ]
+      };
+    }
+
+    // 8. 全站系統功能總覽 / 說明手冊 / 操作指南 / 怎麼用
+    if (/系統有哪些功能|什麼功能可以用|有哪些功能|有什麼可以用|有哪些模組|功能情境|說明手冊|使用手冊|怎麼使用系統|操作指南|平台介紹|怎麼用|如何使用|有哪些工具/.test(q) || expertId === 'kenshin_guide') {
+      return {
+        key: 'features_overview',
+        name: '平台全景導覽與使用者操作手冊',
+        actions: [
+          { label: '📖 開啟【使用者操作手冊】', action: 'manual' },
+          { label: '🌿 進入【本草知識庫】', tab: 'catalog' },
+          { label: '🧪 前往【方劑研製所】', tab: 'alchemy' }
+        ]
+      };
+    }
+
+    return null;
+  }
+
+  /**
+   * 根據情境與專家合成詳細功能導覽回覆
+   */
+  synthesizeScenarioReply(scenario, expert, query) {
+    let greeting = expert.greeting;
+    if (expert.id === 'kenshin_guide') {
+      greeting = '您好！我是本草研究室的「肯信小助手（平台導航員）」。針對您所詢問的功能情境，我為您梳理了最適用的模組與操作指南：';
+    } else if (expert.id === 'wanhua_uncle') {
+      greeting = `${expert.greeting}\n\n老茶師我跟你說，你問這項功能正好，咱研究室裡頭都有整套好用的工具！`;
+    } else if (expert.id === 'hakka_grandmother') {
+      greeting = `${expert.greeting}\n\n阿妹阿弟呀，你問的這個功能，咱研究室有很齊全的工具可以查！`;
+    } else if (expert.id === 'pharmacist_phd') {
+      greeting = `${expert.greeting}\n\n您好！針對您所關注的系統功能與研究情境，本草研究室規劃了完整且嚴謹的模組架構供您運用：`;
+    } else if (expert.id === 'indigenous_forager') {
+      greeting = `${expert.greeting}\n\nSa'icelen！朋友，這個需求在我們的系統裡有超好用的工具可以幫你！`;
+    }
+
+    let body = '';
+    switch (scenario.key) {
+      case 'alchemy':
+        body = `
+### 🧪 推薦核心工具：【方劑研製所 · 青草茶調配實驗室 (\`HerbAlchemyLab\`)]
+
+若您想**自己調配草本茶飲、研製退火涼茶或掌握熬煮火候**，方劑研製所是最契合的專業工具：
+
+#### 🌟 核心功能特色：
+1. **君臣佐使調配槽**：自由挑選 1 至 4 味草藥投入茶釜（例如：大花咸豐草、鳳尾草、甘草）。
+2. **四氣陰陽平衡動態指針**：即時計算處方的寒涼值（-100）與溫熱值（+100），指針即時偏轉，並給出體質調養叮嚀。
+3. **五味滋味預測光譜**：實時預測苦味、甘味、辛味、涼味之風味雷達圖。
+4. **受納經絡臟腑共鳴**：實時顯示金、木、水、火、土五行臟腑受納反饋。
+5. **古法三階熬煮計時器**：
+   - 第一階【武火急沸】（10分鐘，大火滾沸激發草木原香）
+   - 第二階【文火慢熬】（35分鐘，細火溫燉析出黃酮與多醣）
+   - 第三階【關火悶香】（15分鐘，加蓋浸潤回甘）
+   - 內建聲景氣泡沸水微響與到期頌缽提示音。
+6. **AI 神來一配實驗室**：點擊「🎲 AI 神來一配」，演算法將自動隨機配伍最佳茶方！
+
+#### 📍 快速操作路徑：
+- 點擊頂端導覽列上的 **「🧪 方劑實驗室」**，或點擊下方快捷按鈕直接進入！
+        `.trim();
+        break;
+
+      case 'shops':
+        body = `
+### 🏪 推薦核心工具：【全臺青草名店文化地圖與採買指南 (\`AlliedShopsView\`)]
+
+若您想**實地尋訪臺灣老字號青草老舖、了解店家特色或學習採買新鮮草料的辨偽技巧**：
+
+#### 🌟 核心功能特色：
+1. **全島風土名舖名錄**：收錄台北萬華西昌街青草巷（安立青草店、德安青草店）、台中中德藥行、台南蓮玉湯等老字號商號。
+2. **分區聚落篩選**：直觀按「北部」、「中部」、「南部」切換各地青草老街。
+3. **青草採買避坑指南**：
+   - **聞香辨真**：新鮮青草具自然芳香，若有刺鼻酸味或霉味切勿購買。
+   - **觀色識質**：自然日曬乾燥呈深綠或灰綠，過鮮艷者須防二氧化硫薰蒸。
+   - **防潮儲存**：密封避光，生鮮青草應於 3 日內使用。
+4. **依草藥反查老舖**：點選特定草藥標籤，直接反向列出販售該草藥之實體店家。
+
+#### 📍 快速操作路徑：
+- 點擊頂端導覽列上的 **「🏪 結盟青草店」**，或點擊下方快捷按鈕直接前往！
+        `.trim();
+        break;
+
+      case 'books':
+        body = `
+### 📚 推薦核心工具：【草木書閣 · 專題典籍展閱與線上結帳 (\`HerbBookshelfView\`)]
+
+若您想**拜讀中醫大黃世勳教授的三十載本草踏查著作、免費線上試閱章節或購買實體/電子書**：
+
+#### 🌟 核心功能特色：
+1. **收錄產學合作巨著**：
+   - 🎓 **《生化與草本的對話：臺灣本草三十載考證錄》**（黃世勳教授 產學合作巨著，融貫田野踏查與生藥機轉）。
+   - 🍵 **《艋舺西昌街青草巷志：四百年退火茶心法》**（萬華老茶師心傳）。
+   - 👵 **《山徑香草與客庄生活手記》**（客家阿婆風土集）。
+2. **免費線上試閱抽屜**：點擊書籍卡片上的「📖 試閱章節」，即可即時開卷研讀前言導讀與精華篇章。
+3. **實體典藏與電子書雙軌結帳**：支援直接線上選購實體書籍或授權電子書。
+4. **《消保法》第 19 條第 2 項合規保障**：實體書享有 7 日鑑賞期；電子書屬數位內容，經授權交付後排除解除權，權益明確揭露。
+5. **買家訂單安全查詢**：輸入 Email 反查訂單與授權金鑰，電話與地址自動安全脫敏遮罩。
+
+#### 📍 快速操作路徑：
+- 點擊頂端導覽列上的 **「📚 草木書閣」**，或點擊下方快捷按鈕直接前往！
+        `.trim();
+        break;
+
+      case 'compare':
+        body = `
+### ⚖️ 推薦核心工具：【藥材多方橫向對照比對視窗 (\`HerbCompareModal\`)]
+
+若您想**同時並列比較 2 至 4 味草藥的性味、歸經、風土產區、化學活性成分或安全禁忌**：
+
+#### 🌟 核心功能特色：
+1. **多維並列對照表**：一覽四氣五味、十二經絡、活性化合物成分與用藥安全分級。
+2. **一鍵載入經典比對範本**：
+   - 🔥 清熱退火雙雄：**大花咸豐草** vs **鳳尾草**
+   - 🌿 客家辟邪二寶：**抹草** vs **艾草**
+   - 🏹 原民山林辛香：**刺蔥** vs **山苦瓜**
+3. **直覺跨頁比對**：在知識庫圖鑑中點擊任一草藥的「+ 比對」，隨時點擊頂端導覽列上的「⚖️ 比對」開啟視窗。
+
+#### 📍 快速操作路徑：
+- 點擊頂端導覽列上的 **「⚖️ 比對」** 膠囊，或點擊下方快捷按鈕直接開啟！
+        `.trim();
+        break;
+
+      case 'catalog_terroir':
+        body = `
+### 🌿 推薦核心工具：【本草知識庫與臺灣風土產區探索互動地圖 (\`TaiwanTerroirMap\` & \`HerbSidebar\`)]
+
+若您想**按風土產區（如桃竹苗客庄、花東原鄉）、生活情境（辟邪沐浴、月子擦澡）或方言俗名精準搜尋藥材**：
+
+#### 🌟 核心功能特色：
+1. **臺灣風土產區互動探索地圖**：點選地圖六大產區（北部青草巷、桃竹苗客庄、中彰投台地、嘉南平原、六堆高屏、花東原鄉），即時鎖定原生本草。
+2. **多維側邊欄過濾**：支援客家辟邪抹草、大風草月子調養、原民刺蔥野炊、台語俗名（如「恰芒草」、「狗貼耳」）模糊檢索。
+3. **3D 圖鑑卡與清單表格**：自由切換 3D 傾斜卡片或密集清單檢視。
+
+#### 📍 快速操作路徑：
+- 點擊頂端導覽列上的 **「🌿 本草知識庫」**，或點擊下方快捷按鈕直接進入！
+        `.trim();
+        break;
+
+      case 'meridian':
+        body = `
+### 🫀 推薦核心工具：【五行臟腑經絡氣血引導圖 (\`HerbMeridianMap\`)]
+
+若您想**從中醫臟象學與十二經絡角度，探討各器官系統對應之島嶼草本**：
+
+#### 🌟 核心功能特色：
+1. **五行相生相剋視覺化**：呈現金（肺/大腸）、木（肝/膽）、水（腎/膀胱）、火（心/小腸）、土（脾/胃）臟象圖。
+2. **入經草藥即時列出**：點選特定臟腑（例如點擊「金 · 肺」），圖表即刻高亮相生相剋路徑，並列出入肺經之本草名錄（如薄荷、魚腥草）。
+
+#### 📍 快速操作路徑：
+- 點擊 Hero 導覽標籤「🫀 五行經絡圖」，或點擊下方快捷按鈕直接開啟！
+        `.trim();
+        break;
+
+      case 'admin':
+        body = `
+### ⚙️ 推薦核心工具：【典藏管理後台與數據中樞 (\`HerbAdminDashboard\`)]
+
+若您身為**網站管理者、本草策展師或審計員，需要進行資料維護、文章撰寫、批次匯入匯出或系統配置**：
+
+#### 🌟 核心功能特色：
+1. **5 大 RBAC 角色登入**：至高管理員 (\`super_admin\`)、本草策展師 (\`curator\`)、本草諮詢顧問 (\`consultant\`)、典藏觀察員 (\`auditor\`) 與草木學員 (\`member\`)。
+2. **本草 CRUD 與即時古典標本票卡預覽 (Live Specimen Plate Preview)**：所見即所得，編輯草藥表單即刻預覽卡片效果。
+3. **資料批次匯入與線上編輯工作台**：支援 5 味野生草藥示範載入、JSON/CSV 解析，缺漏欄位自動提示，在線上表格校驗後一鍵入庫。
+4. **條件篩選多格式匯出**：依產區篩選匯出結構化 JSON、含 UTF-8 BOM 之 CSV（Excel 雙擊不亂碼）與精美排版 Markdown 植物誌手冊。
+5. **專題文章生成工作室 (Herbal Narrative Studio)**：自資料庫挑選本草 Grounding，指定目標受眾（上班族/長輩/學童）自動生成專題文章。
+6. **API 金鑰脫敏遮罩與系統備份**：API 金鑰自動脫敏，阻斷 SSRF，支援下載全庫 JSON 快照與 1,000 筆環形審計日誌。
+
+#### 📍 快速操作路徑：
+- 點擊頂端導覽列上的 **「⚙️ 管理後台」**，或點擊下方快捷按鈕直接前往！
+        `.trim();
+        break;
+
+      default: // features_overview
+        body = `
+### 📖 臺灣肯信本草研究室 · 全站核心功能模組導覽
+
+歡迎來到臺灣肯信本草研究室！系統提供完善且豐富的 13 大功能模組，無論您是常民生活飲茶、風土文化研究或後台資料管理，都能找到對應工具：
+
+| 功能模組 | 主要用途 | 適用情境 |
+| :--- | :--- | :--- |
+| **🌿 本草知識庫** | 25+味本土草藥、風土產區地圖、3D卡片/清單 | 尋找草藥、按產區或民間情境（如月子/辟邪/退火）篩選 |
+| **🧪 方劑實驗室** | 君臣佐使投入、陰陽指針、滋味光譜、熬煮計時 | 想自製青草茶飲、測算寒熱偏性、掌握文火與武火時間 |
+| **🏪 結盟青草店** | 全台風土名舖聚落、營業導覽、採買避坑指南 | 實地尋訪老字號青草老舖、購買新鮮草料辨偽防坑 |
+| **📚 草木書閣** | 中醫大黃教授專題巨著、線上試閱與結帳 | 拜讀經典本草著作、免費線上試閱、訂購實體/電子書 |
+| **🍵 專家諮詢茶堂** | 5大Persona專家語意問答、Citations標本卡 | 針對生活體質困擾向專家請益，或向小助手詢問系統功能 |
+| **⚖️ 藥材多方比對** | 2~4味草藥橫向多維並列剖析 | 橫向對照兩種以上藥材的性味、歸經、成分與安全禁忌 |
+| **🫀 五行經絡圖** | 人體金木水火土臟象與經絡走向 | 從中醫十二經絡與臟象學角度尋找對應入經之草本 |
+| **⚙️ 典藏管理後台** | RBAC權限、批次匯入/工作台、文章工作室 | 資料庫維護、批次匯入/匯出、撰寫專題文章、金鑰配置 |
+| **⌨️ 全域快捷命令盤** | 按 \`Ctrl+K\` (Mac \`⌘K\`) 快速喚醒 | 快速搜尋藥材學名、俗名並直接鍵盤導航開卷 |
+| **📖 使用者操作手冊** | 點擊頂端「📖 操作手冊」隨時查閱 | 13大模組圖文指南、10大情境速查矩陣與離線手冊下載 |
+
+💡 **貼心叮嚀**：您可隨時點擊頂端導覽列切換模組，或點擊下方快捷按鈕直接跳轉！
+        `.trim();
+        break;
+    }
+
+    return `${greeting}\n\n${body}`;
   }
 
   /**
@@ -677,6 +1013,14 @@ ${secondaryHerbs.length > 0 ? `* **佐使配伍好草**：${secondaryHerbs.map(h
         `黃教授出身鹿港望族，您三十載田野踏查的經驗如何看待「${mainHerbName}」的常民體質調養？`,
         `從您著述上百本專著的生藥考證來看，此草藥的有效活性成分在高溫久煮後會被破壞嗎？`,
         `您創立與主持多個藥學慈善社團，在日常保健茶飲上最重視哪些用藥安全與西藥交互作用？`
+      ];
+    } else if (expert.id === 'kenshin_guide') {
+      return [
+        '我想自己調配青草茶飲，系統有什麼工具能用？',
+        '如何查詢全台各地老字號青草行與採買指南？',
+        '草木書閣如何線上試閱與購買書籍？',
+        '我想橫向比對兩種草藥的性味與歸經，怎麼操作？',
+        '典藏後台支援哪些管理功能與資料匯入？'
       ];
     } else {
       return [

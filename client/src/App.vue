@@ -14,6 +14,7 @@
       @go-home="goCatalog"
       @random-pick="fetchRandomHerb"
       @open-compare="isCompareModalOpen = true"
+      @open-manual="isManualModalOpen = true"
       @open-health="openHealthModal"
       @open-cmd="isCmdPaletteOpen = true"
       @open-disclaimer="openDisclaimerModal"
@@ -43,6 +44,7 @@
       @switch-tab="switchMainTab"
       @view-herb="openHerbDetail"
       @search-term="onHeroSearch"
+      @open-manual="isManualModalOpen = true"
     />
 
     <!-- 主體內容區塊 -->
@@ -85,7 +87,13 @@
 
       <!-- 標籤頁一：專家諮詢茶堂 (RAG Consultation Lab) - 純淨整潔，無首頁資訊 -->
       <div v-else-if="!selectedHerbId && activeTab === 'consult'" style="grid-column: 1 / -1;">
-        <HerbConsultationLab @select-herb-id="openHerbDetail" />
+        <HerbConsultationLab
+          ref="consultLabRef"
+          @select-herb-id="openHerbDetail"
+          @switch-tab="switchMainTab"
+          @open-manual="isManualModalOpen = true"
+          @open-compare="isCompareModalOpen = true"
+        />
       </div>
 
       <!-- 標籤頁二：典藏後台與數據中心 (Admin Dashboard) - 純淨整潔，無首頁資訊 -->
@@ -408,8 +416,17 @@
       </div>
     </div>
 
-    <!-- 頁尾宣告 -->
+    <!-- 頁尾宣告與手冊連結 -->
     <footer class="footer-bar">
+      <div class="footer-links-row" style="margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+        <button class="footer-link-btn" @click="isManualModalOpen = true">📖 使用者操作說明手冊</button>
+        <span class="footer-dot" style="color: var(--border-gold);">·</span>
+        <button class="footer-link-btn" @click="openDisclaimerModal">📜 法律與免責聲明</button>
+        <span class="footer-dot" style="color: var(--border-gold);">·</span>
+        <button class="footer-link-btn" @click="switchMainTab('consult')">🍵 請益專家茶堂 (AGENT)</button>
+        <span class="footer-dot" style="color: var(--border-gold);">·</span>
+        <a href="/USER_MANUAL.md" download="臺灣肯信本草研究室_操作手冊.md" class="footer-link-btn">📥 下載 Markdown 離線手冊</a>
+      </div>
       <div>台灣肯信本草研究室 · Taiwan Kenshin Herb Research Lab</div>
       <div style="margin-top: 4px; font-size: 11.5px; color: var(--ink-muted);">
         榮獲數位美學與植物學知識庫設計標準 · 沉澱四百年風土草木智慧 · 純粹古早民俗文化分享 · 非醫療宣稱平台
@@ -503,6 +520,15 @@
         </div>
       </div>
     </div>
+
+    <!-- 使用者操作說明手冊彈窗 -->
+    <UserManualModal
+      :is-open="isManualModalOpen"
+      @close="isManualModalOpen = false"
+      @switch-tab="switchMainTab"
+      @open-compare="isCompareModalOpen = true"
+      @ask-agent-query="handleAskAgentQuery"
+    />
   </div>
 </template>
 
@@ -531,6 +557,7 @@ const HerbMeridianMap = defineAsyncComponent(() => import('./components/HerbMeri
 const HerbCompareModal = defineAsyncComponent(() => import('./components/HerbCompareModal.vue'));
 const AlliedShopsView = defineAsyncComponent(() => import('./components/AlliedShopsView.vue'));
 const HerbBookshelfView = defineAsyncComponent(() => import('./components/HerbBookshelfView.vue'));
+const UserManualModal = defineAsyncComponent(() => import('./components/UserManualModal.vue'));
 
 import { getSeasonalHerbRecommendation, getCurrentSolarTerm } from './services/solarTerms';
 
@@ -568,9 +595,18 @@ const isLoading = ref(false);
 
 const compareList = ref([]);
 const isCompareModalOpen = ref(false);
+const isManualModalOpen = ref(false);
+const consultLabRef = ref(null);
 const isDisclaimerModalOpen = ref(false);
 const isDisclaimerAgreed = ref(false);
 const shakeDisclaimerAgreement = ref(false);
+
+const handleAskAgentQuery = (queryText) => {
+  switchMainTab('consult');
+  setTimeout(() => {
+    consultLabRef.value?.askQuestion?.(queryText);
+  }, 120);
+};
 
 // 使用者身分與前後台權限狀態 (RBAC)
 const isAuthModalOpen = ref(false);
