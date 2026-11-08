@@ -249,7 +249,7 @@
             </div>
 
             <div class="section-prose">
-              <h4>🍵 5 大特色 Persona 諮詢風格</h4>
+              <h4>🍵 6 大特色 Persona 諮詢風格</h4>
               <div class="expert-cards-mini-grid">
                 <div class="exp-mini-card">
                   <div class="exp-mini-top">
@@ -274,6 +274,13 @@
                 </div>
                 <div class="exp-mini-card">
                   <div class="exp-mini-top">
+                    <span class="exp-avatar">🍲</span>
+                    <strong>李昭瑩 藥膳食療名師</strong>
+                  </div>
+                  <p>《藥膳學》編著者，文興出版權威，專精餐桌上的醫生、四氣五味食療與道地藥膳烹調。</p>
+                </div>
+                <div class="exp-mini-card">
+                  <div class="exp-mini-top">
                     <span class="exp-avatar">🏹</span>
                     <strong>山林野菜獵人 督邁 (Dumay)</strong>
                   </div>
@@ -291,6 +298,46 @@
               <div class="section-actions-row">
                 <button class="btn-action-primary" @click="handleNavigate('consult')">
                   <span>🍵 立即前往【諮詢茶堂】叩問 ➔</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- 章節 6.5：藥膳食療與餐桌養生指南 (根據《藥膳學》) -->
+          <section v-if="currentSection === 'medicinal_diet'" class="manual-section-card">
+            <div class="section-title-wrap">
+              <span class="section-seal">膳</span>
+              <div>
+                <h3 class="section-title">藥膳食療與餐桌養生指南</h3>
+                <div class="section-desc">收錄《藥膳學》（李昭瑩・王儀絜・黃世勳 編著）110 項常用藥材、食材與臟腑部位食療</div>
+              </div>
+            </div>
+
+            <div class="section-prose">
+              <h4>🍲 核心特色與理論基礎</h4>
+              <p>
+                本系統依據文興出版《藥膳學》經典教材，完整收錄包含<strong>「餐桌上的醫生」</strong>（蔬菜類、果品類、糧穀豆類、肉禽水產類與臟腑部位）與<strong>「藥膳常用藥材」</strong>（溫熱藥、寒涼藥、平性藥）共 110 味道地食材與藥材。
+              </p>
+
+              <h4>🍳 經典藥膳料理與部位對應</h4>
+              <ul class="bullet-list">
+                <li><strong>臟腑部位與以形補形</strong>：如「天麻燉豬腦」（平肝熄風、行氣活血，頁54）、「杜仲燉豬腰」（補肝腎強筋骨，頁55）、「蓮子豬肚湯」（健脾開胃、補虛益氣，頁54）、「歸耆羊肉湯」（益氣養血、溫中暖腎，頁53）。</li>
+                <li><strong>常用烹飪法解析</strong>：
+                  <ul>
+                    <li><strong>隔水燉（燉）</strong>：藥物與食物加入清湯，密封容器後隔水加熱，能完整保留藥效與原汁原味，香氣不散。</li>
+                    <li><strong>燜與煨</strong>：文火慢燉使食材軟爛酥潤，讓藥膳成分深入滲透至食材纖維中。</li>
+                    <li><strong>汆與滑炒</strong>：急火快炒或滾水短時間燙過，保留蔬菜類與果品類有效營養成分與爽脆口感。</li>
+                  </ul>
+                </li>
+                <li><strong>衛福部規範合規</strong>：明確標註符合臺灣衛生福利部公告「可供食品使用之中藥材」215 項規範品項，落實日常餐桌藥膳之安全合法性。</li>
+              </ul>
+
+              <div class="section-actions-row">
+                <button class="btn-action-primary" @click="handleNavigate('consult')">
+                  <span>🍲 向【李昭瑩名師】請教藥膳食療 ➔</span>
+                </button>
+                <button class="btn-action-secondary" @click="jumpToAgent('我想了解天麻燉豬腦與隔水燉的烹調方法')">
+                  <span>🍵 向小助手提問藥膳料理</span>
                 </button>
               </div>
             </div>
@@ -509,14 +556,21 @@ const tocItems = [
   { id: 'shops', icon: '🏪', label: '青草名店與採買指南' },
   { id: 'books', icon: '📚', label: '草木書閣與試閱購書' },
   { id: 'consult', icon: '🍵', label: '專家茶堂與 AGENT 問答' },
+  { id: 'medicinal_diet', icon: '🍲', label: '藥膳食療與餐桌指南', badge: '新增' },
   { id: 'compare', icon: '⚖️', label: '藥材多方橫向比對' },
   { id: 'meridian', icon: '🫀', label: '五行經絡引導圖' },
   { id: 'admin', icon: '⚙️', label: '典藏管理後台與權限' },
-  { id: 'scenarios', icon: '🎯', label: '10 大生活情境速查', badge: '速查' },
+  { id: 'scenarios', icon: '🎯', label: '11 大生活情境速查', badge: '速查' },
   { id: 'ask_agent', icon: '🤖', label: '透過 AGENT 提問功能' }
 ];
 
 const scenariosList = [
+  {
+    title: '想查詢日常藥膳食療、臟腑燉湯與古法烹調',
+    desc: '想了解天麻燉豬腦、杜仲豬腰、隔水燉或衛福部可供食品中藥材。',
+    toolName: '李昭瑩名師 藥膳諮詢 (ConsultationLab)',
+    tab: 'consult'
+  },
   {
     title: '自製消暑退火青草茶，想掌握草藥寒熱屬性',
     desc: '想自己熬煮日常退火茶，需計算配方寒涼值並掌握大火與文火時間。',
@@ -580,6 +634,7 @@ const scenariosList = [
 ];
 
 const sampleAgentQueries = [
+  '我想了解天麻燉豬腦與隔水燉的藥膳烹調要訣',
   '這套系統有哪些核心功能與使用情境？',
   '我想自己調配青草茶飲，系統有什麼工具能用？',
   '如何查詢全台各地老字號青草行與採買指南？',

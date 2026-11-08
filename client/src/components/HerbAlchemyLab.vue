@@ -12,7 +12,7 @@
           <em>草木方劑研製所 · AI 神來一配實驗室</em>
         </h2>
         <p class="alchemy-subtitle">
-          收錄 4 大風土專家角色 11 道傳承秘方（茶飲、藥浴、敷膏、藥膳），提供自由茶釜調配、AI 神來一配意圖演算，與道地專家 LLM 客製配方建議。
+          收錄 5 大風土專家角色 25 道傳承秘方（茶飲、藥浴、敷膏、四季養生與臟腑藥膳），提供自由茶釜調配、AI 神來一配意圖演算，與道地專家 LLM 客製配方建議。
         </p>
       </div>
     </div>
@@ -34,7 +34,7 @@
         @click="switchTab('roles')"
       >
         <span class="tab-icon">🍵</span>
-        <span class="tab-title">角色傳承名方庫 (11道)</span>
+        <span class="tab-title">角色傳承名方庫 (25道)</span>
       </button>
 
       <button
@@ -223,6 +223,8 @@
           <select v-model="divineIntent" class="select-intent-dropdown">
             <option value="清熱退火">🎯 意圖：清熱退火</option>
             <option value="夏日消暑">🎯 意圖：夏日消暑</option>
+            <option value="藥膳食療">🍲 意圖：藥膳食療燉補</option>
+            <option value="美容養顏">✨ 意圖：美容美白養顏</option>
             <option value="除濕利水">🎯 意圖：除濕利水</option>
             <option value="元氣補氣">🎯 意圖：元氣補氣</option>
             <option value="安神舒眠">🎯 意圖：安神舒眠</option>
@@ -957,11 +959,13 @@ const expertOptions = [
   { id: 'wanhua_uncle', name: '萬華林萬吉老茶師 (知識助理)' },
   { id: 'hakka_grandmother', name: '客庄彭秀妹老藥師 (知識助理)' },
   { id: 'pharmacist_phd', name: '黃世勳教授 (真實學者)' },
+  { id: 'yaoshan_master', name: '李昭瑩名師 (藥膳食療顧問)' },
   { id: 'indigenous_forager', name: '督邁山林達人 (知識助理)' }
 ];
 
 const typeOptions = [
   { id: '全部', name: '全部劑型' },
+  { id: 'medicinal_diet', name: '🍲 藥膳食療' },
   { id: 'herbal_tea', name: '🍵 青草茶飲' },
   { id: 'bath', name: '🛁 民俗藥浴' },
   { id: 'poultice', name: '🌿 外用敷膏' },
@@ -970,6 +974,7 @@ const typeOptions = [
 
 const formulaTypeLabel = (type) => {
   switch (type) {
+    case 'medicinal_diet': return '藥膳食療';
     case 'herbal_tea': return '青草茶飲';
     case 'bath': return '民俗藥浴';
     case 'poultice': return '外用敷膏';
@@ -1102,7 +1107,9 @@ const quickPresets = [
   { name: '萬華百年退火青草茶', herbNames: ['大花咸豐草', '鳳尾草', '薄荷', '甘草'] },
   { name: '國家中醫清潤防疫茶', herbNames: ['魚腥草', '金銀花', '桑葉', '甘草'] },
   { name: '客家古傳紫蘇暖胃茶', herbNames: ['紫蘇', '艾草', '甘草'] },
-  { name: '元氣固表護眼飲', herbNames: ['黃耆', '枸杞子', '桑葉', '甘草'] }
+  { name: '元氣固表護眼飲', herbNames: ['黃耆', '枸杞子', '桑葉', '甘草'] },
+  { name: '天麻燉豬腦藥膳方', herbNames: ['天麻', '川芎', '枸杞子'] },
+  { name: '百合薏仁潤膚美白湯', herbNames: ['薏苡仁', '百合', '紅棗'] }
 ];
 
 const filteredShelfHerbs = computed(() => {
@@ -1850,6 +1857,14 @@ const expertPersonas = [
     officialUrl: 'https://webap.cmu.edu.tw/TchEportfolio/index_1/sshuang'
   },
   {
+    id: 'yaoshan_master',
+    avatar: '🍲',
+    name: '李昭瑩 藥膳食療名師',
+    title: '《藥膳學》編著者・漢方食療名師・餐桌上的醫生',
+    tone: '溫潤典雅名師風範、四氣五味合臟腑、道地古法隔水燉與四季食療',
+    isReal: false
+  },
+  {
     id: 'wanhua_uncle',
     avatar: '🍵',
     name: '林萬吉 老茶師',
@@ -1876,13 +1891,15 @@ const expertPersonas = [
 ];
 
 const targetTypeOptions = [
+  { id: 'medicinal_diet', name: '餐桌養生藥膳', icon: '🍲' },
   { id: 'herbal_tea', name: '日常生活青草茶', icon: '🍵' },
   { id: 'bath', name: '常民外用藥浴湯', icon: '🛁' },
   { id: 'poultice', name: '清涼消腫草藥膏', icon: '🌿' },
-  { id: 'soup', name: '原鄉滋補藥膳湯', icon: '🍲' }
+  { id: 'soup', name: '原鄉滋補藥膳湯', icon: '🥣' }
 ];
 
 const quickNeedsPrompts = [
+  '想請教李昭瑩名師：經常熬夜用腦、頭痛眩暈，想做一道養生健腦的藥膳（如天麻燉豬腦）該如何搭配？',
   '請教黃教授：三十載本草踏查與百部著作精華中，針對長輩高血壓族群有哪些安全溫和的草本茶飲建議？',
   '天天熬夜火氣大、喉嚨乾痛口苦，但吹冷氣易手腳冰冷',
   '夏日戶外烈日曝曬，汗黏頭昏口渴，想要消暑解熱',

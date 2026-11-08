@@ -4635,6 +4635,4864 @@ const initialHerbs = [
     ],
     "status": "published"
   }
+,
+  // ==========================================
+  // 《藥膳學》（李昭瑩・王儀絜・黃世勳 編著）藥膳常用食材與藥材典藏
+  // ==========================================
+  {
+    "id": 71,
+    "name": "白芷",
+    "scientificName": "繖形科植物白芷或杭白芷",
+    "pinyin": "白芷",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第15頁"
+      }
+    ],
+    "family": "祛風止痛 (繖形科根)",
+    "partsUsed": "祛風止痛 (繖形科根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第15頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "白芷",
+      "祛風止痛 (繖形科根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "辛"
+    ],
+    "channels": [
+      "肺",
+      "脾",
+      "胃",
+      "大腸"
+    ],
+    "efficacy": "解表散風，通竅。生肌止痛，燥濕止帶，消腫排膿。 頭痛、眉棱骨痛、齒痛、鼻淵、風濕痹痛、白帶過多、癰疽瘡瘍、毒蛇咬傷。",
+    "cautions": "通竅止痛要藥，常搭配川芎、魚頭燉湯祛風止頭痛。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以獨支、條粗壯、體重、質硬、粉性足、香氣濃者為佳。",
+    "medicinalDiet": "川芎白芷魚頭湯、當歸鯉魚湯等。",
+    "sourceBook": "《藥膳學》第15頁",
+    "page": 15,
+    "status": "published"
+  },
+  {
+    "id": 72,
+    "name": "防風",
+    "scientificName": "繖形科植物防風",
+    "pinyin": "防風",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第16頁"
+      }
+    ],
+    "family": "辛溫解表 (繖形科根)",
+    "partsUsed": "辛溫解表 (繖形科根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第16頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "防風",
+      "辛溫解表 (繖形科根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "辛"
+    ],
+    "channels": [
+      "膀胱",
+      "肝",
+      "脾"
+    ],
+    "efficacy": "發表祛風，勝濕止痛，止痙。為風藥中之潤劑。 外感風寒、頭痛身痛、風濕痹痛、骨節酸痛、破傷風角弓反張。",
+    "cautions": "祛風解表而性不燥烈，被譽為風藥之潤劑。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以條粗壯、皮細而緊、質柔潤、斷面菊花心黃白色者為佳。",
+    "medicinalDiet": "防風玉米濃湯、防風粥等。",
+    "sourceBook": "《藥膳學》第16頁",
+    "page": 16,
+    "status": "published"
+  },
+  {
+    "id": 73,
+    "name": "荊芥",
+    "scientificName": "唇形科植物荊芥",
+    "pinyin": "荊芥",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第16頁"
+      }
+    ],
+    "family": "辛溫解表 (唇形科地上部/花穗)",
+    "partsUsed": "辛溫解表 (唇形科地上部/花穗)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第16頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "荊芥",
+      "辛溫解表 (唇形科地上部/花穗)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "辛"
+    ],
+    "channels": [
+      "肺",
+      "肝"
+    ],
+    "efficacy": "解表散風，透疹，消瘡止血。 感冒發熱、頭痛、麻疹透發不暢、風疹瘙癢、瘡瘍初起、吐血衄血、便血崩漏。",
+    "cautions": "生用發汗透疹消瘡；炒炭後具苦澀收斂之性，引血歸經止血。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以淡黃綠色、穗長而花密、香氣濃者為佳。",
+    "medicinalDiet": "荊芥拌黃瓜、涼拌荊芥等。",
+    "sourceBook": "《藥膳學》第16頁",
+    "page": 16,
+    "status": "published"
+  },
+  {
+    "id": 74,
+    "name": "生薑",
+    "scientificName": "薑科植物薑的新鮮根莖",
+    "pinyin": "生薑",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第16頁"
+      }
+    ],
+    "family": "祛寒溫中 (薑科根莖)",
+    "partsUsed": "祛寒溫中 (薑科根莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第16頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "生薑",
+      "祛寒溫中 (薑科根莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "辛"
+    ],
+    "channels": [
+      "肺",
+      "脾",
+      "胃"
+    ],
+    "efficacy": "發汗解表，溫中止嘔，溫肺止咳，解魚蟹毒。 風寒感冒、惡寒發熱、胃寒嘔吐（嘔家聖藥）、風寒咳嗽、解半夏天南星及魚蟹毒。",
+    "cautions": "素有「嘔家聖藥」之稱，藥膳解表去腥暖胃最常用食材。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以肥壯、新鮮、薑絲細密、香氣辛辣者為佳；藥用以老薑為佳。",
+    "medicinalDiet": "當歸生薑羊肉湯、生薑紅糖茶、薑母鴨等。",
+    "sourceBook": "《藥膳學》第16頁",
+    "page": 16,
+    "status": "published"
+  },
+  {
+    "id": 75,
+    "name": "蒼耳子",
+    "scientificName": "菊科植物蒼耳",
+    "pinyin": "蒼耳子",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第17頁"
+      }
+    ],
+    "family": "辛溫解表/通鼻竅 (菊科果實)",
+    "partsUsed": "辛溫解表/通鼻竅 (菊科果實)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第17頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "蒼耳子",
+      "辛溫解表/通鼻竅 (菊科果實)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "苦",
+      "辛"
+    ],
+    "channels": [
+      "肺"
+    ],
+    "efficacy": "散風除濕，通鼻竅，止痛，殺蟲。 鼻淵頭痛（鼻竇炎）、風寒頭痛、風濕痹痛、皮膚風疹瘙癢。",
+    "cautions": "通鼻竅要藥，生品有小毒，藥膳多炒用並控制劑量。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以粒大、飽滿、色黃綠、刺堅硬者為佳。",
+    "medicinalDiet": "蒼耳子茶、辛夷蒼耳魚頭湯（需遵醫囑適量）。",
+    "sourceBook": "《藥膳學》第17頁",
+    "page": 17,
+    "status": "published"
+  },
+  {
+    "id": 76,
+    "name": "蒼朮",
+    "scientificName": "菊科植物茅蒼朮或北蒼朮",
+    "pinyin": "蒼朮",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第17頁"
+      }
+    ],
+    "family": "燥濕健脾 (菊科根莖)",
+    "partsUsed": "燥濕健脾 (菊科根莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第17頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "蒼朮",
+      "燥濕健脾 (菊科根莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "苦",
+      "辛"
+    ],
+    "channels": [
+      "脾",
+      "胃",
+      "肝"
+    ],
+    "efficacy": "燥濕健脾，祛風散寒，明目。 濕阻中焦、脘腹脹滿、泄瀉水腫、風濕痹痛、腳氣痿軟、夜盲昏蒙。",
+    "cautions": "燥濕健脾第一要藥，兼具明目之功。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以斷面硃砂點多、芳香濃烈者（茅蒼朮）為佳。",
+    "medicinalDiet": "蒼朮豬肝湯、蒼朮茯苓粥等。",
+    "sourceBook": "《藥膳學》第17頁",
+    "page": 17,
+    "status": "published"
+  },
+  {
+    "id": 77,
+    "name": "九層塔頭",
+    "scientificName": "唇形科植物羅勒（九層塔）",
+    "pinyin": "九層塔頭",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第17頁"
+      }
+    ],
+    "family": "理氣活血/轉骨 (唇形科根)",
+    "partsUsed": "理氣活血/轉骨 (唇形科根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第17頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "九層塔頭",
+      "理氣活血/轉骨 (唇形科根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "辛"
+    ],
+    "channels": [
+      "肺",
+      "脾",
+      "胃",
+      "大腸"
+    ],
+    "efficacy": "祛風利濕，散瘀止痛，消食健胃，解毒消腫。 小兒發育不良（轉骨發育）、筋骨酸痛、胃寒腹痛、跌打損傷。",
+    "cautions": "臺灣民間極具代表性的轉骨發育、強健筋骨食療名方原料。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以根頭粗壯、鬚根多、氣味辛香濃郁者為佳。",
+    "medicinalDiet": "九層塔頭燉排骨、九層塔頭燉土雞湯。",
+    "sourceBook": "《藥膳學》第17頁",
+    "page": 17,
+    "status": "published"
+  },
+  {
+    "id": 78,
+    "name": "吳茱萸",
+    "scientificName": "芸香科植物吳茱萸",
+    "pinyin": "吳茱萸",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第18頁"
+      }
+    ],
+    "family": "散寒止痛/降逆 (芸香科果實)",
+    "partsUsed": "散寒止痛/降逆 (芸香科果實)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第18頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "吳茱萸",
+      "散寒止痛/降逆 (芸香科果實)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "熱",
+    "taste": [
+      "苦",
+      "辛"
+    ],
+    "channels": [
+      "肝",
+      "脾",
+      "胃",
+      "腎"
+    ],
+    "efficacy": "散寒止痛，降逆止嘔，助陽止瀉。 厥陰頭痛（巔頂痛）、寒疝腹痛、寒濕腳氣、經行腹痛、嘔吐吞酸、五更泄瀉。",
+    "cautions": "暖肝溫胃之重藥，性熱味苦辛，藥膳中用量宜少。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以顆粒均勻、飽滿、氣味濃烈芳香者為佳。",
+    "medicinalDiet": "吳茱萸粥、吳茱萸生薑粥（微量入膳）。",
+    "sourceBook": "《藥膳學》第18頁",
+    "page": 18,
+    "status": "published"
+  },
+  {
+    "id": 79,
+    "name": "陳皮",
+    "scientificName": "芸香科植物橘及其栽培變種",
+    "pinyin": "陳皮",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第18頁"
+      }
+    ],
+    "family": "理氣燥濕/化痰 (芸香科果皮)",
+    "partsUsed": "理氣燥濕/化痰 (芸香科果皮)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第18頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "陳皮",
+      "理氣燥濕/化痰 (芸香科果皮)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "苦",
+      "辛"
+    ],
+    "channels": [
+      "肺",
+      "脾"
+    ],
+    "efficacy": "理氣健脾，燥濕化痰。 脘腹脹滿、食少吐瀉、咳嗽痰多、胸膈痞悶。",
+    "cautions": "行氣醒脾與化痰名品，陳久者良，故名陳皮。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以皮薄、質柔、香氣濃、陳久者為佳。",
+    "medicinalDiet": "陳皮牛肉湯、陳皮紅豆沙、陳皮鴨等。",
+    "sourceBook": "《藥膳學》第18頁",
+    "page": 18,
+    "status": "published"
+  },
+  {
+    "id": 80,
+    "name": "紅花",
+    "scientificName": "菊科植物紅花",
+    "pinyin": "紅花",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第18頁"
+      }
+    ],
+    "family": "活血通經 (菊科花)",
+    "partsUsed": "活血通經 (菊科花)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第18頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "紅花",
+      "活血通經 (菊科花)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "辛"
+    ],
+    "channels": [
+      "心",
+      "肝"
+    ],
+    "efficacy": "活血通經，散瘀止痛。 經閉痛經、產後瘀阻腹痛、胸痹心痛、瘀血腫痛、跌打損傷。",
+    "cautions": "少量活血養血，多量破血散瘀；孕婦忌用。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以花冠長、色紅黃、鮮艷、無枝葉雜質者為佳。",
+    "medicinalDiet": "紅花炒蝦仁、桑椹紅花飲等。",
+    "sourceBook": "《藥膳學》第18頁",
+    "page": 18,
+    "status": "published"
+  },
+  {
+    "id": 81,
+    "name": "川芎",
+    "scientificName": "繖形科植物川芎",
+    "pinyin": "川芎",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第19頁"
+      }
+    ],
+    "family": "活血行氣 (繖形科根莖)",
+    "partsUsed": "活血行氣 (繖形科根莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第19頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "川芎",
+      "活血行氣 (繖形科根莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "辛"
+    ],
+    "channels": [
+      "肝",
+      "膽",
+      "心包"
+    ],
+    "efficacy": "活血行氣，祛風止痛。為血中之氣藥。 頭痛（偏頭痛/風寒頭痛）、胸脅刺痛、月經不調、經閉痛經、產後瘀血、風濕痹痛。",
+    "cautions": "上行頭目、下行血海，被稱為「血中之氣藥」，頭痛要藥。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以個大、結實、黃褐色、油潤、香氣濃郁者為佳。",
+    "medicinalDiet": "川芎白芷燉魚頭、川芎當歸燉雞湯等。",
+    "sourceBook": "《藥膳學》第19頁",
+    "page": 19,
+    "status": "published"
+  },
+  {
+    "id": 82,
+    "name": "半夏",
+    "scientificName": "天南星科植物半夏",
+    "pinyin": "半夏",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第19頁"
+      }
+    ],
+    "family": "燥濕化痰/降逆 (天南星科塊莖)",
+    "partsUsed": "燥濕化痰/降逆 (天南星科塊莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第19頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "半夏",
+      "燥濕化痰/降逆 (天南星科塊莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "辛"
+    ],
+    "channels": [
+      "脾",
+      "胃",
+      "肺"
+    ],
+    "efficacy": "燥濕化痰，降逆止嘔，消痞散結。 濕痰寒痰、咳喘痰多、痰飲眩悸、胃氣上逆之嘔吐痞滿。",
+    "cautions": "化痰降逆要藥，生品有毒刺激咽喉，藥膳必須使用法半夏或薑半夏。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以個大、色白、粉性足、質堅實者為佳。",
+    "medicinalDiet": "薑半夏瘦肉湯（嚴格法製後入藥膳）。",
+    "sourceBook": "《藥膳學》第19頁",
+    "page": 19,
+    "status": "published"
+  },
+  {
+    "id": 83,
+    "name": "大棗",
+    "scientificName": "鼠李科植物棗",
+    "pinyin": "大棗",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第19頁"
+      }
+    ],
+    "family": "補氣養血 (鼠李科果實)",
+    "partsUsed": "補氣養血 (鼠李科果實)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第19頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "大棗",
+      "補氣養血 (鼠李科果實)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "胃",
+      "心"
+    ],
+    "efficacy": "補中益氣，養血安神，緩和藥性。 脾虛食少、乏力便溏、婦人臟躁、神志不安、心悸失眠、調和百藥。",
+    "cautions": "藥膳最廣泛應用的甜味調和與補血益氣上品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以個大、肉厚核小、色紫紅、味甘甜者為佳。",
+    "medicinalDiet": "紅棗枸杞燉雞、紅棗銀耳蓮子湯、紅棗粥等。",
+    "sourceBook": "《藥膳學》第19頁",
+    "page": 19,
+    "status": "published"
+  },
+  {
+    "id": 84,
+    "name": "黃精",
+    "scientificName": "百合科植物滇黃精、黃精或多花黃精",
+    "pinyin": "黃精",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第20頁"
+      }
+    ],
+    "family": "補氣養陰 (百合科根莖)",
+    "partsUsed": "補氣養陰 (百合科根莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第20頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "黃精",
+      "補氣養陰 (百合科根莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "肺",
+      "腎"
+    ],
+    "efficacy": "補氣養陰，健脾潤肺，益腎填精。 脾胃氣虛、體倦乏力、胃陰不足、口乾食少、肺虛燥咳、精血不足、鬚髮早白。",
+    "cautions": "氣陰雙補、平補不燥之仙家養生上品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以肉質肥厚、斷面黃白色、角質樣、味甘甜者為佳（多九蒸九曬）。",
+    "medicinalDiet": "黃精燉烏骨雞、黃精枸杞茶、黃精粥等。",
+    "sourceBook": "《藥膳學》第20頁",
+    "page": 20,
+    "status": "published"
+  },
+  {
+    "id": 85,
+    "name": "冬蟲夏草",
+    "scientificName": "麥角菌科真菌冬蟲夏草菌寄生在蝙蝠蛾科昆蟲幼蟲上的子座及幼蟲屍體的乾燥複合體",
+    "pinyin": "冬蟲夏草",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第20頁"
+      }
+    ],
+    "family": "補腎益肺/止血 (麥角菌科真菌與幼蟲)",
+    "partsUsed": "補腎益肺/止血 (麥角菌科真菌與幼蟲)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第20頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "冬蟲夏草",
+      "補腎益肺/止血 (麥角菌科真菌與幼蟲)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "肺",
+      "腎"
+    ],
+    "efficacy": "補腎益肺，止血化痰，秘精益氣。 腎虛精虧、陽痿遺精、腰膝酸痛、久咳虛喘、勞嗽痰血、病後虛弱。",
+    "cautions": "兼顧肺腎兩經、陰陽雙補之珍貴食療名藥。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以蟲體飽滿肥大、色黃亮、內部充實、子座短者為上品。",
+    "medicinalDiet": "蟲草肉蓯蓉燉羊肉、蟲草鴨湯、蟲草燉土雞湯。",
+    "sourceBook": "《藥膳學》第20頁",
+    "page": 20,
+    "status": "published"
+  },
+  {
+    "id": 86,
+    "name": "人參",
+    "scientificName": "五加科植物人參",
+    "pinyin": "人參",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第21頁"
+      }
+    ],
+    "family": "大補元氣 (五加科根)",
+    "partsUsed": "大補元氣 (五加科根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第21頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "人參",
+      "大補元氣 (五加科根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "苦"
+    ],
+    "channels": [
+      "脾",
+      "肺",
+      "心",
+      "腎"
+    ],
+    "efficacy": "大補元氣，復脈固脫，補脾益肺，生津養血，安神益智。 元氣虛脫、肢冷脈微、脾虛食少、肺虛喘咳、津傷口渴、內熱消渴、驚悸失眠、血虛萎黃。",
+    "cautions": "百草之王，大補元氣要藥。服參期間不宜食蘿蔔、飲濃茶。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以蘆長、皮細、紋緊、體實、珍珠點顯著者為佳。",
+    "medicinalDiet": "人參燉土雞、參棗烏雞湯、人參酒等。",
+    "sourceBook": "《藥膳學》第21頁",
+    "page": 21,
+    "status": "published"
+  },
+  {
+    "id": 87,
+    "name": "何首烏",
+    "scientificName": "蓼科植物何首烏",
+    "pinyin": "何首烏",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第21頁"
+      }
+    ],
+    "family": "補肝腎/益精血 (蓼科塊根)",
+    "partsUsed": "補肝腎/益精血 (蓼科塊根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第21頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "何首烏",
+      "補肝腎/益精血 (蓼科塊根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "苦",
+      "澀"
+    ],
+    "channels": [
+      "肝",
+      "腎"
+    ],
+    "efficacy": "補肝腎，益精血，烏鬚髮，強筋骨，化濁降脂。 精血虧虛、頭暈目眩、鬚髮早白、腰膝酸軟、遺精崩帶、高血脂症。",
+    "cautions": "製首烏滋補肝腎、烏黑鬚髮；生首烏通便解毒。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以個大、體重、質堅、粉性足、斷面雲錦花紋明顯者為佳。",
+    "medicinalDiet": "首烏燉排骨、首烏雞蛋湯、首烏芝麻糊。",
+    "sourceBook": "《藥膳學》第21頁",
+    "page": 21,
+    "status": "published"
+  },
+  {
+    "id": 88,
+    "name": "續斷",
+    "scientificName": "川續斷科植物川續斷",
+    "pinyin": "續斷",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第21頁"
+      }
+    ],
+    "family": "補肝腎/續筋骨 (川續斷科根)",
+    "partsUsed": "補肝腎/續筋骨 (川續斷科根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第21頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "續斷",
+      "補肝腎/續筋骨 (川續斷科根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "苦",
+      "辛"
+    ],
+    "channels": [
+      "肝",
+      "腎"
+    ],
+    "efficacy": "補肝腎，強筋骨，續折傷，止崩漏，安胎。 腰膝酸軟、風濕痹痛、跌撲損傷、金瘡骨折、胎漏下血、胎動不安。",
+    "cautions": "能續筋骨、安胎元，傷科骨科與婦科常用之強筋骨藥材。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以條粗、質堅、斷面綠褐色、無枯心者為佳。",
+    "medicinalDiet": "續斷杜仲煲豬尾湯、續斷燉排骨。",
+    "sourceBook": "《藥膳學》第21頁",
+    "page": 21,
+    "status": "published"
+  },
+  {
+    "id": 89,
+    "name": "肉蓯蓉",
+    "scientificName": "列當科植物肉蓯蓉或管花肉蓯蓉",
+    "pinyin": "肉蓯蓉",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第22頁"
+      }
+    ],
+    "family": "補腎助陽/潤腸 (列當科帶鱗葉肉質莖)",
+    "partsUsed": "補腎助陽/潤腸 (列當科帶鱗葉肉質莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第22頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "肉蓯蓉",
+      "補腎助陽/潤腸 (列當科帶鱗葉肉質莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "鹹"
+    ],
+    "channels": [
+      "腎",
+      "大腸"
+    ],
+    "efficacy": "補腎助陽，益精血，潤腸通便。溫而不燥，補而不峻。 腎陽虛衰、陽痿不孕、腰膝冷痛、筋骨無力、腸燥便秘。",
+    "cautions": "有「沙漠人參」之稱，溫潤滋補，老人腸燥便秘兼腎虛者尤宜。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以條粗長、密被鱗片、色棕褐、油潤柔軟者為佳。",
+    "medicinalDiet": "肉蓯蓉羊肉湯、肉蓯蓉泡酒、蓯蓉燉牛尾。",
+    "sourceBook": "《藥膳學》第22頁",
+    "page": 22,
+    "status": "published"
+  },
+  {
+    "id": 90,
+    "name": "白朮",
+    "scientificName": "菊科植物白朮",
+    "pinyin": "白朮",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第22頁"
+      }
+    ],
+    "family": "健脾益氣/燥濕 (菊科根莖)",
+    "partsUsed": "健脾益氣/燥濕 (菊科根莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第22頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "白朮",
+      "健脾益氣/燥濕 (菊科根莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "苦"
+    ],
+    "channels": [
+      "脾",
+      "胃"
+    ],
+    "efficacy": "健脾益氣，燥濕利水，止汗，安胎。 脾氣虛弱、食少倦怠、脘痞泄瀉、痰飲水腫、自汗、胎動不安。",
+    "cautions": "補脾燥濕名藥，與茯苓、人參配伍為四君子健脾基礎。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以身乾個大、皮細色黃內白、斷面平坦有雲頭、質堅實者為佳。",
+    "medicinalDiet": "白朮茯苓粥、四君子燉排骨、補中益氣糕。",
+    "sourceBook": "《藥膳學》第22頁",
+    "page": 22,
+    "status": "published"
+  },
+  {
+    "id": 91,
+    "name": "當歸",
+    "scientificName": "繖形科植物當歸或日本大和當歸",
+    "pinyin": "當歸",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第23頁"
+      }
+    ],
+    "family": "補血活血/調經 (繖形科根)",
+    "partsUsed": "補血活血/調經 (繖形科根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第23頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "當歸",
+      "補血活血/調經 (繖形科根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "辛"
+    ],
+    "channels": [
+      "心",
+      "肝",
+      "脾"
+    ],
+    "efficacy": "補血活血，調經止痛，潤腸通便。 血虛萎黃、眩暈心悸、月經不調、經閉痛經、虛寒腹痛、腸燥便秘、風濕痹痛、跌撲損傷。",
+    "cautions": "婦科調經聖藥，亦為藥膳滋補最普及之血分首選。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以身乾枝大、根頭肥大、體長腿少、油潤、肉質飽滿、香氣濃郁者為佳。",
+    "medicinalDiet": "當歸生薑羊肉湯、當歸燉烏骨雞、參歸燉雞等。",
+    "sourceBook": "《藥膳學》第23頁",
+    "page": 23,
+    "status": "published"
+  },
+  {
+    "id": 92,
+    "name": "杜仲",
+    "scientificName": "杜仲科植物杜仲",
+    "pinyin": "杜仲",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第23頁"
+      }
+    ],
+    "family": "補肝腎/強筋骨 (杜仲科樹皮)",
+    "partsUsed": "補肝腎/強筋骨 (杜仲科樹皮)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第23頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "杜仲",
+      "補肝腎/強筋骨 (杜仲科樹皮)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "肝",
+      "腎"
+    ],
+    "efficacy": "補肝腎，強筋骨，安胎，降血壓。 腰膝酸痛、筋骨痿軟、小便餘瀝、陰下濕癢、胎漏胎動不安、高血壓病。",
+    "cautions": "強健腰脊首選，折斷具豐富彈性膠絲；與豬腰配伍是腰膝酸痛名方。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以張大完整無破、皮細肉厚、折斷白絲稠密、外面黃棕、內面黑褐光滑者為佳。",
+    "medicinalDiet": "杜仲燉豬腰、杜仲寄生茶、杜仲茶。",
+    "sourceBook": "《藥膳學》第23頁",
+    "page": 23,
+    "status": "published"
+  },
+  {
+    "id": 93,
+    "name": "淫羊藿",
+    "scientificName": "小檗科植物淫羊藿",
+    "pinyin": "淫羊藿",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第24頁"
+      }
+    ],
+    "family": "補腎壯陽/強筋骨 (小檗科地上部)",
+    "partsUsed": "補腎壯陽/強筋骨 (小檗科地上部)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第24頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "淫羊藿",
+      "補腎壯陽/強筋骨 (小檗科地上部)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "辛"
+    ],
+    "channels": [
+      "肝",
+      "腎"
+    ],
+    "efficacy": "補腎壯陽，強筋骨，祛風除濕。 陽痿遺精、小便淋瀝、筋骨痿軟、腰膝無力、半身不遂、風濕痹痛、四肢麻木不仁、更年期高血壓。",
+    "cautions": "又名仙靈脾，壯陽祛風名藥，常用於骨質疏鬆與腰膝酸軟之膳食調養。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以梗少、葉多、色黃綠、不破碎者為佳。",
+    "medicinalDiet": "豬腰杜仲淫羊藿湯、人參百歲酒等。",
+    "sourceBook": "《藥膳學》第24頁",
+    "page": 24,
+    "status": "published"
+  },
+  {
+    "id": 94,
+    "name": "肉桂",
+    "scientificName": "樟科植物肉桂",
+    "pinyin": "肉桂",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第24頁"
+      }
+    ],
+    "family": "補火助陽/引火歸元 (樟科樹皮)",
+    "partsUsed": "補火助陽/引火歸元 (樟科樹皮)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第24頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "肉桂",
+      "補火助陽/引火歸元 (樟科樹皮)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "熱",
+    "taste": [
+      "甘",
+      "辛"
+    ],
+    "channels": [
+      "腎",
+      "脾",
+      "心",
+      "肝"
+    ],
+    "efficacy": "補火助陽，引火歸元，散寒止痛，溫通經脈。 命門火衰、肢冷脈微、亡陽虛脫、心腹冷痛、寒疝奔豚、虛寒吐瀉、經閉痛經。",
+    "cautions": "溫補命門真火之大熱重藥，引火歸元；藥膳中常用作香料與暖胃溫中調味。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以皮厚、肉細、油性足、斷面紫紅、香氣濃烈辛甜者為佳。",
+    "medicinalDiet": "肉桂蘋果茶、肉桂燉牛肉、肉桂薑母茶。",
+    "sourceBook": "《藥膳學》第24頁",
+    "page": 24,
+    "status": "published"
+  },
+  {
+    "id": 95,
+    "name": "天麻",
+    "scientificName": "蘭科植物天麻",
+    "pinyin": "天麻",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第24-25頁"
+      }
+    ],
+    "family": "息風止痙/平抑肝陽 (蘭科塊莖)",
+    "partsUsed": "息風止痙/平抑肝陽 (蘭科塊莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第24-25頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "天麻",
+      "息風止痙/平抑肝陽 (蘭科塊莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "肝"
+    ],
+    "efficacy": "息風止痙，平抑肝陽，祛風通絡。 頭痛眩暈、肢體麻木、小兒驚風、癲癇抽搐、破傷風、風濕痹痛、高血壓頭暈。",
+    "cautions": "治眩暈頭痛之神品，不論寒熱虛實皆可配伍使用；與豬腦同燉為健腦名膳。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以個大、體重、質堅硬、半透明、斷面角質狀無空心者為佳。",
+    "medicinalDiet": "天麻燉豬腦、天麻燉魚頭、川芎天麻茶等。",
+    "sourceBook": "《藥膳學》第24-25頁",
+    "page": 24,
+    "status": "published"
+  },
+  {
+    "id": 96,
+    "name": "山茱萸",
+    "scientificName": "山茱萸科植物山茱萸",
+    "pinyin": "山茱萸",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第25頁"
+      }
+    ],
+    "family": "收澀/補益肝腎 (山茱萸科果肉)",
+    "partsUsed": "收澀/補益肝腎 (山茱萸科果肉)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第25頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "山茱萸",
+      "收澀/補益肝腎 (山茱萸科果肉)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "酸",
+      "澀"
+    ],
+    "channels": [
+      "肝",
+      "腎"
+    ],
+    "efficacy": "補益肝腎，澀精固脫。 眩暈耳鳴、腰膝酸軟、陽痿遺精、遺尿尿頻、崩漏帶下、大汗虛脫、內熱消渴。",
+    "cautions": "六味地黃丸之「三補」要角，溫補肝腎而能斂汗固脫。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以無核、皮肉肥厚、色紅油潤者為佳。",
+    "medicinalDiet": "山茱萸肉粥、山茱萸酒等。",
+    "sourceBook": "《藥膳學》第25頁",
+    "page": 25,
+    "status": "published"
+  },
+  {
+    "id": 97,
+    "name": "覆盆子",
+    "scientificName": "薔薇科植物掌葉覆盆子",
+    "pinyin": "覆盆子",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第25頁"
+      }
+    ],
+    "family": "固精縮尿/明目 (薔薇科果實)",
+    "partsUsed": "固精縮尿/明目 (薔薇科果實)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第25頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "覆盆子",
+      "固精縮尿/明目 (薔薇科果實)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "酸"
+    ],
+    "channels": [
+      "肝",
+      "腎",
+      "膀胱"
+    ],
+    "efficacy": "補肝益腎，固精縮尿，助陽，明目。 陽痿早洩、遺精滑精、宮冷不孕、帶下清稀、尿頻遺溺、目視昏暗、鬚髮早白。",
+    "cautions": "固精縮尿良藥，名「覆盆」取其服後夜尿減少、便盆可覆置之意。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以個大、飽滿、粒整、結實、色灰綠、無葉梗者為佳。",
+    "medicinalDiet": "覆盆子果醬、薄荷覆盆子飲、香蕉覆盆子蛋餅。",
+    "sourceBook": "《藥膳學》第25頁",
+    "page": 25,
+    "status": "published"
+  },
+  {
+    "id": 98,
+    "name": "五味子",
+    "scientificName": "五味子科植物五味子或華中五味子",
+    "pinyin": "五味子",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第25頁"
+      }
+    ],
+    "family": "收斂固澀/生津寧心 (五味子科果實)",
+    "partsUsed": "收斂固澀/生津寧心 (五味子科果實)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第25頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "五味子",
+      "收斂固澀/生津寧心 (五味子科果實)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "酸"
+    ],
+    "channels": [
+      "肺",
+      "心",
+      "腎"
+    ],
+    "efficacy": "澀精固氣，益氣生津，斂肺鎮咳，補腎寧心。 久嗽虛喘、夢遺滑精、遺尿尿頻、久瀉不止、自汗盜汗、津傷口渴、短氣脈虛、內熱消渴、心悸失眠。",
+    "cautions": "皮肉甘酸，核中辛苦，全果都有鹹味，五味齊全；保肝收斂之要藥。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以皮肉肥厚、色紫紅、油潤、肉酸甜者為佳。",
+    "medicinalDiet": "五味子茶、五味子蒸豬瘦肉、五味枸杞茶。",
+    "sourceBook": "《藥膳學》第25頁",
+    "page": 25,
+    "status": "published"
+  },
+  {
+    "id": 99,
+    "name": "生地黃",
+    "scientificName": "玄參科植物地黃",
+    "pinyin": "生地黃",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第28頁"
+      }
+    ],
+    "family": "清熱涼血/養陰 (玄參科塊根)",
+    "partsUsed": "清熱涼血/養陰 (玄參科塊根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第28頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "生地黃",
+      "清熱涼血/養陰 (玄參科塊根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "甘",
+      "苦"
+    ],
+    "channels": [
+      "心",
+      "肝",
+      "腎"
+    ],
+    "efficacy": "清熱涼血，養陰生津。（蒸製加黃酒後即成熟地黃，性微溫，主補血滋陰）。 溫熱病熱入營血、發斑發疹、骨蒸潮熱、吐血衄血、咽喉腫痛、內熱消渴。",
+    "cautions": "鮮地黃清熱涼血生津；生地黃清熱養陰；熟地黃滋陰補血益精填髓。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以個大身圓、皮細、體軟、斷面有油光者為佳。",
+    "medicinalDiet": "地黃粥、生地赤豆湯、地黃酒等。",
+    "sourceBook": "《藥膳學》第28頁",
+    "page": 28,
+    "status": "published"
+  },
+  {
+    "id": 100,
+    "name": "牡丹皮",
+    "scientificName": "毛茛科植物牡丹",
+    "pinyin": "牡丹皮",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第28頁"
+      }
+    ],
+    "family": "清熱涼血/活血散瘀 (毛茛科根皮)",
+    "partsUsed": "清熱涼血/活血散瘀 (毛茛科根皮)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第28頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "牡丹皮",
+      "清熱涼血/活血散瘀 (毛茛科根皮)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "苦",
+      "辛"
+    ],
+    "channels": [
+      "心",
+      "肝",
+      "腎"
+    ],
+    "efficacy": "清熱涼血，活血散瘀，退虛熱。 溫毒發斑、吐血衄血、熱伏陰分發熱、陰虛骨蒸潮熱、血滯經閉痛經、癰腫瘡瘍、跌打傷痛。",
+    "cautions": "涼血而不留瘀，活血而不動血，水提取物對原發性高血壓有舒緩作用。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以條粗長、皮厚、無木心、斷面粉白色、亮銀星（丹皮酚結晶）多者為佳。",
+    "medicinalDiet": "牡丹皮赤芍飲、丹皮燉豆腐等。",
+    "sourceBook": "《藥膳學》第28頁",
+    "page": 28,
+    "status": "published"
+  },
+  {
+    "id": 101,
+    "name": "赤芍",
+    "scientificName": "毛茛科植物芍藥或川赤芍",
+    "pinyin": "赤芍",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第29頁"
+      }
+    ],
+    "family": "清熱涼血/散瘀止痛 (毛茛科根)",
+    "partsUsed": "清熱涼血/散瘀止痛 (毛茛科根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第29頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "赤芍",
+      "清熱涼血/散瘀止痛 (毛茛科根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "苦"
+    ],
+    "channels": [
+      "肝"
+    ],
+    "efficacy": "清熱涼血，散瘀止痛，消癰腫。 溫毒發斑、吐血衄血、血痢、目赤腫痛、肝鬱脅痛、經閉痛經、癥瘕腹痛、癰腫瘡毒、跌打損傷。",
+    "cautions": "白芍偏於養血柔肝斂陰，赤芍偏於清熱涼血活血散瘀。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以根條粗長、外皮易脫落、皺紋深、斷面白色粉性足者為佳。",
+    "medicinalDiet": "牡丹皮赤芍飲、赤芍花酒等。",
+    "sourceBook": "《藥膳學》第29頁",
+    "page": 29,
+    "status": "published"
+  },
+  {
+    "id": 102,
+    "name": "黃連",
+    "scientificName": "毛茛科植物黃連、三角葉黃連或雲南黃連",
+    "pinyin": "黃連",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第29-30頁"
+      }
+    ],
+    "family": "清熱燥濕/瀉火解毒 (毛茛科根莖)",
+    "partsUsed": "清熱燥濕/瀉火解毒 (毛茛科根莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第29-30頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "黃連",
+      "清熱燥濕/瀉火解毒 (毛茛科根莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "心",
+      "脾",
+      "胃",
+      "肝",
+      "膽",
+      "大腸"
+    ],
+    "efficacy": "清熱燥濕，瀉火解毒，清心除煩。 濕熱痞滿、嘔吐吞酸、瀉痢、黃疸、高熱神昏、心火亢盛心煩失眠、心腎不交失眠、血熱吐衄、目赤牙痛、癰腫疔瘡。",
+    "cautions": "酒黃連善清上焦心火；薑黃連清胃止嘔；茱萸製黃連清肝胃不和嘔吐吞酸。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以條肥壯、連珠形（雞爪形）、質堅實、斷面紅黃色者為佳。",
+    "medicinalDiet": "黃連木耳燉豬肚、黃連阿膠湯等（微量入膳）。",
+    "sourceBook": "《藥膳學》第29-30頁",
+    "page": 29,
+    "status": "published"
+  },
+  {
+    "id": 103,
+    "name": "白及",
+    "scientificName": "蘭科植物白及",
+    "pinyin": "白及",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第30頁"
+      }
+    ],
+    "family": "收斂止血/消腫生肌 (蘭科塊莖)",
+    "partsUsed": "收斂止血/消腫生肌 (蘭科塊莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第30頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "白及",
+      "收斂止血/消腫生肌 (蘭科塊莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "甘",
+      "苦",
+      "澀"
+    ],
+    "channels": [
+      "肺",
+      "肝",
+      "胃"
+    ],
+    "efficacy": "補肺，收斂止血，消腫生肌，斂瘡。 肺結核咳血、咯血、胃及十二指腸潰瘍出血、吐血、外傷出血、瘡瘍腫毒、燙傷皮裂。",
+    "cautions": "黏液質極豐，覆蓋潰瘍面止血生肌良藥，亦為修復胃壁之藥膳上品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以根莖肥厚、色白明亮、個大堅實、無鬚根者為佳。",
+    "medicinalDiet": "白及粥、白及藕節槐花飲等。",
+    "sourceBook": "《藥膳學》第30頁",
+    "page": 30,
+    "status": "published"
+  },
+  {
+    "id": 104,
+    "name": "丹參",
+    "scientificName": "唇形科植物丹參",
+    "pinyin": "丹參",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第30頁"
+      }
+    ],
+    "family": "活血祛瘀/清心涼血 (唇形科根)",
+    "partsUsed": "活血祛瘀/清心涼血 (唇形科根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第30頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "丹參",
+      "活血祛瘀/清心涼血 (唇形科根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "苦"
+    ],
+    "channels": [
+      "心",
+      "心包",
+      "肝"
+    ],
+    "efficacy": "活血調經，祛瘀止痛，涼血消癰，清心除煩，養血安神。古稱「一味丹參功同四物」。 月經不調、經閉痛經、癥瘕積聚、胸腹刺痛、心絞痛（冠心病）、心煩不眠、肝脾腫大。",
+    "cautions": "活血化瘀而不傷正，現代心血管疾病食療極為推崇。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以質堅硬、易折斷、條粗壯、皮紅褐色、斷面紫黑有菊花狀白點者為佳。",
+    "medicinalDiet": "田七丹參燉雞、丹參紅花酒、丹參粥。",
+    "sourceBook": "《藥膳學》第30頁",
+    "page": 30,
+    "status": "published"
+  },
+  {
+    "id": 105,
+    "name": "胖大海",
+    "scientificName": "梧桐科植物胖大海",
+    "pinyin": "胖大海",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第31頁"
+      }
+    ],
+    "family": "清熱潤肺/利咽通便 (梧桐科種子)",
+    "partsUsed": "清熱潤肺/利咽通便 (梧桐科種子)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第31頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "胖大海",
+      "清熱潤肺/利咽通便 (梧桐科種子)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "涼",
+    "taste": [
+      "甘",
+      "淡"
+    ],
+    "channels": [
+      "肺",
+      "大腸"
+    ],
+    "efficacy": "清熱潤肺，利咽解毒，潤腸通便。 肺熱聲啞、乾咳無痰、咽喉腫痛、慢性咽炎、熱結便秘、頭痛目赤、牙痛。",
+    "cautions": "開音開嗓第一良藥，泡沸水後體積膨大數倍如海綿狀。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以個大、棕色、表面皺紋細、遇水膨脹度大者為佳。",
+    "medicinalDiet": "膨大海茶、冰糖燉膨大海、胖大海羅漢果飲。",
+    "sourceBook": "《藥膳學》第31頁",
+    "page": 31,
+    "status": "published"
+  },
+  {
+    "id": 106,
+    "name": "桑白皮",
+    "scientificName": "桑科植物桑",
+    "pinyin": "桑白皮",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第31頁"
+      }
+    ],
+    "family": "瀉肺平喘/利水消腫 (桑科根皮)",
+    "partsUsed": "瀉肺平喘/利水消腫 (桑科根皮)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第31頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "桑白皮",
+      "瀉肺平喘/利水消腫 (桑科根皮)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "肺",
+      "脾"
+    ],
+    "efficacy": "瀉肺平喘，行水消腫，清肺火。 肺熱咳喘、吐血、面目浮腫、小便不利、腳氣水腫。",
+    "cautions": "專瀉肺中水火，平喘止咳、利水消腫。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以色白、皮厚、粉性足者為佳。",
+    "medicinalDiet": "桑白皮茶、桑菊薄荷茶等。",
+    "sourceBook": "《藥膳學》第31頁",
+    "page": 31,
+    "status": "published"
+  },
+  {
+    "id": 107,
+    "name": "貝母",
+    "scientificName": "百合科植物川貝母或浙貝母",
+    "pinyin": "貝母",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第31-32頁"
+      }
+    ],
+    "family": "清熱化痰/潤肺止咳 (百合科鱗莖)",
+    "partsUsed": "清熱化痰/潤肺止咳 (百合科鱗莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第31-32頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "貝母",
+      "清熱化痰/潤肺止咳 (百合科鱗莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "苦"
+    ],
+    "channels": [
+      "肺",
+      "心"
+    ],
+    "efficacy": "清熱化痰，潤肺止咳，散結消癰。 川貝長於潤肺化痰，主肺燥久咳、乾咳少痰；浙貝長於清火散結，主痰黃稠、瘰癧瘡癰。",
+    "cautions": "咳嗽食療最常用名品，乾咳久咳選川貝，痰黃稠熱咳選浙貝。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "川貝以松貝粒小如珠、色白、粉足為佳；浙貝以個大飽滿粉足為佳。",
+    "medicinalDiet": "川貝燉雪梨、雪梨貝母冰糖飲、貝母粥。",
+    "sourceBook": "《藥膳學》第31-32頁",
+    "page": 31,
+    "status": "published"
+  },
+  {
+    "id": 108,
+    "name": "麥門冬",
+    "scientificName": "百合科植物麥冬或沿階草",
+    "pinyin": "麥門冬",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第32頁"
+      }
+    ],
+    "family": "養陰生津/潤肺清心 (百合科塊根)",
+    "partsUsed": "養陰生津/潤肺清心 (百合科塊根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第32頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "麥門冬",
+      "養陰生津/潤肺清心 (百合科塊根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "甘",
+      "苦"
+    ],
+    "channels": [
+      "肺",
+      "心",
+      "胃"
+    ],
+    "efficacy": "養陰生津，潤肺止咳，清心除煩，潤腸通便。 肺燥乾咳、咯血、虛勞煩熱、津傷口渴、咽乾、心煩失眠、腸燥便秘。",
+    "cautions": "養陰生津名藥，與人參、五味子同用即生脈散，夏日防中暑耗氣傷津良方。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以肥壯、半透明、黃白色、質柔、氣香、嚼之發黏者為佳。",
+    "medicinalDiet": "麥冬粟米粥、麥冬燉老鴨、生脈茶（人參、麥冬、五味子）。",
+    "sourceBook": "《藥膳學》第32頁",
+    "page": 32,
+    "status": "published"
+  },
+  {
+    "id": 109,
+    "name": "女貞子",
+    "scientificName": "木犀科植物女貞",
+    "pinyin": "女貞子",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第32-33頁"
+      }
+    ],
+    "family": "滋補肝腎/明目烏髮 (木犀科果實)",
+    "partsUsed": "滋補肝腎/明目烏髮 (木犀科果實)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第32-33頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "女貞子",
+      "滋補肝腎/明目烏髮 (木犀科果實)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "涼",
+    "taste": [
+      "甘",
+      "苦"
+    ],
+    "channels": [
+      "肝",
+      "腎"
+    ],
+    "efficacy": "補益肝腎，清虛熱，明目烏髮。 肝腎陰虛、頭暈目眩、腰膝酸軟、遺精耳鳴、鬚髮早白、視物昏暗、骨蒸潮熱。現代研究抑制幽門桿菌並降尿酸。",
+    "cautions": "二至丸主要成分，平補肝腎陰虛要藥，現代研究能調節高尿酸血症。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以粒大、飽滿、肉質、色黑紫、無雜質者為佳。",
+    "medicinalDiet": "女貞子酒、桑椹二至膏、女貞黑豆燉排骨。",
+    "sourceBook": "《藥膳學》第32-33頁",
+    "page": 32,
+    "status": "published"
+  },
+  {
+    "id": 110,
+    "name": "白芍",
+    "scientificName": "毛茛科植物芍藥除去栓皮",
+    "pinyin": "白芍",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第33頁"
+      }
+    ],
+    "family": "養血調經/斂陰止痛 (毛茛科根)",
+    "partsUsed": "養血調經/斂陰止痛 (毛茛科根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第33頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "白芍",
+      "養血調經/斂陰止痛 (毛茛科根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "苦",
+      "酸"
+    ],
+    "channels": [
+      "肝",
+      "脾"
+    ],
+    "efficacy": "養血斂陰，柔肝止痛，平抑肝陽。 月經不調、經行腹痛、崩漏、自汗盜汗、脅肋脘腹疼痛、四肢攣痛、頭痛眩暈。",
+    "cautions": "酸甘化陰之代表，與甘草合用（芍藥甘草湯）善緩急止痛解腳痙攣。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以根粗長、勻直、皮色光潔、質堅實、斷面粉白色、粉性足者為佳。",
+    "medicinalDiet": "白芍藥膳蝦、白芍當歸蜜飲、白芍燉雞。",
+    "sourceBook": "《藥膳學》第33頁",
+    "page": 33,
+    "status": "published"
+  },
+  {
+    "id": 111,
+    "name": "鉤藤",
+    "scientificName": "茜草科植物鉤藤、華鉤藤或毛鉤藤",
+    "pinyin": "鉤藤",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第33頁"
+      }
+    ],
+    "family": "平肝熄風/清熱降壓 (茜草科帶鉤莖枝)",
+    "partsUsed": "平肝熄風/清熱降壓 (茜草科帶鉤莖枝)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第33頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "鉤藤",
+      "平肝熄風/清熱降壓 (茜草科帶鉤莖枝)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "肝",
+      "心包"
+    ],
+    "efficacy": "清熱平肝，熄風止痙，降血壓。 頭痛眩暈、肝陽上亢、高血壓病、小兒驚風抽搐、夜啼、熱盛動風。",
+    "cautions": "降血壓與平息內風名藥，煎煮時間不宜超過20分鐘以保有效成分。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以雙鉤形如錨狀、莖細、鉤結實、光滑、色紅褐或紫褐者為佳。",
+    "medicinalDiet": "天麻鉤藤燉豬腦、鉤藤茶（入湯劑宜後下，不可久煎）。",
+    "sourceBook": "《藥膳學》第33頁",
+    "page": 33,
+    "status": "published"
+  },
+  {
+    "id": 112,
+    "name": "茯苓",
+    "scientificName": "多孔菌科真菌茯苓",
+    "pinyin": "茯苓",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第34頁"
+      }
+    ],
+    "family": "利水滲濕/健脾寧心 (多孔菌科菌核)",
+    "partsUsed": "利水滲濕/健脾寧心 (多孔菌科菌核)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第34頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "茯苓",
+      "利水滲濕/健脾寧心 (多孔菌科菌核)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘",
+      "淡"
+    ],
+    "channels": [
+      "心",
+      "脾",
+      "肺",
+      "腎"
+    ],
+    "efficacy": "滲濕利水，健脾和胃，寧心安神。利水而不傷正氣。 小便不利、水腫脹滿、痰飲眩悸、脾虛食少便溏、心神不安、失眠健忘。",
+    "cautions": "四時皆宜之健脾化濕首選；抱松根者名茯神，專長寧心安神。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以體重堅實、外皮褐色具光澤、斷面白色細膩、嚼之黏牙者為佳。",
+    "medicinalDiet": "茯苓糕、茯苓栗子粥、茯苓麥冬粥、茯苓酒。",
+    "sourceBook": "《藥膳學》第34頁",
+    "page": 34,
+    "status": "published"
+  },
+  {
+    "id": 113,
+    "name": "牛膝",
+    "scientificName": "莧科植物懷牛膝或川牛膝",
+    "pinyin": "牛膝",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第34頁"
+      }
+    ],
+    "family": "活血通經/補肝腎 (莧科根)",
+    "partsUsed": "活血通經/補肝腎 (莧科根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第34頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "牛膝",
+      "活血通經/補肝腎 (莧科根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "苦",
+      "酸"
+    ],
+    "channels": [
+      "肝",
+      "腎"
+    ],
+    "efficacy": "補肝腎，強筋骨，活血通經，引火下行，利尿通淋。 腰膝酸痛、下肢痿軟、經閉痛經、產後血瘀腹痛、熱淋血淋、跌打損傷、牙齦腫痛。",
+    "cautions": "生用破血行瘀、引火下行；熟用補益肝腎、強健筋骨。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以條長、皮細肉肥、色黃白者為佳。",
+    "medicinalDiet": "牛膝絲瓜湯、牛膝蹄筋湯、牛膝燉豬腳。",
+    "sourceBook": "《藥膳學》第34頁",
+    "page": 34,
+    "status": "published"
+  },
+  {
+    "id": 114,
+    "name": "枇杷葉",
+    "scientificName": "薔薇科植物枇杷",
+    "pinyin": "枇杷葉",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第34-35頁"
+      }
+    ],
+    "family": "清肺止咳/和胃降逆 (薔薇科葉)",
+    "partsUsed": "清肺止咳/和胃降逆 (薔薇科葉)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第34-35頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "枇杷葉",
+      "清肺止咳/和胃降逆 (薔薇科葉)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "涼",
+    "taste": [
+      "苦"
+    ],
+    "channels": [
+      "肺",
+      "胃"
+    ],
+    "efficacy": "清肺止咳，和胃降逆，止渴，降氣化痰。 肺熱咳嗽、陰虛勞嗽、咳血衄血、胃熱嘔吐、呃逆、氣逆喘急。",
+    "cautions": "入藥必須刷盡背部金黃色絨毛，否則刺激咽喉引起劇烈咳嗽。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以葉大、色綠或紅棕、無黃葉、背部絨毛刷除乾淨者為佳。",
+    "medicinalDiet": "枇杷葉粥、枇杷葉蜜茶、枇杷葉雪梨湯。",
+    "sourceBook": "《藥膳學》第34-35頁",
+    "page": 34,
+    "status": "published"
+  },
+  {
+    "id": 115,
+    "name": "桔梗",
+    "scientificName": "桔梗科植物桔梗",
+    "pinyin": "桔梗",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第35頁"
+      }
+    ],
+    "family": "宣肺排膿/利咽 (桔梗科根)",
+    "partsUsed": "宣肺排膿/利咽 (桔梗科根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第35頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "桔梗",
+      "宣肺排膿/利咽 (桔梗科根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "苦",
+      "辛"
+    ],
+    "channels": [
+      "肺"
+    ],
+    "efficacy": "開宣肺氣，祛痰排膿，利咽喉，引藥上行。 咳嗽痰多、胸滿痛、咽喉腫痛、聲音嘶啞、肺癰吐膿、痢疾腹痛、小便癃閉。",
+    "cautions": "為「舟楫之劑」，能載諸藥上浮入肺；利咽排膿要藥。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以蘆頭長、條粗均勻、堅實、潔白、味苦者為佳。",
+    "medicinalDiet": "涼拌桔梗、桔梗冬瓜排骨湯、桔梗茶。",
+    "sourceBook": "《藥膳學》第35頁",
+    "page": 35,
+    "status": "published"
+  },
+  {
+    "id": 116,
+    "name": "銀耳",
+    "scientificName": "銀耳科真菌銀耳",
+    "pinyin": "銀耳",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第36頁"
+      }
+    ],
+    "family": "滋陰潤肺/養胃生津 (真菌子實體)",
+    "partsUsed": "滋陰潤肺/養胃生津 (真菌子實體)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第36頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "銀耳",
+      "滋陰潤肺/養胃生津 (真菌子實體)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘",
+      "淡"
+    ],
+    "channels": [
+      "肺",
+      "胃",
+      "腎"
+    ],
+    "efficacy": "滋陰潤肺，養胃生津，益氣和血，強心補腦。 虛勞咳嗽、痰中帶血、津少口渴、病後體虛、大便秘結、陰虛內熱。為不受參茸等溫熱補品之病患的最佳清補品。",
+    "cautions": "平民燕窩，富含植物性膠質與多醣體，美容潤膚、潤肺止咳聖品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以色澤黃白、鮮潔發亮、瓣大形似梅花、帶韌性、脹性好者為佳。",
+    "medicinalDiet": "冰糖銀耳蓮子湯、枸杞紅棗銀耳羹、銀耳雪梨盅。",
+    "sourceBook": "《藥膳學》第36頁",
+    "page": 36,
+    "status": "published"
+  },
+  {
+    "id": 117,
+    "name": "山藥",
+    "scientificName": "薯蕷科植物薯蕷",
+    "pinyin": "山藥",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第36-37頁"
+      }
+    ],
+    "family": "健脾補肺/固腎益精 (薯蕷科塊莖)",
+    "partsUsed": "健脾補肺/固腎益精 (薯蕷科塊莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第36-37頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "山藥",
+      "健脾補肺/固腎益精 (薯蕷科塊莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "肺",
+      "腎"
+    ],
+    "efficacy": "補脾養胃，生津益肺，補腎澀精。脾肺腎三陰皆補。 脾虛食少、久瀉不止、肺虛喘咳、腎虛遺精、帶下尿頻、虛熱消渴（糖尿病）。",
+    "cautions": "麩炒山藥增強補脾止瀉；鮮品黏液質豐富，護胃降糖之食補佳品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以條粗肥壯、質重堅實、粉性足、色潔白、無腐爛者為佳。",
+    "medicinalDiet": "皮蛋山藥泥、山藥赤豆粥、山藥燉排骨湯、山藥紅棗芡實湯。",
+    "sourceBook": "《藥膳學》第36-37頁",
+    "page": 36,
+    "status": "published"
+  },
+  {
+    "id": 118,
+    "name": "黨參",
+    "scientificName": "桔梗科植物黨參或川黨參",
+    "pinyin": "黨參",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第37頁"
+      }
+    ],
+    "family": "健脾益肺/養血生津 (桔梗科根)",
+    "partsUsed": "健脾益肺/養血生津 (桔梗科根)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第37頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "黨參",
+      "健脾益肺/養血生津 (桔梗科根)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "肺"
+    ],
+    "efficacy": "健脾補肺，益氣養血，生津止渴。為平民人參。 脾胃虛弱、食少便溏、四肢無力、肺氣不足喘咳、氣血兩虛面黃、津傷口渴。",
+    "cautions": "藥膳中常用以替代人參，補氣而性平和，不易上火。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以根條肥大、粗實、皮緊肉厚、橫紋多、香氣濃、味甜嚼之無渣者為佳。",
+    "medicinalDiet": "黃耆黨參燉烏雞、黨參枸杞紅棗湯、參苓粥。",
+    "sourceBook": "《藥膳學》第37頁",
+    "page": 37,
+    "status": "published"
+  },
+  {
+    "id": 119,
+    "name": "阿膠",
+    "scientificName": "馬科動物黑驢皮經熬製加工而成",
+    "pinyin": "阿膠",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第37頁"
+      }
+    ],
+    "family": "滋陰補血/潤肺止血 (馬科驢皮膠)",
+    "partsUsed": "滋陰補血/潤肺止血 (馬科驢皮膠)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第37頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "阿膠",
+      "滋陰補血/潤肺止血 (馬科驢皮膠)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "肺",
+      "肝",
+      "腎"
+    ],
+    "efficacy": "滋陰養血，補肺潤燥，止血安胎。 血虛萎黃、眩暈心悸、虛勞咯血吐血、崩漏便血、胎漏下血、陰虛心煩失眠。",
+    "cautions": "補血第一名膠，滋補婦女氣血、調經安胎之聖品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以整齊平正、黑褐色如琥珀、質硬脆、斷面光亮、無腥臭氣、經夏不軟者為佳。",
+    "medicinalDiet": "阿膠核桃芝麻膏、阿膠燉雞蛋、阿膠黃酒羹。",
+    "sourceBook": "《藥膳學》第37頁",
+    "page": 37,
+    "status": "published"
+  },
+  {
+    "id": 120,
+    "name": "酸棗仁",
+    "scientificName": "鼠李科植物酸棗",
+    "pinyin": "酸棗仁",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第37-38頁"
+      }
+    ],
+    "family": "養心安神/斂汗 (鼠李科種子)",
+    "partsUsed": "養心安神/斂汗 (鼠李科種子)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第37-38頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "酸棗仁",
+      "養心安神/斂汗 (鼠李科種子)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘",
+      "酸"
+    ],
+    "channels": [
+      "心",
+      "脾",
+      "肝",
+      "膽"
+    ],
+    "efficacy": "養肝寧心，安神益智，斂汗生津。 虛煩不眠、驚悸怔忡、煩渴虛汗、神經衰弱、健忘。",
+    "cautions": "中醫治失眠第一神品，生用炒用皆能寧心，炒用安神力尤優。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以粒大、飽滿、有光澤、外皮紅棕色、種仁黃白色者為佳。",
+    "medicinalDiet": "酸棗仁粥、酸棗仁龍眼百合湯、酸棗仁茶。",
+    "sourceBook": "《藥膳學》第37-38頁",
+    "page": 37,
+    "status": "published"
+  },
+  {
+    "id": 121,
+    "name": "蓮子",
+    "scientificName": "睡蓮科水生草本植物蓮的乾燥成熟種子",
+    "pinyin": "蓮子",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第38頁"
+      }
+    ],
+    "family": "補脾止瀉/益腎固精/安神 (睡蓮科種子)",
+    "partsUsed": "補脾止瀉/益腎固精/安神 (睡蓮科種子)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第38頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "蓮子",
+      "補脾止瀉/益腎固精/安神 (睡蓮科種子)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘",
+      "澀"
+    ],
+    "channels": [
+      "脾",
+      "腎",
+      "心"
+    ],
+    "efficacy": "清心醒脾，補脾止瀉，益腎固精，養心安神。健脾固腸。 脾虛久瀉、大便溏泄、男子遺精淋濁、婦女帶下、心悸失眠多夢、妊娠腰酸。",
+    "cautions": "臺灣名湯四神湯四大主角之一，兼顧健脾止瀉與安神固精。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以粒大飽滿、色白、無蟲蛀、易煮爛者為佳（蓮子心偏於清心火）。",
+    "medicinalDiet": "紅棗銀耳蓮子湯、蓮子百合排骨湯、四神湯。",
+    "sourceBook": "《藥膳學》第38頁",
+    "page": 38,
+    "status": "published"
+  },
+  {
+    "id": 122,
+    "name": "羊奶頭",
+    "scientificName": "桑科植物臺灣天仙果",
+    "pinyin": "羊奶頭",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第38頁"
+      }
+    ],
+    "family": "疏風清熱/強筋補腎 (桑科天仙果根莖)",
+    "partsUsed": "疏風清熱/強筋補腎 (桑科天仙果根莖)",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第38頁 · 第二章 藥膳常用藥材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "羊奶頭",
+      "疏風清熱/強筋補腎 (桑科天仙果根莖)"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘",
+      "澀"
+    ],
+    "channels": [
+      "肝",
+      "脾",
+      "腎"
+    ],
+    "efficacy": "健脾健胃，清熱利濕，補腎陽，強筋骨，潤肺通乳。 肝炎、腰肌勞損、風濕關節痛、水腫、小便淋痛、乳汁不足、產後或病後虛弱、陽痿。",
+    "cautions": "臺灣極富盛名的本土特色青草藥膳，具獨特奶香味，強壯筋骨、補氣通乳。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以粗莖粗壯、根鬚多、乾燥、氣香、無雜質泥沙者為佳。",
+    "medicinalDiet": "羊奶頭燉土雞湯、羊奶頭燉排骨湯、羊奶頭燉豬腳。",
+    "sourceBook": "《藥膳學》第38頁",
+    "page": 38,
+    "status": "published"
+  },
+  {
+    "id": 123,
+    "name": "蔥",
+    "scientificName": "百合科植物蔥的鱗莖或全株",
+    "pinyin": "蔥",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第42頁"
+      }
+    ],
+    "family": "蔬菜辛香類",
+    "partsUsed": "蔬菜辛香類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第42頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "蔥",
+      "蔬菜辛香類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "辛"
+    ],
+    "channels": [
+      "肺",
+      "胃"
+    ],
+    "efficacy": "發汗解表，散寒通陽，健胃，解毒散瘀。刺激汗腺、促進消化液分泌。 風寒感冒輕症、惡寒發熱、陰寒腹痛、小便不利、癰腫瘡毒。對痢疾桿菌抑制明顯。",
+    "cautions": "蔥白發汗通陽，蔥綠行氣活血；感冒初起發汗必備。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以蔥白長、粗壯、緊實、辛辣味濃者為佳。",
+    "medicinalDiet": "蔥豉湯（蔥白豆豉湯）、蔥白薑茶、蔥燒豆腐。",
+    "sourceBook": "《藥膳學》第42頁",
+    "page": 42,
+    "status": "published"
+  },
+  {
+    "id": 124,
+    "name": "薑",
+    "scientificName": "薑科植物薑的新鮮或老根莖（生薑/老薑/乾薑）",
+    "pinyin": "薑",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第42頁"
+      }
+    ],
+    "family": "蔬菜辛香類",
+    "partsUsed": "蔬菜辛香類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第42頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "薑",
+      "蔬菜辛香類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "辛"
+    ],
+    "channels": [
+      "肺",
+      "脾",
+      "胃"
+    ],
+    "efficacy": "發汗、解熱、止咳、止嘔、祛痰。促進消化液分泌，提高消化功能。 改善水腫、胃寒嘔吐、擴張血管降低血壓、消化功能不良。",
+    "cautions": "民間俗諺：冬吃生薑，不用醫生開藥方。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "生薑肥嫩汁多者利止嘔；老薑纖維多辣味重者利驅寒溫中。",
+    "medicinalDiet": "薑汁撞奶、薑絲鱸魚湯、薑母鴨。",
+    "sourceBook": "《藥膳學》第42頁",
+    "page": 42,
+    "status": "published"
+  },
+  {
+    "id": 125,
+    "name": "大蒜",
+    "scientificName": "百合科植物大蒜的地下鱗莖",
+    "pinyin": "大蒜",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第42頁"
+      }
+    ],
+    "family": "蔬菜辛香類",
+    "partsUsed": "蔬菜辛香類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第42頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "大蒜",
+      "蔬菜辛香類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "辛"
+    ],
+    "channels": [
+      "脾",
+      "胃",
+      "肺"
+    ],
+    "efficacy": "溫中行滯，解毒殺蟲。消除血管中積存脂肪，抗菌降脂。 脘腹冷痛、痢疾泄瀉、百日咳、感冒、癰疽腫毒、高血脂症、動脈硬化。多吃有礙視力。",
+    "cautions": "含大蒜素，天然抗生素與降血脂聖品；陰虛火旺或目疾者少食。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以蒜瓣肥大、緊實、辛辣濃烈、無腐爛發芽者為佳。",
+    "medicinalDiet": "大蒜燉田雞、大蒜蜆湯、黑蒜雞湯。",
+    "sourceBook": "《藥膳學》第42頁",
+    "page": 42,
+    "status": "published"
+  },
+  {
+    "id": 126,
+    "name": "洋蔥",
+    "scientificName": "百合科植物洋蔥的地下鱗莖",
+    "pinyin": "洋蔥",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第42-43頁"
+      }
+    ],
+    "family": "蔬菜辛香類",
+    "partsUsed": "蔬菜辛香類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第42-43頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "洋蔥",
+      "蔬菜辛香類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "辛"
+    ],
+    "channels": [
+      "肺",
+      "脾",
+      "胃"
+    ],
+    "efficacy": "祛痰利尿，健胃潤腸，解毒殺蟲，降脂降壓。含前列腺素A能舒張血管。 動脈硬化、高血脂、高血壓、冠心病、食欲不振、消化不良、腸炎蟲積。",
+    "cautions": "含二烯丙基二硫化物與前列腺素A，保護心血管與抗血栓名品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以球體整齊、堅實、無軟腐、外皮乾爽者為佳。",
+    "medicinalDiet": "洋蔥炒牛肉、洋蔥紅酒飲、洋蔥濃湯。",
+    "sourceBook": "《藥膳學》第42-43頁",
+    "page": 42,
+    "status": "published"
+  },
+  {
+    "id": 127,
+    "name": "韭菜",
+    "scientificName": "百合科植物韭菜的嫩葉",
+    "pinyin": "韭菜",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第43頁"
+      }
+    ],
+    "family": "蔬菜類",
+    "partsUsed": "蔬菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第43頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "韭菜",
+      "蔬菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "辛"
+    ],
+    "channels": [
+      "肝",
+      "胃",
+      "腎"
+    ],
+    "efficacy": "健胃提神，止汗固澀，溫中行氣，活血化瘀，溫腎壯陽。有「起陽草」之稱。 自汗盜汗、跌打損傷、瘀血腫痛、外傷出血、腎虛腰冷陽痿、便秘。",
+    "cautions": "起陽草，春季食用香氣最足，溫陽健胃而助生發。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以葉嫩、色翠綠、無枯黃殘葉者為佳。",
+    "medicinalDiet": "韭菜炒蝦仁、韭菜炒雞蛋、韭菜鮮蚵湯。",
+    "sourceBook": "《藥膳學》第43頁",
+    "page": 43,
+    "status": "published"
+  },
+  {
+    "id": 128,
+    "name": "大白菜",
+    "scientificName": "十字花科植物大白菜的葉球",
+    "pinyin": "大白菜",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第43頁"
+      }
+    ],
+    "family": "蔬菜類",
+    "partsUsed": "蔬菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第43頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "大白菜",
+      "蔬菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘",
+      "淡"
+    ],
+    "channels": [
+      "胃",
+      "大腸"
+    ],
+    "efficacy": "養胃生津，除煩解渴，利尿通便，清熱解毒，消食和中。 感冒、煩渴口乾、百日咳、消化性潰瘍出血、咽乾聲嘶、大便秘結。",
+    "cautions": "百菜不如白菜，富含維生素C與膳食纖維，清熱通腸利胃。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以包心緊實、葉厚、色鮮嫩、無黑斑點者為佳。",
+    "medicinalDiet": "白菜燉豆腐、開水白菜、白菜排骨湯。",
+    "sourceBook": "《藥膳學》第43頁",
+    "page": 43,
+    "status": "published"
+  },
+  {
+    "id": 129,
+    "name": "高麗菜",
+    "scientificName": "十字花科甘藍屬植物結球甘藍的葉球（高麗菜/捲心菜）",
+    "pinyin": "高麗菜",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第43頁"
+      }
+    ],
+    "family": "蔬菜類",
+    "partsUsed": "蔬菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第43頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "高麗菜",
+      "蔬菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "胃",
+      "腎"
+    ],
+    "efficacy": "益脾和胃，緩急止痛，清熱散結，潤腸通便。富含維生素U。 胃及十二指腸潰瘍疼痛、消化性潰瘍、上腹脹痛、胃脘拘急、便秘。搗汁飲服能促進潰瘍癒合。",
+    "cautions": "天然胃菜之王，所含維生素U是修復胃黏膜與消炎止痛最佳成分。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以葉球結實、葉片鮮翠、手感沉重者為佳。",
+    "medicinalDiet": "高麗菜鮮汁、高麗菜番茄豆腐湯、清炒高麗菜枸杞。",
+    "sourceBook": "《藥膳學》第43頁",
+    "page": 43,
+    "status": "published"
+  },
+  {
+    "id": 130,
+    "name": "芹菜",
+    "scientificName": "繖形科植物旱芹或水芹的莖葉",
+    "pinyin": "芹菜",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第43-44頁"
+      }
+    ],
+    "family": "蔬菜類",
+    "partsUsed": "蔬菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第43-44頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "芹菜",
+      "蔬菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "涼",
+    "taste": [
+      "甘",
+      "苦"
+    ],
+    "channels": [
+      "肝",
+      "胃",
+      "膀胱"
+    ],
+    "efficacy": "平肝清熱，祛風利濕，涼血止血，降血壓，降血脂。 高血壓、頭暈目眩、血管硬化、面紅目赤、小便淋痛、尿血便血。搗汁服用降壓效果佳。",
+    "cautions": "天然降壓菜，清肝利尿、保護血管彈性。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以棵大、梗脆嫩、綠色清爽、香氣清新者為佳。",
+    "medicinalDiet": "鮮芹汁、芹菜炒豆乾、芹菜香菇粥。",
+    "sourceBook": "《藥膳學》第43-44頁",
+    "page": 43,
+    "status": "published"
+  },
+  {
+    "id": 131,
+    "name": "菠菜",
+    "scientificName": "藜科植物菠菜的全草及葉",
+    "pinyin": "菠菜",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第44頁"
+      }
+    ],
+    "family": "蔬菜類",
+    "partsUsed": "蔬菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第44頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "菠菜",
+      "蔬菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "涼",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "腸",
+      "胃"
+    ],
+    "efficacy": "潤燥清熱，下氣調中，養血止血，補鐵補鋅，保護眼睛延緩老化。 貧血萎黃、腸燥便秘、痔瘡出血、夜盲症、高血壓、消渴。",
+    "cautions": "含豐富葉酸、胡蘿蔔素與鐵質；烹調前宜先汆燙去草酸。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以葉色濃綠、根部鮮紅、質嫩無老梗者為佳。",
+    "medicinalDiet": "菠菜豬肝湯、菠菜炒蛋、涼拌芝麻菠菜。",
+    "sourceBook": "《藥膳學》第44頁",
+    "page": 44,
+    "status": "published"
+  },
+  {
+    "id": 132,
+    "name": "白蘿蔔",
+    "scientificName": "十字花科植物蘿蔔的新鮮肉質根（萊菔）",
+    "pinyin": "白蘿蔔",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第44頁"
+      }
+    ],
+    "family": "根莖蔬菜類",
+    "partsUsed": "根莖蔬菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第44頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "白蘿蔔",
+      "根莖蔬菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "涼",
+    "taste": [
+      "甘",
+      "辛"
+    ],
+    "channels": [
+      "肺",
+      "胃"
+    ],
+    "efficacy": "消積滯，化痰熱，下氣寬中，解毒利尿。能破除體內致癌物亞硝胺。 消化不良、腹脹噯氣、痰咳氣喘、便秘、咽乾消渴。",
+    "cautions": "俗稱小人參；生吃消食清火，熟吃下氣化痰。服人參時不宜同食。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以條形勻稱、皮光色白、掂之沉重不空心者為佳。",
+    "medicinalDiet": "白蘿蔔排骨湯、蜂蜜蘿蔔汁、蘿蔔絲煎蛋。",
+    "sourceBook": "《藥膳學》第44頁",
+    "page": 44,
+    "status": "published"
+  },
+  {
+    "id": 133,
+    "name": "胡蘿蔔",
+    "scientificName": "繖形科植物胡蘿蔔的新鮮肉質根",
+    "pinyin": "胡蘿蔔",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第44頁"
+      }
+    ],
+    "family": "根莖蔬菜類",
+    "partsUsed": "根莖蔬菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第44頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "胡蘿蔔",
+      "根莖蔬菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "肺"
+    ],
+    "efficacy": "健脾消食，補肝明目，清熱解毒，透疹，降氣止咳。 夜盲症、小兒營養不良、角膜乾燥、麻疹透發不暢、高血壓、腸胃不適。",
+    "cautions": "富含β-胡蘿蔔素，為脂溶性維生素，以油脂熱炒食用吸收率最高。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以根形平直、色橘紅、質細嫩脆甜者為佳。",
+    "medicinalDiet": "胡蘿蔔炒肉絲、胡蘿蔔排骨湯、胡蘿蔔蘋果汁。",
+    "sourceBook": "《藥膳學》第44頁",
+    "page": 44,
+    "status": "published"
+  },
+  {
+    "id": 134,
+    "name": "絲瓜",
+    "scientificName": "葫蘆科植物絲瓜或粵絲瓜的新鮮果實（老者為絲瓜絡）",
+    "pinyin": "絲瓜",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第44-45頁"
+      }
+    ],
+    "family": "瓜果蔬菜類",
+    "partsUsed": "瓜果蔬菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第44-45頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "絲瓜",
+      "瓜果蔬菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "涼",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "肺",
+      "肝",
+      "胃"
+    ],
+    "efficacy": "清熱化痰，涼血解毒，通經活絡，利尿消腫，通乳下乳。 夏季暑熱煩渴、痰喘咳嗽、咽喉腫痛、血淋、便血、產後乳少、關節麻木（絡）。",
+    "cautions": "夏日降火清熱美容勝品，瓜汁更有「美人水」之稱。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以條直勻稱、瓜條嫩綠、拿捏彈性佳、無老筋者為佳。",
+    "medicinalDiet": "蛤蜊絲瓜湯、絲瓜炒麵線、絲瓜枸杞湯。",
+    "sourceBook": "《藥膳學》第44-45頁",
+    "page": 44,
+    "status": "published"
+  },
+  {
+    "id": 135,
+    "name": "金針",
+    "scientificName": "百合科植物萱草或黃花菜的乾燥花蕾（黃花菜/忘憂草）",
+    "pinyin": "金針",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第45頁"
+      }
+    ],
+    "family": "花菜類",
+    "partsUsed": "花菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第45頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "金針",
+      "花菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "涼",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "肝",
+      "脾",
+      "腎"
+    ],
+    "efficacy": "化濕利水，清熱通淋，止渴消煩，健胃，通乳，消腫退火。富含卵磷脂健腦。 心煩失眠、健忘、小便淋痛、水腫、乳汁不足、產後虛弱。天然美容聖品。",
+    "cautions": "古名萱草忘憂，富含維生素A與卵磷脂，安神助眠、通乳健腦。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以色澤黃褐微金、花條完整、香氣清爽、無二氧化硫殘留者為佳。",
+    "medicinalDiet": "金針排骨湯、香菇木耳炒金針、金針燉土雞。",
+    "sourceBook": "《藥膳學》第45頁",
+    "page": 45,
+    "status": "published"
+  },
+  {
+    "id": 136,
+    "name": "香菇",
+    "scientificName": "側耳科真菌香蕈的子實體",
+    "pinyin": "香菇",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第45頁"
+      }
+    ],
+    "family": "蕈菌類",
+    "partsUsed": "蕈菌類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第45頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "香菇",
+      "蕈菌類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "胃",
+      "脾"
+    ],
+    "efficacy": "補氣健脾，和胃益腎，抗腫瘤，增強免疫。含香菇多醣與麥角固醇。 脾胃虛弱、食少倦怠、高血脂、動脈硬化、小兒軟骨病、免疫低下、貧血。",
+    "cautions": "富含麥角固醇經日曬轉為維生素D，菇多糖能大幅提升抗病防癌免疫力。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以朵圓整齊、菌蓋肉厚下捲、柄短、菌褶白皙、香氣濃郁者為佳（冬菇/花菇）。",
+    "medicinalDiet": "香菇枸杞燉土雞湯、香菇栗子炆雞、香菇排骨粥。",
+    "sourceBook": "《藥膳學》第45頁",
+    "page": 45,
+    "status": "published"
+  },
+  {
+    "id": 137,
+    "name": "黑木耳",
+    "scientificName": "木耳科真菌木耳",
+    "pinyin": "黑木耳",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第45頁"
+      }
+    ],
+    "family": "蕈菌類",
+    "partsUsed": "蕈菌類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第45頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "黑木耳",
+      "蕈菌類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "胃",
+      "大腸"
+    ],
+    "efficacy": "補氣養血，潤肺清腸，活血止血，防血栓形成。含木耳多醣改善便秘。 腸風便血、痔瘡出血、高血脂、動脈硬化、血管栓塞、習慣性便秘、貧血。",
+    "cautions": "血管清道夫，抗血小板凝集、降血脂防血栓之養生聖品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以朵大肉厚、色青黑無白雜質、手捏乾燥易脆、泡發率高者為佳。",
+    "medicinalDiet": "涼拌黑木耳、黑木耳紅棗桂圓湯、木耳炒肉絲。",
+    "sourceBook": "《藥膳學》第45頁",
+    "page": 45,
+    "status": "published"
+  },
+  {
+    "id": 138,
+    "name": "苦瓜",
+    "scientificName": "葫蘆科植物苦瓜的新鮮果實",
+    "pinyin": "苦瓜",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第45頁"
+      }
+    ],
+    "family": "瓜果蔬菜類",
+    "partsUsed": "瓜果蔬菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第45頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "苦瓜",
+      "瓜果蔬菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "苦"
+    ],
+    "channels": [
+      "心",
+      "脾",
+      "胃"
+    ],
+    "efficacy": "清暑滌熱，明目解毒，瀉火除煩，散瘀消腫。增強血管彈性防微血管破裂。 夏日熱病煩渴、中暑熱痱、目赤腫痛、痢疾腹痛、消渴（糖尿病降血糖）。",
+    "cautions": "含植物胰島素胜肽，清熱降火抗糖尿病名品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以瓜條均稱、果瘤粗大圓滑、色白亮或翠綠、手感堅實者為佳。",
+    "medicinalDiet": "鳳梨苦瓜雞湯、苦瓜排骨湯、涼拌苦瓜片。",
+    "sourceBook": "《藥膳學》第45頁",
+    "page": 45,
+    "status": "published"
+  },
+  {
+    "id": 139,
+    "name": "冬瓜",
+    "scientificName": "葫蘆科植物冬瓜的新鮮果實（皮肉瓤子皆可入藥）",
+    "pinyin": "冬瓜",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第46頁"
+      }
+    ],
+    "family": "瓜果蔬菜類",
+    "partsUsed": "瓜果蔬菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第46頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "冬瓜",
+      "瓜果蔬菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "甘",
+      "淡"
+    ],
+    "channels": [
+      "肺",
+      "大腸",
+      "小腸",
+      "膀胱"
+    ],
+    "efficacy": "利水消痰，清熱解毒，生津除煩，減肥降脂。防止黑色素沉澱。 水腫腹脹、小便不利、暑熱煩渴、消渴、肥胖症、痤瘡面斑。",
+    "cautions": "不含脂肪且含丙醇二酸抑制醣類轉化為脂肪，利尿減重第一瓜。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以肉厚、白霜多、肉質緊實、皮色深綠者為佳。",
+    "medicinalDiet": "冬瓜蛤蜊排骨湯、冬瓜薏仁湯、冬瓜排骨煨湯。",
+    "sourceBook": "《藥膳學》第46頁",
+    "page": 46,
+    "status": "published"
+  },
+  {
+    "id": 140,
+    "name": "番茄",
+    "scientificName": "茄科植物番茄的新鮮果實",
+    "pinyin": "番茄",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第46頁"
+      }
+    ],
+    "family": "茄果蔬菜類",
+    "partsUsed": "茄果蔬菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第46頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "番茄",
+      "茄果蔬菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "甘",
+      "酸"
+    ],
+    "channels": [
+      "肝",
+      "胃",
+      "肺"
+    ],
+    "efficacy": "生津止渴，健胃消食，清熱解毒，保護血管彈性，預防血栓及防癌。 熱病口渴、食欲不振、高血壓、動脈硬化、前列腺肥大與抗氧化預防癌症。",
+    "cautions": "富含茄紅素（Lycopene），經油脂加熱熟煮後吸收率大幅增加。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以果形圓整、色深紅熟透、無空洞腐爛者為佳。",
+    "medicinalDiet": "番茄炒蛋、番茄豆腐牛肉湯、番茄羅宋湯。",
+    "sourceBook": "《藥膳學》第46頁",
+    "page": 46,
+    "status": "published"
+  },
+  {
+    "id": 141,
+    "name": "蓮藕",
+    "scientificName": "睡蓮科植物蓮的肥大地下莖",
+    "pinyin": "蓮藕",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第46頁"
+      }
+    ],
+    "family": "根莖水生類",
+    "partsUsed": "根莖水生類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第46頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "蓮藕",
+      "根莖水生類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "心",
+      "脾",
+      "胃"
+    ],
+    "efficacy": "生用清熱生津、涼血散瘀、解酒除煩；熟用補脾益胃、滋陰生血、止瀉收斂。 吐血衄血、咳血尿血、食少泄瀉、煩渴口乾、動脈硬化、產後瘀血（生用不忌）。",
+    "cautions": "生用涼血散瘀，熟用健脾補血；民間有「男不離韭，女不離藕」之說。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以藕節肥短、外皮黃褐色無外傷、斷面肉色均勻者為佳。",
+    "medicinalDiet": "蓮藕排骨湯、蜜汁糯米藕、鮮藕汁、涼拌鮮藕片。",
+    "sourceBook": "《藥膳學》第46頁",
+    "page": 46,
+    "status": "published"
+  },
+  {
+    "id": 142,
+    "name": "海帶",
+    "scientificName": "海帶科海帶屬植物海帶的乾燥葉狀體（昆布）",
+    "pinyin": "海帶",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第46-47頁"
+      }
+    ],
+    "family": "藻類海產蔬菜",
+    "partsUsed": "藻類海產蔬菜",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第46-47頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "海帶",
+      "藻類海產蔬菜"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "鹹"
+    ],
+    "channels": [
+      "肝",
+      "胃",
+      "腎"
+    ],
+    "efficacy": "軟堅散結，消痰平喘，利水消腫，清熱降壓。含豐富褐藻酸鈉與碘。 癭瘤瘰癧（甲狀腺腫大）、高血壓、水腫、腳氣、動脈硬化、高血脂、便秘。",
+    "cautions": "含大量有機碘與褐藻酸，降膽固醇、防動脈硬化與軟化腫塊良品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以葉寬厚、色深褐或深綠、表面附著白霜（甘露醇）多者為佳。",
+    "medicinalDiet": "海帶排骨湯、涼拌海帶絲、海帶冬瓜消脂湯。",
+    "sourceBook": "《藥膳學》第46-47頁",
+    "page": 46,
+    "status": "published"
+  },
+  {
+    "id": 143,
+    "name": "紫菜",
+    "scientificName": "紅毛菜科植物紫菜的乾燥葉狀體",
+    "pinyin": "紫菜",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第47頁"
+      }
+    ],
+    "family": "藻類海產蔬菜",
+    "partsUsed": "藻類海產蔬菜",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第47頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "紫菜",
+      "藻類海產蔬菜"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "甘",
+      "鹹"
+    ],
+    "channels": [
+      "肺",
+      "腎"
+    ],
+    "efficacy": "軟堅化痰，利水通淋，清熱降壓，補腎養心。富含碘質、蛋白質與微量元素。 癭瘤瘰癧、甲狀腺腫、水腫淋病、腳氣、熱咳痰稠、高血壓病。",
+    "cautions": "海中之菜，含碘量極高，軟堅散結通淋要角。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以色紫紅而有光澤、片薄均勻、口感脆嫩無泥沙者為佳。",
+    "medicinalDiet": "紫菜蛋花湯、紫菜吻仔魚湯、紫菜飯糰。",
+    "sourceBook": "《藥膳學》第47頁",
+    "page": 47,
+    "status": "published"
+  },
+  {
+    "id": 144,
+    "name": "南瓜",
+    "scientificName": "葫蘆科植物南瓜的新鮮果實及成熟種子（南瓜子）",
+    "pinyin": "南瓜",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第47頁"
+      }
+    ],
+    "family": "瓜果蔬菜類",
+    "partsUsed": "瓜果蔬菜類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第47頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "南瓜",
+      "瓜果蔬菜類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "胃"
+    ],
+    "efficacy": "補中益氣，消炎止痛，利尿生津；南瓜子驅蟲消腫，保養前列腺。 脾虛氣弱、食少腹脹、百日咳、痔瘡；南瓜子治絛蟲蛔蟲、前列腺肥大、產後手足水腫。",
+    "cautions": "果肉補中益氣降血糖；南瓜子配檳榔煎服為驅殺絛蟲要方。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以瓜皮堅硬老熟、果肉金黃厚實、糖分充足者為佳。",
+    "medicinalDiet": "南瓜濃湯、南瓜蒸排骨、南瓜十穀米飯。",
+    "sourceBook": "《藥膳學》第47頁",
+    "page": 47,
+    "status": "published"
+  },
+  {
+    "id": 145,
+    "name": "龍眼",
+    "scientificName": "無患子科植物龍眼的假種皮（新鮮龍眼/龍眼肉/桂圓）",
+    "pinyin": "龍眼",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第47頁"
+      }
+    ],
+    "family": "果品類",
+    "partsUsed": "果品類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第47頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "龍眼",
+      "果品類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "心",
+      "脾"
+    ],
+    "efficacy": "補心安神，養血益脾，增智延壽。為抗衰老滋補名品。 思慮過度勞傷心脾、驚悸怔忡、失眠健忘、貧血萎黃、產後體虛大補。",
+    "cautions": "滋補心脾養血安神之聖品，陰虛火旺或痰熱內盛者慎服。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以肉厚、色棕黃半透明、味極甘甜、乾爽不黏手者為佳。",
+    "medicinalDiet": "桂圓紅棗茶、桂圓蓮子粥、桂圓麻油煎蛋。",
+    "sourceBook": "《藥膳學》第47頁",
+    "page": 47,
+    "status": "published"
+  },
+  {
+    "id": 146,
+    "name": "葡萄",
+    "scientificName": "葡萄科植物葡萄的成熟果實",
+    "pinyin": "葡萄",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第47頁"
+      }
+    ],
+    "family": "果品類",
+    "partsUsed": "果品類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第47頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "葡萄",
+      "果品類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘",
+      "酸"
+    ],
+    "channels": [
+      "肺",
+      "脾",
+      "腎"
+    ],
+    "efficacy": "補氣血，強筋骨，健脾胃，利小便，安胎通淋。 氣血虛弱、肺虛咳嗽、心悸盜汗、風濕痹痛、小便淋澀、妊娠水腫胎動。",
+    "cautions": "富含白藜蘆醇與花青素，抗氧化、護心血管與補血上品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以串整粒滿、果粉濃厚、色澤紫黑深艷、味甘多汁者為佳。",
+    "medicinalDiet": "葡萄乾桂圓粥、鮮葡萄汁、紅酒浸洋蔥。",
+    "sourceBook": "《藥膳學》第47頁",
+    "page": 47,
+    "status": "published"
+  },
+  {
+    "id": 147,
+    "name": "蘋果",
+    "scientificName": "薔薇科植物蘋果的成熟果實",
+    "pinyin": "蘋果",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第47-48頁"
+      }
+    ],
+    "family": "果品類",
+    "partsUsed": "果品類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第47-48頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "蘋果",
+      "果品類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘",
+      "酸"
+    ],
+    "channels": [
+      "脾",
+      "肺"
+    ],
+    "efficacy": "生津止渴，潤肺除煩，健脾開胃，解暑醒酒，分解脂肪，軟化血管。 中氣不足、消化不良、輕度腹瀉與便秘雙向調節、煩熱口渴、高血壓病。",
+    "cautions": "果膠生吃通便、蒸熟止瀉；每日一蘋果，排毒又降膽固醇。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以果形端正、色澤紅潤、手感重、果皮無病斑者為佳。",
+    "medicinalDiet": "肉桂蘋果茶、蘋果銀耳排骨湯、蒸蘋果。",
+    "sourceBook": "《藥膳學》第47-48頁",
+    "page": 47,
+    "status": "published"
+  },
+  {
+    "id": 148,
+    "name": "木瓜",
+    "scientificName": "番木瓜科植物番木瓜",
+    "pinyin": "木瓜",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第48頁"
+      }
+    ],
+    "family": "果品類",
+    "partsUsed": "果品類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第48頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "木瓜",
+      "果品類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "酸"
+    ],
+    "channels": [
+      "肝",
+      "脾",
+      "胃"
+    ],
+    "efficacy": "平肝和胃，去濕舒筋，健脾消食，通乳抗痙攣。 吐瀉轉筋、風濕痹痛、腳氣水腫、食少消化不良、婦女產後缺乳。",
+    "cautions": "含木瓜蛋白酶，分解肉類蛋白質極佳，通乳舒筋名膳原料。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以果肉厚實、色橙黃、香氣濃、甘甜多汁者為佳。",
+    "medicinalDiet": "青木瓜燉排骨湯、木瓜燉雪蛤、木瓜鮮奶。",
+    "sourceBook": "《藥膳學》第48頁",
+    "page": 48,
+    "status": "published"
+  },
+  {
+    "id": 149,
+    "name": "核桃",
+    "scientificName": "胡桃科植物胡桃的成熟種仁（胡桃仁）",
+    "pinyin": "核桃",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第48-49頁"
+      }
+    ],
+    "family": "堅果類",
+    "partsUsed": "堅果類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第48-49頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "核桃",
+      "堅果類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "腎",
+      "肺",
+      "大腸"
+    ],
+    "efficacy": "補腎固精，溫肺定喘，潤腸通便，補腦增智，潤膚烏髮。有「萬歲子」之稱。 腎虛腰酸腿軟、陽痿遺精、虛寒喘嗽、腸燥便秘、鬚髮早白、記憶力減退。",
+    "cautions": "形似大腦，富含亞麻酸與維生素E，中醫自古推崇以形補形、健腦補腎。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以仁肉飽滿肥白、無油脂敗酸哈喇味、外膜淡黃者為佳。",
+    "medicinalDiet": "核桃芝麻黑豆糊、核桃燉豬腰、琥珀核桃仁。",
+    "sourceBook": "《藥膳學》第48-49頁",
+    "page": 48,
+    "status": "published"
+  },
+  {
+    "id": 150,
+    "name": "栗子",
+    "scientificName": "殼斗科植物板栗",
+    "pinyin": "栗子",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第48頁"
+      }
+    ],
+    "family": "堅果類",
+    "partsUsed": "堅果類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第48頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "栗子",
+      "堅果類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "胃",
+      "腎"
+    ],
+    "efficacy": "養胃健脾，補腎強筋，活血止血。被稱為「腎之果」。 脾胃虛寒泄瀉、反胃、腎虛腰痛腿腳無力、吐血衄血便血、外傷骨折。",
+    "cautions": "腎之果，老人腎虛腰膝酸軟、步履蹣跚者，每日生嚼數枚極有益。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以個大飽滿、外殼紫褐有光澤、果仁金黃甜糯者為佳。",
+    "medicinalDiet": "栗子炆土雞、栗子茯苓粥、栗子燉排骨。",
+    "sourceBook": "《藥膳學》第48頁",
+    "page": 48,
+    "status": "published"
+  },
+  {
+    "id": 151,
+    "name": "芝麻",
+    "scientificName": "胡麻科植物脂麻的乾燥成熟種子（黑芝麻/白芝麻）",
+    "pinyin": "芝麻",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第49頁"
+      }
+    ],
+    "family": "油料種子類",
+    "partsUsed": "油料種子類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第49頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "芝麻",
+      "油料種子類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "肝",
+      "腎",
+      "大腸"
+    ],
+    "efficacy": "滋補肝腎，養血潤燥，潤腸通便，烏髮黑髮，通乳增乳。 肝腎不足、頭暈耳鳴、鬚髮早白、病後脫髮、津枯腸燥便秘、產後缺乳。",
+    "cautions": "仙家延年駐顏上品，富含不飽和脂肪酸、維生素E與鈣質。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以粒大飽滿、色漆黑（黑芝麻）、無雜質泥沙、香氣濃者為佳。",
+    "medicinalDiet": "黑芝麻糊、黑芝麻核桃粥、芝麻山藥糕。",
+    "sourceBook": "《藥膳學》第49頁",
+    "page": 49,
+    "status": "published"
+  },
+  {
+    "id": 152,
+    "name": "山楂",
+    "scientificName": "薔薇科植物山里紅或山楂",
+    "pinyin": "山楂",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第49頁"
+      }
+    ],
+    "family": "消食果品類",
+    "partsUsed": "消食果品類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第49頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "山楂",
+      "消食果品類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "酸"
+    ],
+    "channels": [
+      "脾",
+      "胃",
+      "肝"
+    ],
+    "efficacy": "消食健胃，行氣散瘀，化濁降脂。尤善消化肉積油膩。 肉食積滯、脘腹脹滿、瀉痢腹痛、瘀血經閉痛經、產後瘀血、高血脂症、冠心病、動脈硬化。",
+    "cautions": "消肉食積滯第一要藥，兼具擴張冠狀動脈、降膽固醇奇功。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以皮紅肉厚、氣清香、酸甜適口、核小者為佳。",
+    "medicinalDiet": "山楂決明子茶、山楂洛神菊花茶、山楂陳皮茶。",
+    "sourceBook": "《藥膳學》第49頁",
+    "page": 49,
+    "status": "published"
+  },
+  {
+    "id": 153,
+    "name": "烏梅",
+    "scientificName": "薔薇科植物梅的未成熟果實經燻焙加工而成",
+    "pinyin": "烏梅",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第49-50頁"
+      }
+    ],
+    "family": "收斂果品類",
+    "partsUsed": "收斂果品類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第49-50頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "烏梅",
+      "收斂果品類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "酸",
+      "澀"
+    ],
+    "channels": [
+      "肝",
+      "脾",
+      "肺",
+      "大腸"
+    ],
+    "efficacy": "斂肺止咳，澀腸止瀉，生津止渴，安蛔止痛。酸甘化陰。 肺虛久咳、久瀉久痢、虛熱消渴、蛔厥腹痛（膽道蛔蟲）、嘔吐乾噦。",
+    "cautions": "生津解渴夏令聖品，安蛔止痛、止久咳久瀉之收澀名品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以個大、肉厚、核小、色烏黑、酸味濃郁者為佳。",
+    "medicinalDiet": "酸梅湯（烏梅/山楂/甘草/陳皮）、烏梅冰糖茶。",
+    "sourceBook": "《藥膳學》第49-50頁",
+    "page": 49,
+    "status": "published"
+  },
+  {
+    "id": 154,
+    "name": "紅棗與黑棗",
+    "scientificName": "鼠李科植物棗",
+    "pinyin": "紅棗與黑棗",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第50頁"
+      }
+    ],
+    "family": "補氣養血果品",
+    "partsUsed": "補氣養血果品",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第50頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "紅棗與黑棗",
+      "補氣養血果品"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "胃"
+    ],
+    "efficacy": "補脾和胃，益氣生津，調營衛，養血安神。紅棗偏補脾養心安神，黑棗偏補脾養腎補血。 脾胃虛弱、食少便溏、氣血不足、倦怠心悸、臟躁、調和劇烈藥性。",
+    "cautions": "藥膳中不可或缺之天然甜味滋補品；紅棗補心脾，黑棗補肝腎。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以肉厚核小、皮色光亮、甜味純正者為佳。",
+    "medicinalDiet": "紅棗枸杞茶、黑棗燉排骨、紅棗蒸南瓜。",
+    "sourceBook": "《藥膳學》第50頁",
+    "page": 50,
+    "status": "published"
+  },
+  {
+    "id": 155,
+    "name": "花生",
+    "scientificName": "豆科植物落花生",
+    "pinyin": "花生",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第50頁"
+      }
+    ],
+    "family": "堅果種子類",
+    "partsUsed": "堅果種子類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第50頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "花生",
+      "堅果種子類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "肺"
+    ],
+    "efficacy": "潤肺化痰，溫中和胃，健脾利水，理氣通乳。富含白藜蘆醇與蛋白質。 燥咳少痰、反胃反酸、腳氣水腫、婦女產後缺乳。有「長生果」之稱。",
+    "cautions": "紅衣能升高血小板、止血；發霉花生嚴禁食用以免黃麴毒素傷肝。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以顆粒飽滿、紅衣完整、無受潮發霉（無黃麴毒素）者為佳。",
+    "medicinalDiet": "花生豬腳湯（通乳良方）、花生燉紅棗、花生眉豆湯。",
+    "sourceBook": "《藥膳學》第50頁",
+    "page": 50,
+    "status": "published"
+  },
+  {
+    "id": 156,
+    "name": "番薯",
+    "scientificName": "旋花科植物番薯的地下肉質塊根（地瓜/甘薯）",
+    "pinyin": "番薯",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第50頁"
+      }
+    ],
+    "family": "根莖薯類",
+    "partsUsed": "根莖薯類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第50頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "番薯",
+      "根莖薯類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "腎"
+    ],
+    "efficacy": "補中和血，益氣生津，寬腸胃，通便秘。富含綠原酸與膳食纖維。 脾虛氣弱、大便秘結、津少口渴、小兒疳積、高血壓動脈硬化預防。",
+    "cautions": "通便排毒之天然益腸食品，與生薑、紅糖同煲暖胃又暢腑。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以個頭勻稱、皮色鮮豔、質堅實、無黑斑腐爛者為佳。",
+    "medicinalDiet": "番薯生薑紅糖湯、烤地瓜、地瓜十穀米粥。",
+    "sourceBook": "《藥膳學》第50頁",
+    "page": 50,
+    "status": "published"
+  },
+  {
+    "id": 157,
+    "name": "洛神花",
+    "scientificName": "錦葵科植物玫瑰茄（洛神葵）",
+    "pinyin": "洛神花",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第51頁"
+      }
+    ],
+    "family": "花果茶飲類",
+    "partsUsed": "花果茶飲類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第51頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "洛神花",
+      "花果茶飲類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "涼",
+    "taste": [
+      "酸",
+      "澀"
+    ],
+    "channels": [
+      "心",
+      "肺",
+      "胃"
+    ],
+    "efficacy": "清熱解暑，生津止渴，消食開胃，利尿降壓，解酒醉。富含花青素與原兒茶酸。 暑熱煩渴、肺虛咳嗽、高血壓病、高血脂症、食積腹脹、醉酒不醒。",
+    "cautions": "天然紅寶石茶飲，抗氧化、保護心血管與消除暑熱疲勞之良品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以色紫紅鮮亮、肉質肥厚、花萼完整、酸味濃純者為佳。",
+    "medicinalDiet": "洛神山楂茶、洛神花果醬、洛神冰糖飲。",
+    "sourceBook": "《藥膳學》第51頁",
+    "page": 51,
+    "status": "published"
+  },
+  {
+    "id": 158,
+    "name": "綠豆",
+    "scientificName": "豆科植物綠豆的成熟種子",
+    "pinyin": "綠豆",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第51頁"
+      }
+    ],
+    "family": "豆類",
+    "partsUsed": "豆類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第51頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "綠豆",
+      "豆類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "心",
+      "胃"
+    ],
+    "efficacy": "清熱解毒，消暑除煩，止渴利水。善解百毒（附子、巴豆、重金屬等）。 暑熱煩渴、水腫淋病、瘡癰腫毒、食物中毒、藥物中毒。",
+    "cautions": "綠豆皮偏於清熱解暑，綠豆肉偏於解毒解藥毒；服溫補中藥時宜隔開。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以顆粒飽滿、色翠綠、無蟲蛀、煮之易爛者為佳。",
+    "medicinalDiet": "綠豆薏仁湯、綠豆百合蓮子湯、綠豆海帶排骨湯。",
+    "sourceBook": "《藥膳學》第51頁",
+    "page": 51,
+    "status": "published"
+  },
+  {
+    "id": 159,
+    "name": "黑豆",
+    "scientificName": "豆科植物大豆的黑色種子（烏豆）",
+    "pinyin": "黑豆",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第51頁"
+      }
+    ],
+    "family": "豆類",
+    "partsUsed": "豆類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第51頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "黑豆",
+      "豆類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "腎"
+    ],
+    "efficacy": "補腎益陰，健脾利濕，除熱解毒，活血祛風，烏髮黑髮。 腎虛陰虧、消渴多飲、小便頻數、頭暈目暗、鬚髮早白、腳氣水腫、腰痛痹攣。",
+    "cautions": "黑入腎，補腎陰、生精血首選豆類；青仁黑豆滋補藥力更勝黃仁。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以顆粒均勻、圓潤黑亮、破開內部青綠（青仁黑豆）者為上品。",
+    "medicinalDiet": "黑豆杜仲排骨湯、何首烏黑豆燉雞、黑豆茶。",
+    "sourceBook": "《藥膳學》第51頁",
+    "page": 51,
+    "status": "published"
+  },
+  {
+    "id": 160,
+    "name": "黃豆與豆腐",
+    "scientificName": "豆科植物大豆",
+    "pinyin": "黃豆與豆腐",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第51-52頁"
+      }
+    ],
+    "family": "豆類及豆製品",
+    "partsUsed": "豆類及豆製品",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第51-52頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "黃豆與豆腐",
+      "豆類及豆製品"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "胃",
+      "大腸"
+    ],
+    "efficacy": "健脾利濕，益氣補虛，解毒生肌；豆腐清熱潤燥、生津解毒、和脾胃。 消瘦虛弱、貧血、營養不良、胃火口臭、便秘；富含大豆異黃酮抗衰老。",
+    "cautions": "植物肉代表，植物蛋白與大豆異黃酮極佳來源，降血脂又防骨質疏鬆。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以顆粒飽滿、色金黃純淨、無雜質黴爛者為佳。",
+    "medicinalDiet": "黃豆豬腳湯、香菇燉豆腐、黑芝麻豆腐羹。",
+    "sourceBook": "《藥膳學》第51-52頁",
+    "page": 51,
+    "status": "published"
+  },
+  {
+    "id": 161,
+    "name": "米醋",
+    "scientificName": "穀物（以糯米、高粱或小麥等）經發酵釀造而成",
+    "pinyin": "米醋",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第53頁"
+      }
+    ],
+    "family": "調味發酵類",
+    "partsUsed": "調味發酵類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第53頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "米醋",
+      "調味發酵類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "酸"
+    ],
+    "channels": [
+      "肝",
+      "胃"
+    ],
+    "efficacy": "祛脂降壓，降低膽固醇，消食和中，散瘀解毒，解酒，安神除煩。 食積腹脹、肉食過多、高血壓病、高血脂、動脈硬化、肝炎、蛔厥腹痛。",
+    "cautions": "酸入肝經，軟化血管、消除疲勞促進血液循環之調味聖藥。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以釀造米醋、色黃澄澈、香酸醇厚、回味回甘者為佳。",
+    "medicinalDiet": "薑汁黑豆醋、醋泡花生、蘋果醋沙拉。",
+    "sourceBook": "《藥膳學》第53頁",
+    "page": 53,
+    "status": "published"
+  },
+  {
+    "id": 162,
+    "name": "羊肉",
+    "scientificName": "牛科動物山羊或綿羊的肉",
+    "pinyin": "羊肉",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第53頁"
+      }
+    ],
+    "family": "禽畜肉類",
+    "partsUsed": "禽畜肉類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第53頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "羊肉",
+      "禽畜肉類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "腎"
+    ],
+    "efficacy": "補虛勞，祛寒冷，溫補氣血，益腎氣，助元陽，補益產婦，通乳治帶。 腎虛腰膝酸痛、陽痿精衰、形瘦畏寒、病後虛寒、產婦腹痛虛寒、產後無乳。",
+    "cautions": "冬季溫補第一肉食，暖中祛寒之聖品；陰虛火旺或熱病初起忌服。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以肉質鮮紅、脂肪潔白、彈性緊實、羶氣自然清純者為佳。",
+    "medicinalDiet": "當歸生薑羊肉湯、枸杞燉羊肉、蓯蓉羊肉湯。",
+    "sourceBook": "《藥膳學》第53頁",
+    "page": 53,
+    "status": "published"
+  },
+  {
+    "id": 163,
+    "name": "海參",
+    "scientificName": "刺參科或海參科棘皮動物海參的乾燥體",
+    "pinyin": "海參",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第53頁"
+      }
+    ],
+    "family": "海產水產類",
+    "partsUsed": "海產水產類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第53頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "海參",
+      "海產水產類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "鹹"
+    ],
+    "channels": [
+      "腎",
+      "心",
+      "大腸"
+    ],
+    "efficacy": "補腎益精，養血潤燥，生肌止血，延緩衰老。高蛋白、低脂肪、低膽固醇。 精血虧損、虛弱勞怯、陽痿遺精、小便頻數、腸燥便艱、咯血便血、高血壓肝炎老人調理。",
+    "cautions": "海中人參，補腎精而不燥熱，極宜病後老人滋補與抗衰老。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以體形完整、刺尖挺立、肉厚堅實、無雜質砂石者為上品（刺參尤良）。",
+    "medicinalDiet": "蔥燒海參、海參枸杞小米粥、海參當歸燉烏雞。",
+    "sourceBook": "《藥膳學》第53頁",
+    "page": 53,
+    "status": "published"
+  },
+  {
+    "id": 164,
+    "name": "鯉魚",
+    "scientificName": "鯉科動物鯉魚的新鮮肉",
+    "pinyin": "鯉魚",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第53-54頁"
+      }
+    ],
+    "family": "海產水產類",
+    "partsUsed": "海產水產類",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第53-54頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "鯉魚",
+      "海產水產類"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "腎",
+      "胃"
+    ],
+    "efficacy": "補脾健胃，利水消腫，通乳下乳，清熱解毒，止嗽下氣，安胎。 脾虛水腫、腳氣黃疸、腹水癃閉、氣血不足乳少、孕婦水腫胎動不安。",
+    "cautions": "利水消腫與通乳名魚，搭配赤小豆同燉是水腫病經典食療名方。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以魚鰓鮮紅、鱗片完整光澤、肉質彈性緊實之活魚為佳。",
+    "medicinalDiet": "赤小豆燉鯉魚（利水消腫名方）、白芷鯉魚湯、鯉魚冬瓜湯。",
+    "sourceBook": "《藥膳學》第53-54頁",
+    "page": 53,
+    "status": "published"
+  },
+  {
+    "id": 165,
+    "name": "豬腦",
+    "scientificName": "豬科動物豬的腦髓組織",
+    "pinyin": "豬腦",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第54頁"
+      }
+    ],
+    "family": "豬臟腑部位",
+    "partsUsed": "豬臟腑部位",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第54頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "豬腦",
+      "豬臟腑部位"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "寒",
+    "taste": [
+      "甘",
+      "鹹"
+    ],
+    "channels": [
+      "心",
+      "腦",
+      "腎"
+    ],
+    "efficacy": "補益腦髓，疏風熄風，潤澤生肌。改善記憶力減退。 頭痛、眩暈、失眠、神經衰弱、手足皸裂、癰腫凍瘡。（高血脂與動脈硬化者不宜過食）。",
+    "cautions": "中醫以腦補腦之代表，治頭痛眩暈及神經衰弱，需挑淨血絲。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以新鮮白淨、無血污血塊、質地細嫩不散爛者為佳。",
+    "medicinalDiet": "天麻燉豬腦（天麻3-5錢加豬腦一副隔水清燉）、川芎白芷燉豬腦。",
+    "sourceBook": "《藥膳學》第54頁",
+    "page": 54,
+    "status": "published"
+  },
+  {
+    "id": 166,
+    "name": "豬肝",
+    "scientificName": "豬科動物豬的新鮮肝臟",
+    "pinyin": "豬肝",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第54頁"
+      }
+    ],
+    "family": "豬臟腑部位",
+    "partsUsed": "豬臟腑部位",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第54頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "豬肝",
+      "豬臟腑部位"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘",
+      "苦"
+    ],
+    "channels": [
+      "肝"
+    ],
+    "efficacy": "補肝，養血，明目。富含鐵質、維生素A與蛋白質。 血虛萎黃、夜盲眼乾、目赤昏花、浮腫、疲勞過度引起的肝功能衰退。",
+    "cautions": "以肝補肝、養血補鐵明目聖品，烹調宜熟透。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以色澤褐紅均勻、表面光澤潤滑、無硬結腫塊水泡者為佳。",
+    "medicinalDiet": "菠菜豬肝湯、枸杞葉豬肝湯、麻油豬肝。",
+    "sourceBook": "《藥膳學》第54頁",
+    "page": 54,
+    "status": "published"
+  },
+  {
+    "id": 167,
+    "name": "豬心",
+    "scientificName": "豬科動物豬的心臟組織",
+    "pinyin": "豬心",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第54-55頁"
+      }
+    ],
+    "family": "豬臟腑部位",
+    "partsUsed": "豬臟腑部位",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第54-55頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "豬心",
+      "豬臟腑部位"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘",
+      "鹹"
+    ],
+    "channels": [
+      "心"
+    ],
+    "efficacy": "補虛，安神定驚，養心補血。治心氣虛衰、心神恍惚。 驚悸怔忡、自汗失眠、神志恍惚、心跳心悸不寧。",
+    "cautions": "以心補心，配合酸棗仁、茯神、柏子仁同燉，善治心悸失眠。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以新鮮呈暗紅色、質地堅實、心腔內血塊洗淨者為佳。",
+    "medicinalDiet": "酸棗仁百合燉豬心、丹參燉豬心、當歸燉豬心湯。",
+    "sourceBook": "《藥膳學》第54-55頁",
+    "page": 54,
+    "status": "published"
+  },
+  {
+    "id": 168,
+    "name": "豬肚",
+    "scientificName": "豬科動物豬的胃部組織",
+    "pinyin": "豬肚",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第55頁"
+      }
+    ],
+    "family": "豬臟腑部位",
+    "partsUsed": "豬臟腑部位",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第55頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "豬肚",
+      "豬臟腑部位"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "溫",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "脾",
+      "胃"
+    ],
+    "efficacy": "補虛損，健脾胃。增進消化吸收功能。 虛勞瘦弱、胃寒泄瀉、下痢、消渴、小便頻數、小兒疳積、體虛納呆。",
+    "cautions": "溫補脾胃要角，加白胡椒同燉是改善胃寒腹痛與消化不良之絕妙名品。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以厚實、色白微黃、質韌有彈性、黏膜洗滌潔淨無臭味者為佳。",
+    "medicinalDiet": "白胡椒燉豬肚湯（豬肚一副加白胡椒3錢）、四神豬肚湯、黃耆燉豬肚。",
+    "sourceBook": "《藥膳學》第55頁",
+    "page": 55,
+    "status": "published"
+  },
+  {
+    "id": 169,
+    "name": "豬肺",
+    "scientificName": "豬科動物豬的肺臟組織",
+    "pinyin": "豬肺",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第55頁"
+      }
+    ],
+    "family": "豬臟腑部位",
+    "partsUsed": "豬臟腑部位",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第55頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "豬肺",
+      "豬臟腑部位"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "肺"
+    ],
+    "efficacy": "補肺，止咳，止血。調養呼吸道機能。 肺虛咳嗽、久咳咯血、氣管功能不佳、容易感冒咳嗽。",
+    "cautions": "以肺補肺，與粉光參或百合同燉，大幅改善氣管虛弱與久咳。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以粉紅色、無硬結斑點、灌水沖洗乾淨至潔白者為佳。",
+    "medicinalDiet": "粉光參燉豬肺、川貝杏仁雪梨燉豬肺、百合豬肺湯。",
+    "sourceBook": "《藥膳學》第55頁",
+    "page": 55,
+    "status": "published"
+  },
+  {
+    "id": 170,
+    "name": "豬腎 (豬腰子)",
+    "scientificName": "豬科動物豬的腎臟器官（豬腰子）",
+    "pinyin": "豬腎 (豬腰子)",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第55頁"
+      }
+    ],
+    "family": "豬臟腑部位",
+    "partsUsed": "豬臟腑部位",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第55頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "豬腎 (豬腰子)",
+      "豬臟腑部位"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘",
+      "鹹"
+    ],
+    "channels": [
+      "腎"
+    ],
+    "efficacy": "和理腎氣，通利膀胱，補腎強腰。作用平和溫潤。 腎虛腰痛、身面水腫、遺精、盜汗、老人耳聾耳鳴、腰膝酸軟。",
+    "cautions": "補腎強腰名品，去淨內部白色臊腺，與杜仲配伍是預防腰酸背痛良方。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以表面光滑、淡紅褐色、質嫩緊實、去除白色筋膜臊腺者為佳。",
+    "medicinalDiet": "杜仲燉豬腰（杜仲2錢同煮）、麻油炒腰花、枸杞燉豬腰。",
+    "sourceBook": "《藥膳學》第55頁",
+    "page": 55,
+    "status": "published"
+  },
+  {
+    "id": 171,
+    "name": "豬腳筋",
+    "scientificName": "豬科動物豬腿部的肌腱組織（豬蹄筋）",
+    "pinyin": "豬腳筋",
+    "dialectNames": [
+      {
+        "dialect": "出處",
+        "name": "《藥膳學》第56頁"
+      }
+    ],
+    "family": "豬臟腑部位",
+    "partsUsed": "豬臟腑部位",
+    "activeCompounds": [
+      "多醣類",
+      "揮發油",
+      "微量元素",
+      "天然胺基酸"
+    ],
+    "harvestSeason": "四季常備食材",
+    "terroir": "《藥膳學》第56頁 · 第三章 藥膳常用食材介紹",
+    "region": "全島 (日常餐桌與藥膳食補)",
+    "folkApplication": "日常藥膳食療與燉補",
+    "safetyLevel": "衛福部可供食品使用 / 溫和食療",
+    "solarTermRecommendation": "四季皆宜",
+    "commonNames": [
+      "豬腳筋",
+      "豬臟腑部位"
+    ],
+    "category": "藥膳食療名著典藏",
+    "nature": "平",
+    "taste": [
+      "甘"
+    ],
+    "channels": [
+      "肝",
+      "腎"
+    ],
+    "efficacy": "養血益肝，強筋壯骨，補腰健膝，舒筋活絡。富含膠原蛋白。 關節酸痛、手腳無力、腰膝酸軟、容易扭傷拉傷、筋絡弛緩。",
+    "cautions": "膠原蛋白極為豐富，能強筋骨、增腿力，改善容易扭到筋骨的症狀。",
+    "dailyDosage": "藥膳煲湯 10-30g，或依食譜份量。",
+    "traditionalProcessing": "以色澤白潤微黃、半透明、無腐味、水發後爽脆韌滑者為佳。",
+    "medicinalDiet": "黃耆川七燉豬腳筋（川七5錢、黃耆5錢同蒸）、紅燒蹄筋、杜仲蹄筋湯。",
+    "sourceBook": "《藥膳學》第56頁",
+    "page": 56,
+    "status": "published"
+  }
 ];
 
 module.exports = initialHerbs;

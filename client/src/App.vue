@@ -124,6 +124,11 @@
         />
       </div>
 
+      <!-- 標籤頁：藥膳食療館 (Medicinal Diet 典藏專館與 RAG 智慧問答) - 純淨整潔，無首頁資訊 -->
+      <div v-else-if="!selectedHerbId && activeTab === 'diet'" style="grid-column: 1 / -1;">
+        <MedicinalDietView />
+      </div>
+
       <!-- 標籤頁四：五行經絡引導圖 (Meridian Body Map) - 純淨整潔，無首頁資訊 -->
       <div v-else-if="!selectedHerbId && activeTab === 'meridian'" style="grid-column: 1 / -1;">
         <HerbMeridianMap :herbs="allHerbsFullList" @select-herb="openHerbDetail" />
@@ -557,6 +562,7 @@ const HerbMeridianMap = defineAsyncComponent(() => import('./components/HerbMeri
 const HerbCompareModal = defineAsyncComponent(() => import('./components/HerbCompareModal.vue'));
 const AlliedShopsView = defineAsyncComponent(() => import('./components/AlliedShopsView.vue'));
 const HerbBookshelfView = defineAsyncComponent(() => import('./components/HerbBookshelfView.vue'));
+const MedicinalDietView = defineAsyncComponent(() => import('./components/MedicinalDietView.vue'));
 const UserManualModal = defineAsyncComponent(() => import('./components/UserManualModal.vue'));
 
 import { getSeasonalHerbRecommendation, getCurrentSolarTerm } from './services/solarTerms';

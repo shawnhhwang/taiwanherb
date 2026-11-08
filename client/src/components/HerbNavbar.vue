@@ -77,6 +77,19 @@
 
           <button
             class="nav-tab-btn"
+            :class="{ active: activeTab === 'diet' }"
+            title="藥膳食療 · 《藥膳學》食材名方檢索與名師 RAG 智慧問答"
+            @click="$emit('switch-tab', 'diet')"
+          >
+            <span class="tab-icon">🍲</span>
+            <span class="tab-label">
+              <span class="label-full">藥膳食療</span>
+              <span class="label-short">藥膳</span>
+            </span>
+          </button>
+
+          <button
+            class="nav-tab-btn"
             :class="{ active: activeTab === 'consult' }"
             title="請益本草耆老與風土達人 (RAG 語意問答)"
             @click="$emit('switch-tab', 'consult')"
@@ -328,6 +341,18 @@
             <div class="m-tab-info">
               <span class="m-tab-title">草木書閣</span>
               <span class="m-tab-desc">線上購書與沈浸式線上試閱</span>
+            </div>
+          </button>
+
+          <button
+            class="mobile-tab-card"
+            :class="{ active: activeTab === 'diet' }"
+            @click="handleMobileTabSwitch('diet')"
+          >
+            <span class="m-tab-icon">🍲</span>
+            <div class="m-tab-info">
+              <span class="m-tab-title">藥膳食療</span>
+              <span class="m-tab-desc">《藥膳學》食材名方與名師 RAG 問答</span>
             </div>
           </button>
 

@@ -4,6 +4,8 @@
  */
 const herbRepository = require('../repositories/herbRepository');
 const llmService = require('./llmService');
+const medicinalDietData = require('../data/medicinalDietData');
+const characterFormulas = require('../data/formulasData');
 
 // 四大特色本草專家 Persona 設定 (黃世勳教授為真實學者，其餘三位為常民文化虛擬人物)
 const EXPERTS = {
@@ -75,6 +77,28 @@ const EXPERTS = {
     catchphrase: '「走進山林要先敬畏祖靈。刺蔥的香氣像朝陽，野苦瓜的甘苦像泥土，大地會賜給我們力量。」',
     greeting: 'Sa\'icelen！朋友，聞到太平洋的海風與山林的刺蔥香氣了嗎？歡迎來到大地餐桌。',
     expertise: ['原住民傳統野生草本', '刺蔥昭和草野炊料理', '山林永續採集倫理', '自然共生體質調和']
+  },
+  yaoshan_master: {
+    id: 'yaoshan_master',
+    name: '李昭瑩 藥膳食療名師',
+    title: '《藥膳學》編著者 · 漢方食療與廚藝養生名師',
+    avatar: '🍲',
+    seal: '產學名師',
+    isRealExpert: true,
+    collaborationNote: '《藥膳學》（李昭瑩、王儀絜、黃世勳 編著，文興出版）權威食療依據',
+    characterType: '產學合作權威專家・藥膳食療顧問',
+    region: '臺灣中醫藥膳學術典藏 · 餐桌上的養生之道',
+    tone: '典雅溫厚、精通四氣五味、深諳食材與藥材的廚藝火候搭配，專精以食養生、醫食同源（真實權威學者名師）',
+    catchphrase: '「安身之本，必資於食；不知食宜者，不足以存生。藥借食力，食助藥威，方是餐桌上的健康之道。」',
+    greeting: '您好！我是李昭瑩。在《藥膳學》中，我們將四氣五味、二十四節氣與日常生活食材嚴謹結合。餐桌就是最好的養生堂，讓我們一同探尋道地藥膳與食材調補的美味精華！',
+    expertise: [
+      '《藥膳學》常用藥材與食材食療考證',
+      '四氣五味與臟腑調補配伍',
+      '隔水燉、蒸、煨、扣等古法廚藝工藝',
+      '衛福部公告215項可供食品中藥材應用',
+      '臟腑部位食材（天麻燉豬腦、杜仲豬腰等）對應調養',
+      '四季家庭防病延年養生膳食設計'
+    ]
   },
   kenshin_guide: {
     id: 'kenshin_guide',
@@ -175,7 +199,7 @@ class RagService {
       throw new Error(`找不到 ID 為 ${expertId} 的專家`);
     }
 
-    const builtInIds = ['wanhua_uncle', 'hakka_grandmother', 'pharmacist_phd', 'indigenous_forager', 'kenshin_guide'];
+    const builtInIds = ['wanhua_uncle', 'hakka_grandmother', 'pharmacist_phd', 'indigenous_forager', 'yaoshan_master', 'kenshin_guide'];
     if (builtInIds.includes(expertId)) {
       throw new Error('系統內建核心風土專家與導航助手不可刪除，僅可微調設定');
     }
@@ -341,10 +365,121 @@ class RagService {
       };
     });
 
-    // 依分數降冪排序，若得分均為 0 則挑選經典代表草藥（大花咸豐草、薄荷、甘草）
-    scoredHerbs.sort((a, b) => b.score - a.score);
+    // 4. 《藥膳學》食材與藥膳食譜檢索匹配 (Pages 15-59)
+    const medicinalMatches = medicinalDietData.map(item => {
+      let score = 0;
+      const reasons = [];
 
-    let selected = scoredHerbs.filter(s => s.score > 0).slice(0, 3);
+      if (q.includes(item.name.toLowerCase())) {
+        score += 20;
+        reasons.push(`精準匹配《藥膳學》品項「${item.name}」(${item.bookRef})`);
+      }
+      if (item.medicinalDiet && item.medicinalDiet.split(/[、，, ]/).some(d => d.trim() && q.includes(d.trim()))) {
+        score += 15;
+        reasons.push(`匹配《藥膳學》道地食譜「${item.medicinalDiet}」`);
+      }
+      if (item.indications && q.split(/[，, 、]/).some(part => part.length >= 2 && item.indications.includes(part))) {
+        score += 8;
+        reasons.push(`符合《藥膳學》記載之主治條目`);
+      }
+      if (item.natureFlavor && q.split(/[，, 、]/).some(part => part.length >= 2 && item.natureFlavor.includes(part))) {
+        score += 6;
+        reasons.push(`符合《藥膳學》四氣五味歸經記載`);
+      }
+
+      // 轉換成與 Herb 格式相容的物件結構
+      const herbAdapted = {
+        id: item.id,
+        name: item.name,
+        scientificName: item.subCategory || '《藥膳學》典藏食療',
+        category: item.categoryName,
+        nature: item.natureFlavor,
+        taste: [item.natureFlavor || '甘平'],
+        channels: [item.chapter || '藥膳學'],
+        efficacy: item.functions,
+        folkApplication: item.medicinalDiet ? `【經典藥膳食譜】${item.medicinalDiet}（${item.bookRef}）` : `【食療功效】${item.functions}（${item.bookRef}）`,
+        safetyLevel: item.quality ? `【品質評鑑】${item.quality}` : '常服食補',
+        contraindications: item.notes || '依體質適量食用',
+        region: item.bookRef,
+        isMedicinalDiet: true,
+        dietItem: item
+      };
+
+      return {
+        herb: herbAdapted,
+        score,
+        reason: reasons[0] || `依據《藥膳學》${item.page ? `第${item.page}頁` : ''}之食療記載`
+      };
+    }).filter(m => m.score > 0);
+
+    // 依分數降冪排序草藥庫與藥膳庫
+    scoredHerbs.sort((a, b) => b.score - a.score);
+    medicinalMatches.sort((a, b) => b.score - a.score);
+
+    // 檢索角色傳承配方庫 (含李昭瑩名師 25 道藥膳名方)
+    const formulaMatches = characterFormulas.map(form => {
+      let score = 0;
+      const reasons = [];
+      const fName = form.name.toLowerCase();
+      const fIntent = (form.intent || '').toLowerCase();
+      const fSummary = (form.summary || '').toLowerCase();
+      const fType = (form.typeName || '').toLowerCase();
+
+      if (q.includes(fName) || fName.includes(q)) {
+        score += 30;
+        reasons.push(`精準匹配《藥膳學》傳承配方「${form.name}」(${form.sourceBook || '名方庫'})`);
+      } else if (fName.split('').some((_, i) => i < fName.length - 1 && q.includes(fName.slice(i, i + 2)))) {
+        score += 15;
+        reasons.push(`匹配藥膳名方「${form.name}」關鍵成分`);
+      }
+      if (q.split(/[，, 、]/).some(part => part.length >= 2 && fIntent.includes(part))) {
+        score += 12;
+        reasons.push(`符合配方主治條目「${form.intent.slice(0, 18)}」`);
+      }
+      if (form.composition && form.composition.some(c => q.includes(c.herbName.toLowerCase()))) {
+        score += 10;
+        reasons.push(`方中含匹配藥材`);
+      }
+
+      const herbAdapted = {
+        id: form.id,
+        name: form.name,
+        scientificName: `${form.expertName} · ${form.typeName}`,
+        category: form.typeName || '角色傳承名方',
+        nature: '配伍調和',
+        taste: ['甘潤'],
+        channels: [form.typeName],
+        efficacy: form.intent,
+        folkApplication: `【配方組成】${(form.composition || []).map(c => `${c.herbName}(${c.role}:${c.amount})`).join('、')}。${form.preparation || ''}`,
+        safetyLevel: form.badge || '傳承名方',
+        contraindications: form.contraindications || '依體質適量服用',
+        region: form.sourceBook || '臺灣本草傳承名方庫',
+        isFormula: true,
+        sourceBook: form.sourceBook,
+        page: form.page,
+        formulaItem: form
+      };
+
+      return {
+        herb: herbAdapted,
+        score,
+        reason: reasons[0] || `符合「${form.name}」調理方向`
+      };
+    }).filter(f => f.score > 0);
+
+    formulaMatches.sort((a, b) => b.score - a.score);
+
+    // 若有高分的藥膳配方或食材命中，將其混編至檢索結果最前列
+    let combined = [];
+    if (formulaMatches.length > 0 && formulaMatches[0].score >= 20) {
+      combined = [formulaMatches[0], ...medicinalMatches.slice(0, 2), ...scoredHerbs.filter(s => s.score > 0).slice(0, 1)];
+    } else if (medicinalMatches.length > 0) {
+      combined = [...medicinalMatches.slice(0, 2), ...formulaMatches.slice(0, 1), ...scoredHerbs.filter(s => s.score > 0).slice(0, 1)];
+    } else {
+      combined = scoredHerbs.filter(s => s.score > 0).slice(0, 3);
+    }
+
+    let selected = combined.slice(0, 3);
     if (selected.length === 0) {
       // 預設經典台灣本草
       selected = [
@@ -380,7 +515,12 @@ class RagService {
       folkApplication: herb.folkApplication,
       safetyLevel: herb.safetyLevel,
       thumbnailUrl: herb.thumbnailUrl,
+      region: herb.region,
+      bookRef: herb.formulaItem ? (herb.formulaItem.sourceBook || '《藥膳學》') : (herb.dietItem ? herb.dietItem.bookRef : (herb.region || null)),
+      page: herb.formulaItem ? herb.formulaItem.page : (herb.dietItem ? herb.dietItem.page : null),
+      medicinalDiet: herb.formulaItem ? herb.formulaItem.summary : (herb.dietItem ? herb.dietItem.medicinalDiet : null),
       relevanceReason: reason,
+      isFormula: !!herb.isFormula,
       taiwanHeritage: herb.taiwanHeritage
     }));
 
@@ -581,7 +721,20 @@ class RagService {
       };
     }
 
-    // 8. 全站系統功能總覽 / 說明手冊 / 操作指南 / 怎麼用
+    // 8. 藥膳食療與餐桌食材指南
+    if (/藥膳|食療|餐桌上的醫生|四氣五味|食材|烹調|隔水燉|臟腑部位|可供食品/.test(q) && (/哪裡查|怎麼查|在哪裡|有什麼工具|如何篩選|怎麼找|功能|手冊/.test(q) || expertId === 'kenshin_guide')) {
+      return {
+        key: 'medicinal_diet',
+        name: '藥膳食療與餐桌食材指南（《藥膳學》典藏）',
+        tab: 'consult',
+        actions: [
+          { label: '🍲 請益【李昭瑩 藥膳食療名師】', tab: 'consult' },
+          { label: '📖 查閱【藥膳食療操作手冊】', action: 'manual' }
+        ]
+      };
+    }
+
+    // 9. 全站系統功能總覽 / 說明手冊 / 操作指南 / 怎麼用
     if (/系統有哪些功能|什麼功能可以用|有哪些功能|有什麼可以用|有哪些模組|功能情境|說明手冊|使用手冊|怎麼使用系統|操作指南|平台介紹|怎麼用|如何使用|有哪些工具/.test(q) || expertId === 'kenshin_guide') {
       return {
         key: 'features_overview',
@@ -610,6 +763,48 @@ class RagService {
       greeting = `${expert.greeting}\n\n阿妹阿弟呀，你問的這個功能，咱研究室有很齊全的工具可以查！`;
     } else if (expert.id === 'pharmacist_phd') {
       greeting = `${expert.greeting}\n\n您好！針對您所關注的系統功能與研究情境，本草研究室規劃了完整且嚴謹的模組架構供您運用：`;
+    } else if (expert.id === 'yaoshan_master') {
+      // 李昭瑩 藥膳食療名師風格
+      const dietItem = mainHerb.dietItem || {};
+      const bookPage = dietItem.page ? `《藥膳學》第 ${dietItem.page} 頁` : (mainHerb.region || '《藥膳學》');
+      const dietRecipe = dietItem.medicinalDiet || (mainHerb.folkApplication || '道地藥膳調養');
+
+      reply = `
+${expert.greeting}
+
+欣見您問及「**${query.trim()}**」！唐代孫思邈於《千金要方》有云：*「夫為醫者，當須先洞曉病源，知其所犯，以食治之，食療不愈，然後命藥。」* 在《藥膳學》的體系中，我們強調『四氣調陰陽、五味合臟腑』，每一道端上餐桌的藥膳，都是滋養人體的健康良方。
+
+依循《藥膳學》典藏研究與食材配伍準則，為您推薦最合宜的食療食材與藥膳方案：${herbNames}。
+
+---
+
+### 🍲 【《藥膳學》典籍考證與食材解析：${mainHerb.name}】
+* **典籍出處**：${bookPage}
+* **分類所屬**：${dietItem.chapter || '藥膳學'} · ${dietItem.section || mainHerb.category}
+* **來源與部位**：${dietItem.source || mainHerb.scientificName || '天然優質食材'}
+* **四氣五味與歸經**：${dietItem.natureFlavor || `性${mainHerb.nature}`}
+* **食療功能**：${dietItem.functions || mainHerb.efficacy}
+* **主治調養**：${dietItem.indications || mainHerb.efficacy}
+* **選材品質要領**：${dietItem.quality || '以新鮮無雜質、體質堅實飽滿者為上品。'}
+
+---
+
+### 🍳 【名師私房藥膳工藝：${dietRecipe}】
+1. **食材備料與前置處理**：
+   - 取 **${mainHerb.name}** 為主角，搭配 ${secondaryHerbs.length > 0 ? `**${secondaryHerbs[0].name}** 與優質食材（如土雞、排骨、魚頭或新鮮豆腐）` : '合宜食材與天然高湯'}。
+   - 若為中藥材，應以清水快洗去塵，切勿浸泡過久以免水溶性多醣流失。
+2. **廚藝烹調心法（隔水燉 / 慢火煨）**：
+   - 藥膳首重「**隔水燉**」或「**文火煨**」，內鍋放進調味後的食材與高湯，外鍋放水加蓋，文火慢燉約 45 至 60 分鐘，使藥效充分滲透肉質，精華不揮發。
+   - 起鍋前少鹽、免味精，保持原汁原味與清爽回甘。
+3. **佐使搭配叮嚀**：
+   - ${dietItem.notes || '藥借食力，食助藥威；三少三多守則：少糖、少鹽、少油；多水、多纖、多健康。'}
+
+---
+
+### ⚠️ 【食療守則與體質禁忌】
+> **名師叮囑**：${dietItem.notes || mainHerb.contraindications || '食補需因人、因時、因體質而異。'}
+> 《內經》明言「熱者寒之、寒者熱之」，若屬燥熱火旺體質宜偏寒涼清淡，若屬虛寒體質宜選溫熱補益，循序漸進，切勿暴食偏嗜。
+      `.trim();
     } else if (expert.id === 'indigenous_forager') {
       greeting = `${expert.greeting}\n\nSa'icelen！朋友，這個需求在我們的系統裡有超好用的工具可以幫你！`;
     }
@@ -746,6 +941,34 @@ class RagService {
 
 #### 📍 快速操作路徑：
 - 點擊頂端導覽列上的 **「⚙️ 管理後台」**，或點擊下方快捷按鈕直接前往！
+        `.trim();
+        break;
+
+      case 'medicinal_diet':
+        body = `
+### 🍲 推薦核心模組：【藥膳食療與餐桌食材指南 · 《藥膳學》典藏專區】
+
+若您想**了解藥膳食材性能、四氣五味對應臟腑、餐桌上的醫生、臟腑部位食材、14 道經典養生藥膳或隔水燉燜煨等古法烹調技法**：
+
+#### 🌟 核心功能特色：
+1. **依循《藥膳學》第15至133頁權威典藏**：
+   - 由李昭瑩、王儀絜、黃世勳教授編著，完整收錄第二章常用藥材（溫熱、寒涼、平性）、第三章常用食材（餐桌上的醫生、臟腑部位）與第四至十一章專題藥膳。
+2. **四氣五味食療辨證**：
+   - 寒涼清熱瀉火、溫熱散寒補火、甘緩補虛、辛散行氣活血、苦降瀉下、鹹軟散結。
+3. **經典專題養生名膳庫（涵蓋四季、美容、婦幼與銀髮）**：
+   - **春季升補**：人參山藥烏骨雞湯（大補肺脾元氣）
+   - **夏季健脾消暑**：山藥茯苓健脾包子、燈心苦瓜消暑飲、清心蓮子養神粥
+   - **冬令大補與驅寒**：冬季氣血大補湯、當歸生薑羊肉湯、青蝦炒韭菜
+   - **臟腑部位食療**：天麻隔水燉豬腦（平肝熄風）、杜仲炒腰花（強筋骨腰膝）
+   - **美容瘦身養顏**：百合薏仁美白潤膚湯、山楂烏梅決明降脂茶、四草降火龜苓退熱膏
+   - **婦幼與考生健腦**：桃紅四物調理湯、元氣補腦醒神雞湯、杞菊清肝明目飲
+   - **銀髮滋補延壽**：何首烏黑髮延壽粥、當歸燉土雞、茯苓健脾肉丸、冰糖銀耳蓮子羹、銀杏白果炒雞丁
+4. **衛福部公告 215 項可同時提供食品之中藥材合規清單**。
+5. **烹調工藝心法**：隔水燉（保持精華不散）、扣、拌、煨、蒸、燜。
+
+#### 📍 快速操作路徑：
+- 在專家諮詢茶堂選擇 **「🍲 李昭瑩 藥膳食療名師」**，直接向名師叩問任何食材搭配與食譜！
+- 在方劑實驗室（HerbAlchemyLab）自由調配藥膳食材，享受 AI 君臣佐使平衡判定與神來一配！
         `.trim();
         break;
 
@@ -921,6 +1144,48 @@ ${secondaryHerbs.length > 0 ? `### 🧪 【協同作用配伍 (Synergistic Phyto
 > **禁忌證 (Contraindications)**：${mainHerb.contraindications}
 > **藥物交互作用 (DDI)**：若您目前正在服用抗凝血劑（如 Warfarin）、免疫抑制劑或降血糖藥物，天然多酚類可能影響肝臟 CYP450 酵素代謝，建議間隔 2 小時以上，並務必諮詢專科醫師或藥師。
       `.trim();
+    } else if (expert.id === 'yaoshan_master') {
+      // 李昭瑩 藥膳食療名師風格
+      const dietItem = mainHerb.dietItem || {};
+      const bookPage = dietItem.page ? `《藥膳學》第 ${dietItem.page} 頁` : (mainHerb.region || '《藥膳學》');
+      const dietRecipe = dietItem.medicinalDiet || (mainHerb.folkApplication || '道地藥膳調養');
+
+      reply = `
+${expert.greeting}
+
+欣見您問及「**${query.trim()}**」！唐代孫思邈於《千金要方》有云：*「夫為醫者，當須先洞曉病源，知其所犯，以食治之，食療不愈，然後命藥。」* 在《藥膳學》的體系中，我們強調『四氣調陰陽、五味合臟腑』，每一道端上餐桌的藥膳，都是滋養人體的健康良方。
+
+依循《藥膳學》典藏研究與食材配伍準則，為您推薦最合宜的食療食材與藥膳方案：${herbNames}。
+
+---
+
+### 🍲 【《藥膳學》典籍考證與食材解析：${mainHerb.name}】
+* **典籍出處**：${bookPage}
+* **分類所屬**：${dietItem.chapter || '藥膳學'} · ${dietItem.section || mainHerb.category}
+* **來源與部位**：${dietItem.source || mainHerb.scientificName || '天然優質食材'}
+* **四氣五味與歸經**：${dietItem.natureFlavor || `性${mainHerb.nature}`}
+* **食療功能**：${dietItem.functions || mainHerb.efficacy}
+* **主治調養**：${dietItem.indications || mainHerb.efficacy}
+* **選材品質要領**：${dietItem.quality || '以新鮮無雜質、體質堅實飽滿者為上品。'}
+
+---
+
+### 🍳 【名師私房藥膳工藝：${dietRecipe}】
+1. **食材備料與前置處理**：
+   - 取 **${mainHerb.name}** 為主角，搭配 ${secondaryHerbs.length > 0 ? `**${secondaryHerbs[0].name}** 與優質食材（如土雞、排骨、魚頭或新鮮豆腐）` : '合宜食材與天然高湯'}。
+   - 若為中藥材，應以清水快洗去塵，切勿浸泡過久以免水溶性多醣流失。
+2. **廚藝烹調心法（隔水燉 / 慢火煨）**：
+   - 藥膳首重「**隔水燉**」或「**文火煨**」，內鍋放進調味後的食材與高湯，外鍋放水加蓋，文火慢燉約 45 至 60 分鐘，使藥效充分滲透肉質，精華不揮發。
+   - 起鍋前少鹽、免味精，保持原汁原味與清爽回甘。
+3. **佐使搭配叮嚀**：
+   - ${dietItem.notes || '藥借食力，食助藥威；三少三多守則：少糖、少鹽、少油；多水、多纖、多健康。'}
+
+---
+
+### ⚠️ 【食療守則與體質禁忌】
+> **名師叮囑**：${dietItem.notes || mainHerb.contraindications || '食補需因人、因時、因體質而異。'}
+> 《內經》明言「熱者寒之、寒者熱之」，若屬燥熱火旺體質宜偏寒涼清淡，若屬虛寒體質宜選溫熱補益，循序漸進，切勿暴食偏嗜。
+      `.trim();
     } else if (expert.id === 'indigenous_forager') {
       // 阿美族山林野菜獵人風格
       reply = `
@@ -1014,6 +1279,12 @@ ${secondaryHerbs.length > 0 ? `* **佐使配伍好草**：${secondaryHerbs.map(h
         `從您著述上百本專著的生藥考證來看，此草藥的有效活性成分在高溫久煮後會被破壞嗎？`,
         `您創立與主持多個藥學慈善社團，在日常保健茶飲上最重視哪些用藥安全與西藥交互作用？`
       ];
+    } else if (expert.id === 'yaoshan_master') {
+      return [
+        `李老師，《藥膳學》中提到「隔水燉」與「直接燉」在藥效提取上有何關鍵差異？`,
+        `日常餐桌上如果想用「${mainHerbName}」入膳，最經典的配伍食材與烹調步驟是什麼？`,
+        `請問衛福部公告之215項可同時供食品使用之中藥材，在家庭自煮藥膳時有哪些用量安全指引？`
+      ];
     } else if (expert.id === 'kenshin_guide') {
       return [
         '我想自己調配青草茶飲，系統有什麼工具能用？',
@@ -1087,6 +1358,8 @@ ${secondaryHerbs.length > 0 ? `* **佐使配伍好草**：${secondaryHerbs.map(h
         : `客庄長老親傳 · ${mainName}溫經潤胃飲`;
     } else if (expert.id === 'pharmacist_phd') {
       formulaName = `黃世勳教授研訂 · ${mainName}本草清潤方`;
+    } else if (expert.id === 'yaoshan_master') {
+      formulaName = `李昭瑩名師傳承 · ${mainName}御膳滋補方`;
     } else {
       formulaName = `部落獵人古傳 · ${mainName}山林元氣精力方`;
     }
@@ -1179,6 +1452,20 @@ ${thirdHerb ? `3. **緩釋與生物利用度調控 (佐/使)：${thirdHerb.name}
 `.trim();
       shopAdvice = `建議前往通過檢驗合格、具備產銷履歷之結盟青草店或農會合作門市（如名間鄉草藥產銷門市、吉安鄉青草產銷中心）選購通過農殘重金屬檢驗之合格乾燥品。`;
       caution = `「本配方純屬日常機能性草本飲品，若有長期慢性病正在服用抗凝血劑、降血壓西藥者，建議與常規西藥間隔 2 小時以上分開服用。」`;
+    } else if (expert.id === 'yaoshan_master') {
+      greeting = `「您好！我是李昭瑩。在《藥膳學》中，我們將四氣五味與餐桌食療嚴謹結合。針對您所提的需求：『${userNeeds}』，我依據君臣佐使食療配伍與歷代食醫典籍，為您量身配製這道兼具美味與調養的道地藥膳。」`;
+      explanation = `
+本藥膳**【${formulaName}】**依循《藥膳學》四氣五味合臟腑之調理法則：
+1. **君膳主料：${mainHerb.name}** —— 針對您的體質需求發揮主治食療效用，充養臟腑氣血。
+2. **臣膳輔弼：${secondaryHerb.name}** —— 輔助主藥生發氣陰，相生相旺。
+${thirdHerb ? `3. **佐使相成：${thirdHerb.name}** —— 調和全鍋滋味，護衛脾胃，使補而不滯、滋而不膩。` : ''}
+`.trim();
+      craftsmanship = `
+*   **隔水燉與煨燉心法**：藥膳最講究「隔水燉」或「文火慢煨」，加蓋密封隔水蒸燉 45-60 分鐘，藥效深透且香氣不散。
+*   **調味少鹽免精**：起鍋前僅加微量天然海鹽或米酒提香，保留食材自然清甜。
+`.trim();
+      shopAdvice = `推薦選購衛福部核准之 215 項可供食品使用中藥材，選擇外觀潔淨、無硫磺燻蒸與無霉變之上品食材。`;
+      caution = `「《內經》有云：『熱者寒之，寒者熱之』，藥膳應隨個人寒熱虛實調整，切忌盲目大補或過食寒涼。」`;
     } else {
       greeting = `「Masalu！朋友，來自山林的問候。你說遇到『${userNeeds}』，部落獵人常在山裡走，風吹雨淋、涉溪過澗，身體有任何疲累，山林裡的草木就是最真誠的解方。」`;
       explanation = `

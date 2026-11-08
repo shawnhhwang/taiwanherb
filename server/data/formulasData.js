@@ -723,6 +723,1037 @@ const characterFormulas = [
     },
     featuredShops: ['shop_taitung_taimali', 'shop_hualien_jian']
   }
+,
+  // ==========================================
+  // 5. 李昭瑩 藥膳食療名師 (《藥膳學》編著者 · 四季養生與臟腑食療名膳)
+  // ==========================================
+  {
+    "id": "formula_ys_renshen_chicken",
+    "name": "人參山藥烏骨雞湯",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "四季養生藥膳",
+    "badge": "春季升補首選",
+    "intent": "春季生發正氣、大補肺脾元氣、滋養肝腎、抗虛勞疲乏",
+    "summary": "《藥膳學》春季升補名膳。以紅棗、黨參（或高麗參）、淮山藥搭配烏骨雞文火慢燉，升發體內正氣，預防換季虛損。",
+    "sourceBook": "《藥膳學》第61頁",
+    "page": 61,
+    "composition": [
+      {
+        "herbName": "烏骨雞",
+        "role": "君",
+        "amount": "1 隻",
+        "reason": "君藥。甘平補虛，滋陰補腎，養血益氣，為補益虛損之佳品。"
+      },
+      {
+        "herbName": "山藥",
+        "role": "臣",
+        "amount": "淮山藥 200g",
+        "reason": "臣藥。補脾養胃，生津益肺，補腎澀精，氣陰雙補。"
+      },
+      {
+        "herbName": "黨參",
+        "role": "佐",
+        "amount": "15g (或高麗參)",
+        "reason": "佐藥。補中益氣，健脾益肺，協助人體春天陽氣生發。"
+      },
+      {
+        "herbName": "紅棗",
+        "role": "使",
+        "amount": "30 枚",
+        "reason": "使藥。補中益氣，養血安神，調和百味與甘潤湯頭。"
+      },
+      {
+        "herbName": "枸杞",
+        "role": "使",
+        "amount": "1 大匙",
+        "reason": "使藥。滋補肝腎，益精明目，潤肺和中。"
+      }
+    ],
+    "preparation": "所有食材洗淨，烏骨雞汆燙去血水，一同放入燉鍋中加水漫過食材，大火煮沸後轉小火隔水燉煮 60 分鐘，起鍋前少許鹽調味即可。",
+    "contraindications": "感冒發燒、喉嚨發炎紅腫等實熱外感期暫緩食用。"
+  },
+  {
+    "id": "formula_ys_shanyao_fuling_bao",
+    "name": "山藥茯苓健脾包子",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "四季養生藥膳",
+    "badge": "夏季健脾名點",
+    "intent": "夏季健脾和胃、祛濕利水、養陰生津、消除身重倦怠",
+    "summary": "《藥膳學》夏季健脾藥膳點心。山藥茯苓研粉入餡，健脾胃又利濕濁，避免夏季生冷黏膩礙胃。",
+    "sourceBook": "《藥膳學》第63頁",
+    "page": 63,
+    "composition": [
+      {
+        "herbName": "山藥",
+        "role": "君",
+        "amount": "100g",
+        "reason": "君藥。甘平健脾補肺，益胃生津。"
+      },
+      {
+        "herbName": "茯苓",
+        "role": "臣",
+        "amount": "100g",
+        "reason": "臣藥。利水滲濕，健脾寧心，祛除盛夏暑濕。"
+      },
+      {
+        "herbName": "蓮子",
+        "role": "佐",
+        "amount": "適量",
+        "reason": "佐藥。補脾止瀉，益腎澀精，清心安神。"
+      },
+      {
+        "herbName": "白芍",
+        "role": "佐",
+        "amount": "炒白芍適量",
+        "reason": "佐藥。養血調經，柔肝止痛，斂陰止汗。"
+      },
+      {
+        "herbName": "麵粉",
+        "role": "使",
+        "amount": "200g (白糖150g)",
+        "reason": "使藥。發酵作包子皮與餡料載體，調和五味。"
+      }
+    ],
+    "preparation": "山藥、茯苓研細粉加水調成糊狀，蒸半小時後拌入白糖、炒白芍與蓮子成餡，以發酵麵皮包捏成包子蒸熟即可。",
+    "contraindications": "血糖控制不佳者應減少白糖用量。"
+  },
+  {
+    "id": "formula_ys_dengxin_kugua",
+    "name": "燈心苦瓜消暑飲",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "四季養生藥膳",
+    "badge": "三伏清暑利尿",
+    "intent": "清心降火、清暑解毒、利尿通淋、解尿道赤澀疼痛",
+    "summary": "《藥膳學》盛夏去暑濕利水名茶。苦瓜配伍燈心草，清透心火、引熱下行從小便利出。",
+    "sourceBook": "《藥膳學》第64頁",
+    "page": 64,
+    "composition": [
+      {
+        "herbName": "苦瓜",
+        "role": "君",
+        "amount": "鮮品 1 條",
+        "reason": "君藥。苦寒清暑滌熱、明目解毒。"
+      },
+      {
+        "herbName": "燈心草",
+        "role": "臣",
+        "amount": "3-5 紮",
+        "reason": "臣藥。清心降火，利尿通淋，專導心火下行。"
+      },
+      {
+        "herbName": "茶葉",
+        "role": "使",
+        "amount": "少許",
+        "reason": "使藥。生津止渴，醒脾消滯。"
+      }
+    ],
+    "preparation": "鮮苦瓜去瓤切片，與燈心草洗淨入砂鍋，加水煮沸後轉微火煮 15-20 分鐘，濾渣取清汁當茶頻飲。",
+    "contraindications": "脾胃虛寒容易腹瀉、便溏者慎用。"
+  },
+  {
+    "id": "formula_ys_lianzi_zhou",
+    "name": "清心蓮子養神粥",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "四季養生藥膳",
+    "badge": "清暑安神名粥",
+    "intent": "消暑煩熱、清心火、養心安神、健脾和胃",
+    "summary": "《藥膳學》夏季養心藥粥。蓮子配粳米慢熬，除煩熱止虛汗，安心神助眠。",
+    "sourceBook": "《藥膳學》第65頁",
+    "page": 65,
+    "composition": [
+      {
+        "herbName": "蓮子",
+        "role": "君",
+        "amount": "50g",
+        "reason": "君藥。清心安神，健脾止瀉，益腎固精。"
+      },
+      {
+        "herbName": "粳米",
+        "role": "臣",
+        "amount": "100g (或糙米)",
+        "reason": "臣藥。補脾益胃，滋養陰液，和胃生津。"
+      },
+      {
+        "herbName": "冰糖",
+        "role": "使",
+        "amount": "適量",
+        "reason": "使藥。潤肺生津，調和滋味。"
+      }
+    ],
+    "preparation": "蓮子去心洗淨浸泡 30 分鐘，與淘淨粳米同入鍋，加水大火煮滾轉小火慢熬成稠粥，起鍋前加入適量冰糖溶勻。",
+    "contraindications": "大便燥結、腹脹滿者不宜過量。"
+  },
+  {
+    "id": "formula_ys_qixue_dabu",
+    "name": "冬季氣血大補湯",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "四季養生藥膳",
+    "badge": "冬令十全進補",
+    "intent": "大補氣血、溫補脾腎、防禦嚴寒、改善手足冰冷畏寒",
+    "summary": "《藥膳學》冬令進補代表方。融匯熟地、當歸、黃耆、肉桂、黨參等，佐以豬排骨、雞肉，氣血雙補，暖中驅寒。",
+    "sourceBook": "《藥膳學》第71頁",
+    "page": 71,
+    "composition": [
+      {
+        "herbName": "黃耆",
+        "role": "君",
+        "amount": "15g",
+        "reason": "君藥。大補元氣，益衛固表，利水消腫。"
+      },
+      {
+        "herbName": "當歸",
+        "role": "君",
+        "amount": "10g",
+        "reason": "君藥。補血活血，調經止痛，溫暖經脈。"
+      },
+      {
+        "herbName": "熟地",
+        "role": "臣",
+        "amount": "15g",
+        "reason": "臣藥。滋陰補血，益精填髓。"
+      },
+      {
+        "herbName": "白朮",
+        "role": "臣",
+        "amount": "10g",
+        "reason": "臣藥。健脾益氣，燥濕利水。"
+      },
+      {
+        "herbName": "肉桂",
+        "role": "佐",
+        "amount": "5g",
+        "reason": "佐藥。補火助陽，引火歸原，散寒止痛。"
+      },
+      {
+        "herbName": "生薑",
+        "role": "使",
+        "amount": "3 片 (紅棗5枚)",
+        "reason": "使藥。調和脾胃，溫通營衛。"
+      }
+    ],
+    "preparation": "藥材裝入紗布包，排骨或雞肉洗淨汆燙，加入蔥薑料酒與高湯，大火煮開後轉小火慢燉 1.5 小時，熟爛後下少許鹽即成。",
+    "contraindications": "高血壓未控制、急性化膿性感染或熱性發炎期忌食。"
+  },
+  {
+    "id": "formula_ys_danggui_yangrou",
+    "name": "當歸生薑羊肉湯",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "四季養生藥膳",
+    "badge": "張仲景傳世金方",
+    "intent": "溫中補虛、補氣養血、驅寒止痛、改善產後虛羸或虛寒腹痛",
+    "summary": "《金匱要略》漢代醫聖名方，收錄於《藥膳學》第73頁。當歸生薑羊肉完美配伍，溫暖臟腑筋脈，血虛寒凝之聖方。",
+    "sourceBook": "《藥膳學》第73頁",
+    "page": 73,
+    "composition": [
+      {
+        "herbName": "羊肉",
+        "role": "君",
+        "amount": "500g",
+        "reason": "君藥。甘熱補虛，溫中暖下，開胃健力。"
+      },
+      {
+        "herbName": "當歸",
+        "role": "臣",
+        "amount": "15-20g",
+        "reason": "臣藥。補血活血，調經止痛，溫通血脈。"
+      },
+      {
+        "herbName": "生薑",
+        "role": "佐",
+        "amount": "30-50g",
+        "reason": "佐藥。溫中止嘔，散寒發汗，解羊肉羶氣。"
+      },
+      {
+        "herbName": "黃耆",
+        "role": "佐",
+        "amount": "15g (或黨參)",
+        "reason": "佐藥。加強補氣托毒，扶正固表。"
+      },
+      {
+        "herbName": "米酒",
+        "role": "使",
+        "amount": "2 大匙 (鹽少許)",
+        "reason": "使藥。通經宣導，去腥增香。"
+      }
+    ],
+    "preparation": "羊肉切塊沸水汆燙去血沫。砂鍋中加入清水、當歸、生薑、羊肉、黃耆與米酒，大火煮滾後轉小火慢煨至肉爛湯濃，加鹽調味即可。",
+    "contraindications": "體質實熱、口乾舌燥、咽喉腫痛或便秘者不宜食用。"
+  },
+  {
+    "id": "formula_ys_duzhong_yaozi",
+    "name": "杜仲炒腰花",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "臟腑部位藥膳",
+    "badge": "以形補形名菜",
+    "intent": "補益肝腎、強健筋骨、降血壓、緩解腎虛腰痛足膝無力",
+    "summary": "《藥膳學》臟腑部位食療經典。杜仲濃汁與豬腰爆炒，以形補形，補肝腎而強腰膝。",
+    "sourceBook": "《藥膳學》第55頁 / 第74頁",
+    "page": 74,
+    "composition": [
+      {
+        "herbName": "豬腰",
+        "role": "君",
+        "amount": "1 副 (約250g)",
+        "reason": "君藥。味鹹平，理腎氣，通膀胱，以臟補臟。"
+      },
+      {
+        "herbName": "杜仲",
+        "role": "臣",
+        "amount": "15g",
+        "reason": "臣藥。補肝腎，強筋骨，安胎，降血壓。"
+      },
+      {
+        "herbName": "生薑",
+        "role": "佐",
+        "amount": "片與蔥段適量",
+        "reason": "佐藥。散寒去腥，激發腰花爽脆滋味。"
+      },
+      {
+        "herbName": "紹興酒",
+        "role": "使",
+        "amount": "1 大匙 (白糖少許)",
+        "reason": "使藥。調和醬汁，活血通絡。"
+      }
+    ],
+    "preparation": "豬腰切開剔去白色筋膜，切麥穗花刀，滾水燙過濾乾。杜仲先煎濃汁。鍋下油熱後下蔥薑爆香，投入腰花快炒，淋入杜仲汁與調味料炒勻起鍋。",
+    "contraindications": "高膽固醇、血脂過高者應控制食用頻率。"
+  },
+  {
+    "id": "formula_ys_tianma_nao",
+    "name": "天麻隔水燉豬腦",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "臟腑部位藥膳",
+    "badge": "古法隔水燉",
+    "intent": "平肝熄風、行氣活血、益智健腦、緩解眩暈偏頭痛",
+    "summary": "《藥膳學》第24頁與第54頁收錄之經典燉品。天麻搭配新鮮豬腦隔水蒸燉，藥氣深融，為古傳治偏正頭風神效良方。",
+    "sourceBook": "《藥膳學》第54頁",
+    "page": 54,
+    "composition": [
+      {
+        "herbName": "天麻",
+        "role": "君",
+        "amount": "10-15g (約3-5錢)",
+        "reason": "君藥。息風止痙，平抑肝陽，通絡止痛，治頭風第一神品。"
+      },
+      {
+        "herbName": "豬腦",
+        "role": "臣",
+        "amount": "1 副",
+        "reason": "臣藥。甘寒入腦，補骨髓，益虛勞，滋腎健腦。"
+      },
+      {
+        "herbName": "川芎",
+        "role": "佐",
+        "amount": "5g",
+        "reason": "佐藥。活血行氣，祛風止痛，上行頭目引藥上達。"
+      },
+      {
+        "herbName": "枸杞",
+        "role": "使",
+        "amount": "10g (生薑2片)",
+        "reason": "使藥。滋補肝腎，明目除腥。"
+      }
+    ],
+    "preparation": "天麻洗淨切薄片，豬腦撕去外層紅血絲薄膜洗淨。瓷盅內放入天麻、川芎、豬腦、生薑片，注入清湯加蓋密封，隔水蒸燉 45 分鐘，起鍋加微鹽即食。",
+    "contraindications": "腦中風急性期或體內重度濕熱痰火熾盛者慎服。"
+  },
+  {
+    "id": "formula_ys_baihe_yiren",
+    "name": "百合薏仁美白潤膚湯",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "美容養顏藥膳",
+    "badge": "淡斑美白首選",
+    "intent": "淡化黑色素斑點、清熱利濕排膿、潤肺養陰、使肌膚細緻白皙",
+    "summary": "《藥膳學》第84頁美容專方。薏苡仁健脾去濕軟化角質，百合養陰清熱潤肺皮毛，紅棗補血和中，內外雙調。",
+    "sourceBook": "《藥膳學》第84頁",
+    "page": 84,
+    "composition": [
+      {
+        "herbName": "薏苡仁",
+        "role": "君",
+        "amount": "30g",
+        "reason": "君藥。健脾滲濕，除痹止瀉，清熱排膿，美白淡斑軟化角質。"
+      },
+      {
+        "herbName": "百合",
+        "role": "臣",
+        "amount": "6-10g",
+        "reason": "臣藥。養陰潤肺，清心安神，改善皮膚乾燥與肺陰虛燥。"
+      },
+      {
+        "herbName": "紅棗",
+        "role": "使",
+        "amount": "3 枚",
+        "reason": "使藥。健脾養血，中和薏仁微寒，調和營衛。"
+      }
+    ],
+    "preparation": "薏苡仁溫水浸泡 1 小時，百合洗淨。鍋中加入 800c.c. 水，大火煮滾後轉小火煮 40 分鐘至薏仁軟爛，溫服食用。",
+    "contraindications": "孕婦慎用薏苡仁（具滑利之性）。"
+  },
+  {
+    "id": "formula_ys_jiangzhi_shoushen",
+    "name": "山楂烏梅決明降脂茶",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "輕盈瘦身藥膳",
+    "badge": "消脂消水腫",
+    "intent": "消食化積、活血散瘀、潤腸通便、促進水分代謝排油解膩",
+    "summary": "《藥膳學》第93頁瘦身減肥茶飲。山楂化肉積消血脂，烏梅生津收斂，決明子潤腸通便，清脂不傷正氣。",
+    "sourceBook": "《藥膳學》第93頁",
+    "page": 93,
+    "composition": [
+      {
+        "herbName": "山楂",
+        "role": "君",
+        "amount": "30g",
+        "reason": "君藥。消食健胃，行氣散瘀，化濁降脂，專消肉食油膩。"
+      },
+      {
+        "herbName": "決明子",
+        "role": "臣",
+        "amount": "15g",
+        "reason": "臣藥。清熱明目，潤腸通便，降低血液膽固醇。"
+      },
+      {
+        "herbName": "烏梅",
+        "role": "佐",
+        "amount": "15g",
+        "reason": "佐藥。斂肺止渴，生津除煩，防空腹反酸。"
+      },
+      {
+        "herbName": "冰糖",
+        "role": "使",
+        "amount": "少許 (或不加)",
+        "reason": "使藥。中和酸味，回甘利口。"
+      }
+    ],
+    "preparation": "材料洗淨置壺中，加水 1000c.c. 煮沸後轉小火煎煮 20 分鐘，飯後飲用去油解膩效果最佳。",
+    "contraindications": "胃潰瘍、胃酸過多者宜飯後少量飲用，孕婦不宜。"
+  },
+  {
+    "id": "formula_ys_taohong_siwu",
+    "name": "桃紅四物調理湯",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "婦女保健藥膳",
+    "badge": "活血調經聖藥",
+    "intent": "補養陰血、活血祛瘀、行氣止痛、緩解經期腹痛血塊",
+    "summary": "《醫宗金鑑》傳世名方，收錄於《藥膳學》第97頁。四物湯加桃仁紅花，專治女性氣滯血瘀、經行不暢痛經。",
+    "sourceBook": "《藥膳學》第97頁",
+    "page": 97,
+    "composition": [
+      {
+        "herbName": "熟地",
+        "role": "君",
+        "amount": "15g",
+        "reason": "君藥。滋陰補血，益精填髓。"
+      },
+      {
+        "herbName": "當歸",
+        "role": "君",
+        "amount": "10g",
+        "reason": "君藥。補血活血，調經止痛。"
+      },
+      {
+        "herbName": "白芍",
+        "role": "臣",
+        "amount": "10g",
+        "reason": "臣藥。養血調經，柔肝止痛。"
+      },
+      {
+        "herbName": "川芎",
+        "role": "臣",
+        "amount": "6g",
+        "reason": "臣藥。活血行氣，祛風止痛。"
+      },
+      {
+        "herbName": "桃仁",
+        "role": "佐",
+        "amount": "8g",
+        "reason": "佐藥。活血祛瘀，潤腸通便。"
+      },
+      {
+        "herbName": "紅花",
+        "role": "佐",
+        "amount": "5g",
+        "reason": "佐藥。活血通經，散瘀止痛。"
+      }
+    ],
+    "preparation": "藥材洗淨裝入過濾紗袋，可搭配排骨或土雞肉，加水 1200c.c. 大火煮開轉小火燉 45 分鐘，經前或經後服用。",
+    "contraindications": "月經量過多者、孕婦及出血性疾病者忌服。"
+  },
+  {
+    "id": "formula_ys_yuanqi_kaoshi",
+    "name": "元氣補腦醒神雞湯",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "益智健腦藥膳",
+    "badge": "考生上班族首選",
+    "intent": "增強大腦記憶力、提神醒腦、寧心安神、緩解用腦過度頭昏眼花",
+    "summary": "《藥膳學》第122頁考生健腦名湯。天麻、西洋參、玉竹搭配枸杞與雞腿，滋補氣陰，提升專注力且清涼不上火。",
+    "sourceBook": "《藥膳學》第122頁",
+    "page": 122,
+    "composition": [
+      {
+        "herbName": "雞腿",
+        "role": "君",
+        "amount": "1 隻",
+        "reason": "君藥。溫中益氣，補精填髓，提供優質胺基酸。"
+      },
+      {
+        "herbName": "西洋參",
+        "role": "臣",
+        "amount": "8g",
+        "reason": "臣藥。補氣養陰，清熱生津，提振精神且不易上火。"
+      },
+      {
+        "herbName": "天麻",
+        "role": "臣",
+        "amount": "8g",
+        "reason": "臣藥。平抑肝陽，通絡止痛，保護腦神經消除腦霧。"
+      },
+      {
+        "herbName": "玉竹",
+        "role": "佐",
+        "amount": "8g",
+        "reason": "佐藥。養陰潤燥，生津止渴，生潤脾胃。"
+      },
+      {
+        "herbName": "枸杞",
+        "role": "使",
+        "amount": "10g (紅棗6枚)",
+        "reason": "使藥。補益肝腎，明目清神，調和全湯鮮美甘甜。"
+      }
+    ],
+    "preparation": "將所有藥材洗淨，雞腿切塊汆燙。全部食材放入電鍋內鍋，加入 5 碗水，外鍋加 1 杯水蒸燉至開關跳起，加少許鹽調味即可。",
+    "contraindications": "感冒發燒咽痛期間暫緩飲用。"
+  },
+  {
+    "id": "formula_ys_guizhi_shouwu",
+    "name": "何首烏黑髮延壽粥",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "銀髮延壽藥膳",
+    "badge": "滋補肝腎白髮轉黑",
+    "intent": "補益肝腎、養血益精、烏鬚黑髮、強壯筋骨、預防動脈硬化",
+    "summary": "《藥膳學》第130頁老年保健名方。何首烏先煎取汁，再與糙米紅棗慢熬成粥，補腎固精、抗細胞脂質過氧化。",
+    "sourceBook": "《藥膳學》第130頁",
+    "page": 130,
+    "composition": [
+      {
+        "herbName": "何首烏",
+        "role": "君",
+        "amount": "30g (製首烏)",
+        "reason": "君藥。補肝腎，益精血，烏鬚髮，強筋骨，延緩衰老。"
+      },
+      {
+        "herbName": "糙米",
+        "role": "臣",
+        "amount": "100g",
+        "reason": "臣藥。健脾養胃，富含維生素B群與膳食纖維。"
+      },
+      {
+        "herbName": "黑芝麻",
+        "role": "佐",
+        "amount": "20g",
+        "reason": "佐藥。補肝腎，潤五臟，滑腸潤燥預防便秘。"
+      },
+      {
+        "herbName": "紅棗",
+        "role": "使",
+        "amount": "5 枚",
+        "reason": "使藥。養血安神，中和藥性，甘溫助脾。"
+      }
+    ],
+    "preparation": "製首烏加適量水煎煮 30 分鐘後濾去渣取清汁，將藥汁、糙米、紅棗同入砂鍋中，加水熬煮成軟爛稀粥，早晚空腹溫服。",
+    "contraindications": "大便稀溏腹瀉者不宜過量食用。"
+  },
+  {
+    "id": "formula_ys_fuling_meatball",
+    "name": "茯苓健脾和胃肉丸",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "銀髮延壽藥膳",
+    "badge": "長者健脾軟食",
+    "intent": "滲濕利水、益脾和胃、寧心安神、改善長者消化不良或水腫",
+    "summary": "《藥膳學》第132頁銀髮藥膳佳餚。茯苓研細粉入肉餡做成肉丸，質地軟嫩好入口，健運脾胃水濕。",
+    "sourceBook": "《藥膳學》第132頁",
+    "page": 132,
+    "composition": [
+      {
+        "herbName": "茯苓",
+        "role": "君",
+        "amount": "20g (研細粉)",
+        "reason": "君藥。滲濕利水，健脾寧心，增強銀髮族消化運化機能。"
+      },
+      {
+        "herbName": "豬絞肉",
+        "role": "臣",
+        "amount": "300g (五花肉或梅花肉)",
+        "reason": "臣藥。滋陰潤燥，益氣補中，提供蛋白質。"
+      },
+      {
+        "herbName": "生薑",
+        "role": "佐",
+        "amount": "5g (蔥段10g)",
+        "reason": "佐藥。溫中散寒，理氣化痰，去腥解膩。"
+      },
+      {
+        "herbName": "紅蘿蔔",
+        "role": "佐",
+        "amount": "50g",
+        "reason": "佐藥。健脾消食，潤腸通便，富含胡蘿蔔素。"
+      },
+      {
+        "herbName": "太白粉",
+        "role": "使",
+        "amount": "適量 (鹽、米酒少許)",
+        "reason": "使藥。聚攏肉丸滑嫩質地，調和諸味。"
+      }
+    ],
+    "preparation": "茯苓碾成極細粉。豬絞肉加入茯苓粉、生薑末、鹽、米酒、太白粉攪打起膠，揉成肉丸蒸熟或少油微煎，再入紅蘿蔔高湯燜燒入味即可。",
+    "contraindications": "高血壓高血脂患者宜選用瘦肉絞肉，少油少鹽。"
+  }
+,
+  // --- 《藥膳學》四季、美容、婦幼與銀髮增補經典名方 ---
+  {
+    "id": "formula_ys_qixian_jiucai",
+    "name": "青蝦炒韭菜",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "四季養生藥膳",
+    "badge": "補虛助陽名餚",
+    "intent": "補虛助陽、溫中行氣、散瘀解毒、溫腎暖下改善宮冷與畏寒",
+    "summary": "《藥膳學》第74頁冬春溫補名餚。鮮蝦甘溫補腎益氣，韭菜溫中行氣，兩者相配快炒，溫腎散寒效果極佳。",
+    "sourceBook": "《藥膳學》第74頁",
+    "page": 74,
+    "composition": [
+      {
+        "herbName": "青蝦",
+        "role": "君",
+        "amount": "8 兩 (約300g)",
+        "reason": "君藥。甘溫補腎壯陽，通乳抗衰老。"
+      },
+      {
+        "herbName": "韭菜",
+        "role": "臣",
+        "amount": "3 兩 (約120g)",
+        "reason": "臣藥。溫中行氣，散血解毒，助陽散寒。"
+      },
+      {
+        "herbName": "生薑",
+        "role": "佐",
+        "amount": "薑絲適量",
+        "reason": "佐藥。溫散寒氣，辟腥提味。"
+      },
+      {
+        "herbName": "黃酒",
+        "role": "使",
+        "amount": "1 大匙 (醬油醋適量)",
+        "reason": "使藥。活血行氣，引熱下行。"
+      }
+    ],
+    "preparation": "青蝦洗淨備用，韭菜洗淨切段。油鍋燒熱先下生薑絲爆香，投入青蝦煽炒，加黃酒、醬油提味，再下韭菜大火快炒均勻即可出鍋。",
+    "contraindications": "陰虛火旺或瘡瘍腫毒發炎期不宜食用。"
+  },
+  {
+    "id": "formula_ys_shanyao_tangyuan",
+    "name": "山藥滋陰補腎湯圓",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "四季養生藥膳",
+    "badge": "冬令養陰甜點",
+    "intent": "補腎滋陰、健脾益胃、固精縮尿、調養腰膝酸軟虛寒",
+    "summary": "《藥膳學》第75頁冬令滋陰養腎點心。鮮山藥蒸熟揉泥入餡，搭配糯米粉包裹煮熟，補而不滯。",
+    "sourceBook": "《藥膳學》第75頁",
+    "page": 75,
+    "composition": [
+      {
+        "herbName": "山藥",
+        "role": "君",
+        "amount": "4 兩 (約150g)",
+        "reason": "君藥。甘平補脾養胃，生津益肺，補腎澀精。"
+      },
+      {
+        "herbName": "糯米粉",
+        "role": "臣",
+        "amount": "5 兩半 (約200g)",
+        "reason": "臣藥。溫中補脾，固表止汗。"
+      },
+      {
+        "herbName": "胡椒粉",
+        "role": "佐",
+        "amount": "少許",
+        "reason": "佐藥。辛溫散寒，醒脾開胃。"
+      },
+      {
+        "herbName": "白糖",
+        "role": "使",
+        "amount": "適量",
+        "reason": "使藥。調和甜潤風味。"
+      }
+    ],
+    "preparation": "山藥洗淨蒸熟去皮搗成細泥，加入白糖與胡椒粉拌勻成餡。糯米粉加水揉糰分劑，包入山藥餡捏成湯圓，水沸下鍋煮至浮起即成。",
+    "contraindications": "濕熱內盛、大便秘結或糖尿病患者慎用。"
+  },
+  {
+    "id": "formula_ys_qiaodui_yin",
+    "name": "焦棗陳皮橘對飲",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "四季養生藥膳",
+    "badge": "理氣消食茶飲",
+    "intent": "健脾理氣、和胃消食、燥濕化痰、改善食慾不振與飯後腹脹",
+    "summary": "《藥膳學》第78頁理氣和胃經典茶飲。大紅棗炒焦入脾安神，廣東陳皮理氣醒胃，飯前代茶開胃，飯後代茶消滯。",
+    "sourceBook": "《藥膳學》第78頁",
+    "page": 78,
+    "composition": [
+      {
+        "herbName": "紅棗",
+        "role": "君",
+        "amount": "大紅棗 10 枚 (置鍋炒焦)",
+        "reason": "君藥。健脾益氣，炒焦後能溫中收斂，固腸止瀉。"
+      },
+      {
+        "herbName": "陳皮",
+        "role": "臣",
+        "amount": "1-2 錢 (廣東陳皮)",
+        "reason": "臣藥。理氣健脾，燥濕化痰，消解脘腹脹滿。"
+      }
+    ],
+    "preparation": "大紅棗炒至外皮微焦香，陳皮切細絲，同置保溫杯中，以沸水 500c.c. 沖泡燜蓋 10-15 分鐘，代茶頻飲。",
+    "contraindications": "舌苔黃厚、體內實熱熾盛者少飲。"
+  },
+  {
+    "id": "formula_ys_guiqigao",
+    "name": "四草降火龜苓退熱膏",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "輕盈瘦身藥膳",
+    "badge": "熬夜退火甜品",
+    "intent": "養陰益氣、清熱解毒、消除熬夜火氣、改善口苦便秘與面部痘瘡",
+    "summary": "《藥膳學》第118頁自製退火藥膳凍。土茯苓、龜板配伍咸豐草、薄荷，清熱滋陰，特別適合青年學生與上班族熬夜虛火。",
+    "sourceBook": "《藥膳學》第118頁",
+    "page": 118,
+    "composition": [
+      {
+        "herbName": "土茯苓",
+        "role": "君",
+        "amount": "15g (約4錢)",
+        "reason": "君藥。解毒除濕，通利關節，消除體內濕熱火毒。"
+      },
+      {
+        "herbName": "大花咸豐草",
+        "role": "臣",
+        "amount": "15g",
+        "reason": "臣藥。清熱解毒，退三焦伏火，利尿通淋。"
+      },
+      {
+        "herbName": "薄荷",
+        "role": "佐",
+        "amount": "5g (後下)",
+        "reason": "佐藥。辛涼宣透，疏散上焦風熱，生津開音。"
+      },
+      {
+        "herbName": "天然果膠",
+        "role": "使",
+        "amount": "3 大匙 (冰糖適量)",
+        "reason": "使藥。凝固成果凍載體，甘潤入口。"
+      }
+    ],
+    "preparation": "藥材加水 8 碗大火煮沸後小火煎至 4 碗，起鍋前 10 分鐘下薄荷，濾汁加入冰糖與調勻果膠，倒入模具冷卻冷藏結凍享用。",
+    "contraindications": "孕婦、腹瀉便溏及脾胃極度虛寒者忌服。"
+  },
+  {
+    "id": "formula_ys_qiju_yin",
+    "name": "杞菊清肝明目飲",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "益智健腦藥膳",
+    "badge": "視力緊張急救",
+    "intent": "清肝明目、滋補肝腎、緩解長時間看書螢幕之眼部乾澀脹痛與畏光",
+    "summary": "《藥膳學》第123頁視力緊張症候群專方。枸杞子滋養肝腎陰血，菊花清泄肝經鬱熱，泡茶清芬宜人。",
+    "sourceBook": "《藥膳學》第123頁",
+    "page": 123,
+    "composition": [
+      {
+        "herbName": "枸杞子",
+        "role": "君",
+        "amount": "10g",
+        "reason": "君藥。滋補肝腎，益精明目，富含胡蘿蔔素。"
+      },
+      {
+        "herbName": "菊花",
+        "role": "臣",
+        "amount": "6g (白菊或油菊)",
+        "reason": "臣藥。散風清熱，平肝明目，清熱解毒。"
+      },
+      {
+        "herbName": "冰糖",
+        "role": "使",
+        "amount": "少許",
+        "reason": "使藥。和胃潤肺生津。"
+      }
+    ],
+    "preparation": "枸杞菊花以溫水略沖洗，置入茶壺中注入熱開水 500c.c.，燜泡 5-10 分鐘即可代茶飲用，可回沖 2-3 次。",
+    "contraindications": "風寒感冒初起或腹瀉便溏者暫緩飲用。"
+  },
+  {
+    "id": "formula_ys_ymc_zhou",
+    "name": "益母草生地調經粥",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "婦女保健藥膳",
+    "badge": "經前緊繃舒緩",
+    "intent": "活血調經、利水消腫、清熱涼血、緩解經前煩躁頭痛與下腹脹痛",
+    "summary": "《藥膳學》第124頁婦女經前調養名粥。益母草善調血脈，生地黃滋陰涼血，與白米煮粥溫服，平撫情緒與經痛。",
+    "sourceBook": "《藥膳學》第124頁",
+    "page": 124,
+    "composition": [
+      {
+        "herbName": "益母草",
+        "role": "君",
+        "amount": "30g",
+        "reason": "君藥。婦科要藥，活血調經，利水消腫，清熱解毒。"
+      },
+      {
+        "herbName": "生地黃",
+        "role": "臣",
+        "amount": "30g",
+        "reason": "臣藥。清熱涼血，養陰生津，防止血熱妄行。"
+      },
+      {
+        "herbName": "白米",
+        "role": "使",
+        "amount": "100g (或糙米)",
+        "reason": "使藥。和中健脾，顧護胃氣。"
+      }
+    ],
+    "preparation": "益母草與生地黃洗淨加水煎煮 30 分鐘，濾去藥渣取汁，再加入淘洗乾淨的白米同入砂鍋煮成稀粥食用。",
+    "contraindications": "孕婦忌服，月經已來且量多者暫緩。"
+  },
+  {
+    "id": "formula_ys_danggui_chicken",
+    "name": "當歸燉土雞",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "銀髮延壽藥膳",
+    "badge": "養血益氣補虛",
+    "intent": "補血益氣、溫中健脾、和胃止痛、改善病後體虛與手足不溫",
+    "summary": "《藥膳學》第131頁銀髮補血強身名膳。當歸塞入雞肚內砂鍋慢火煨燉，肉爛湯濃，氣血雙榮。",
+    "sourceBook": "《藥膳學》第131頁",
+    "page": 131,
+    "composition": [
+      {
+        "herbName": "土雞",
+        "role": "君",
+        "amount": "1 隻 (去毛內臟)",
+        "reason": "君藥。甘溫補虛，益氣養血，大補五臟虧損。"
+      },
+      {
+        "herbName": "當歸",
+        "role": "臣",
+        "amount": "30g",
+        "reason": "臣藥。補血活血，調經止痛，潤燥滑腸。"
+      },
+      {
+        "herbName": "生薑",
+        "role": "佐",
+        "amount": "3 片 (米酒少許)",
+        "reason": "佐藥。溫中散寒，去雞腥味。"
+      },
+      {
+        "herbName": "食鹽",
+        "role": "使",
+        "amount": "微量",
+        "reason": "使藥。起鍋前調味提鮮。"
+      }
+    ],
+    "preparation": "土雞洗淨汆燙，將當歸片塞入雞腹內，放入砂鍋加清水適量，大火煮沸撇去浮沫，轉微火慢煨 1.5 小時至雞肉熟爛，加少許鹽即成。",
+    "contraindications": "感冒發燒、急性發炎期或體質燥熱火旺者慎服。"
+  },
+  {
+    "id": "formula_ys_shuanggan_juice",
+    "name": "冰糖雙柑解熱汁",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "銀髮延壽藥膳",
+    "badge": "清心生津果療",
+    "intent": "生津止渴、清心安神、開胃理氣、緩解口乾舌燥與心胸煩熱",
+    "summary": "《藥膳學》第131頁清熱生津果品食療。廣柑與橘柑取鮮果原汁，調入冰糖溫和滋潤，老少咸宜。",
+    "sourceBook": "《藥膳學》第131頁",
+    "page": 131,
+    "composition": [
+      {
+        "herbName": "廣柑",
+        "role": "君",
+        "amount": "500g",
+        "reason": "君藥。生津止渴，開胃理氣，清潤肺胃。"
+      },
+      {
+        "herbName": "椪柑",
+        "role": "臣",
+        "amount": "500g",
+        "reason": "臣藥。潤肺化痰，理氣止咳，富含維生素C與有機酸。"
+      },
+      {
+        "herbName": "冰糖",
+        "role": "使",
+        "amount": "50g",
+        "reason": "使藥。養陰生津，調和酸甘風味。"
+      }
+    ],
+    "preparation": "廣柑、椪柑去皮去核榨取原汁倒入杯中，加入研碎冰糖充分攪拌均勻融化，即可飲用。",
+    "contraindications": "脾胃虛寒容易腹瀉、腹脹便溏者忌過量生食。"
+  },
+  {
+    "id": "formula_ys_yiner_lianzi",
+    "name": "冰糖銀耳蓮子羹",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "銀髮延壽藥膳",
+    "badge": "滋陰潤燥聖品",
+    "intent": "滋陰潤肺、養心安神、降壓通便、改善虛勞乾咳與失眠健忘",
+    "summary": "《藥膳學》第131頁宮廷傳承養生名甜羹。銀耳出膠軟糯，蓮子清心安神，電鍋蒸燉質地晶瑩潤澤。",
+    "sourceBook": "《藥膳學》第131頁",
+    "page": 131,
+    "composition": [
+      {
+        "herbName": "銀耳",
+        "role": "君",
+        "amount": "30g (泡發洗淨)",
+        "reason": "君藥。滋陰潤肺，養胃生津，益氣強心補腦。"
+      },
+      {
+        "herbName": "蓮子",
+        "role": "臣",
+        "amount": "50g",
+        "reason": "臣藥。健脾止瀉，益腎澀精，養心安神。"
+      },
+      {
+        "herbName": "冰糖",
+        "role": "使",
+        "amount": "30g",
+        "reason": "使藥。潤肺生津，引藥入肺胃二經。"
+      }
+    ],
+    "preparation": "蓮子銀耳洗淨泡發，銀耳去蒂剪小朵。把銀耳、蓮子、冰糖置於大碗中加水漫過，放入電鍋外鍋加水 1.5 杯蒸至跳起燜 15 分鐘即可。",
+    "contraindications": "風寒咳嗽或糖尿病患者減糖或慎食。"
+  },
+  {
+    "id": "formula_ys_guihua_hetao",
+    "name": "桂花核桃潤腸凍",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "銀髮延壽藥膳",
+    "badge": "潤腸通便美點",
+    "intent": "清熱解毒、生津潤燥、補腎溫肺、潤腸通便緩解老年燥結",
+    "summary": "《藥膳學》第132頁銀髮藥膳點心。核桃磨漿搭配鮮牛奶與桂花凝凍，香氣清雅、潤滑腸胃防止便秘。",
+    "sourceBook": "《藥膳學》第132頁",
+    "page": 132,
+    "composition": [
+      {
+        "herbName": "核桃仁",
+        "role": "君",
+        "amount": "250g",
+        "reason": "君藥。補腎固精，溫肺定喘，潤腸通便，富含亞麻油酸。"
+      },
+      {
+        "herbName": "牛奶",
+        "role": "臣",
+        "amount": "100g",
+        "reason": "臣藥。補虛損，益肺胃，生津潤腸。"
+      },
+      {
+        "herbName": "桂花",
+        "role": "佐",
+        "amount": "15g",
+        "reason": "佐藥。辛溫散寒，化痰散瘀，芳香開胃醒脾。"
+      },
+      {
+        "herbName": "冰糖",
+        "role": "使",
+        "amount": "適量",
+        "reason": "使藥。調和甜度成凍。"
+      }
+    ],
+    "preparation": "核桃仁加水磨成細漿。冷水煮滾加入冰糖化開，將核桃漿、牛奶與桂花入鍋微火攪拌沸騰，倒入容器放涼冷藏成凍，切塊食用。",
+    "contraindications": "腹瀉便溏者不宜過量食用。"
+  },
+  {
+    "id": "formula_ys_yinxing_chicken",
+    "name": "銀杏白果炒雞丁",
+    "expertId": "yaoshan_master",
+    "expertName": "李昭瑩 藥膳食療名師",
+    "type": "medicinal_diet",
+    "typeName": "銀髮延壽藥膳",
+    "badge": "斂肺定喘名菜",
+    "intent": "斂肺平喘、縮尿止帶、益氣補虛、改善長者咳嗽氣喘與夜尿頻數",
+    "summary": "《藥膳學》第133頁銀髮止咳定喘藥膳名菜。白果斂肺氣止咳喘，搭配嫩雞丁滑炒，鮮香爽口好咀嚼。",
+    "sourceBook": "《藥膳學》第133頁",
+    "page": 133,
+    "composition": [
+      {
+        "herbName": "雞胸肉",
+        "role": "君",
+        "amount": "300g (切1.2公分丁)",
+        "reason": "君藥。溫中益氣，補精填髓，提供高蛋白低脂營養。"
+      },
+      {
+        "herbName": "白果",
+        "role": "臣",
+        "amount": "200g (銀杏熟品)",
+        "reason": "臣藥。斂肺定喘，止帶縮尿，專治老年肺虛咳喘夜尿。"
+      },
+      {
+        "herbName": "蔥段",
+        "role": "佐",
+        "amount": "15g (生薑少許)",
+        "reason": "佐藥。溫通陽氣，辟腥提香。"
+      },
+      {
+        "herbName": "太白粉",
+        "role": "使",
+        "amount": "適量 (鹽蛋清少許)",
+        "reason": "使藥。雞丁上漿滑炒，保持肉質柔嫩多汁。"
+      }
+    ],
+    "preparation": "雞丁加蛋清太白粉上漿。熱鍋下油溫炒雞丁與白果至熟瀝油。鍋留底油爆香蔥段，投入雞丁白果大火快炒，淋太白粉水薄芡炒勻裝盤。",
+    "contraindications": "白果微有毒性，必須熟食，切勿生食或一次過量食用。"
+  }
 ];
 
 module.exports = characterFormulas;

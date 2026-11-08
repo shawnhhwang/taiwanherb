@@ -164,16 +164,17 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.ok(found);
   });
 
-  test('GET /api/consult/experts - 應回傳 5 大專家 Persona 名錄 (含系統導航小助手)', async () => {
+  test('GET /api/consult/experts - 應回傳 6 大專家 Persona 名錄 (含藥膳名師與系統導航小助手)', async () => {
     const { status, body } = await fetchJson('/api/consult/experts');
     assert.equal(status, 200);
     assert.equal(body.success, true);
     assert.ok(Array.isArray(body.data));
-    assert.equal(body.data.length, 5);
+    assert.equal(body.data.length, 6);
     const ids = body.data.map(e => e.id);
     assert.ok(ids.includes('wanhua_uncle'));
     assert.ok(ids.includes('hakka_grandmother'));
     assert.ok(ids.includes('pharmacist_phd'));
+    assert.ok(ids.includes('yaoshan_master'));
     assert.ok(ids.includes('indigenous_forager'));
     assert.ok(ids.includes('kenshin_guide'));
 
@@ -182,7 +183,12 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.equal(huang.isRealExpert, true);
     assert.equal(huang.profileUrl, 'https://webap.cmu.edu.tw/TchEportfolio/index_1/sshuang');
 
-    const virtuals = body.data.filter(e => e.id !== 'pharmacist_phd' && e.id !== 'kenshin_guide');
+    const yaoshan = body.data.find(e => e.id === 'yaoshan_master');
+    assert.ok(yaoshan);
+    assert.ok(yaoshan.name.includes('李昭瑩'));
+    assert.equal(yaoshan.characterType, '產學合作權威專家・藥膳食療顧問');
+
+    const virtuals = body.data.filter(e => e.id !== 'pharmacist_phd' && e.id !== 'kenshin_guide' && e.id !== 'yaoshan_master');
     virtuals.forEach(v => {
       assert.equal(v.isRealExpert, false);
       assert.equal(v.characterType, '知識聊天助理');
@@ -230,6 +236,27 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     assert.ok(body.data.reply.includes('阿婆') || body.data.reply.includes('阿妹阿弟'));
     const hasMoCao = body.data.citations.some(c => c.name === '抹草' || c.name === '艾草');
     assert.ok(hasMoCao);
+  });
+
+  test('POST /api/consult - 李昭瑩名師 RAG 藥膳諮詢與《藥膳學》文獻引用檢索', async () => {
+    const payload = {
+      expertId: 'yaoshan_master',
+      message: '我想了解天麻燉豬腦與隔水燉的藥膳烹調要訣'
+    };
+    const { status, body } = await fetchJson('/api/consult', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    assert.equal(status, 200);
+    assert.equal(body.success, true);
+    assert.ok(body.data.reply);
+    assert.ok(body.data.reply.includes('李昭瑩') || body.data.reply.includes('藥膳'));
+    assert.ok(Array.isArray(body.data.citations));
+    assert.ok(body.data.citations.length > 0);
+    const hasDietBook = body.data.citations.some(c => c.bookRef && c.bookRef.includes('藥膳學'));
+    assert.ok(hasDietBook);
   });
 
   test('POST /api/consult - AGENT 系統導航小助手功能情境問答與快捷跳轉', async () => {
@@ -821,12 +848,19 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
 
   // 8. 角色經典配方庫與 AI 神來一配實驗室測試
   test('Formulas & Divine Blend: 角色傳承名方庫與 AI 神來一配實驗室演算法', async () => {
-    // 8.1 取得 11 道角色經典傳承配方
+    // 8.1 取得全角色經典傳承配方 (含李昭瑩名師 25 道四季養生與臟腑藥膳名方，共 36 道)
     const formulasRes = await fetchJson('/api/formulas');
     assert.equal(formulasRes.status, 200);
     assert.equal(formulasRes.body.success, true);
     assert.ok(Array.isArray(formulasRes.body.data));
-    assert.equal(formulasRes.body.data.length, 11);
+    assert.equal(formulasRes.body.data.length, 36);
+
+    // 8.1.1 驗證藥膳名師李昭瑩配方篩選
+    const yaoshanFormulasRes = await fetchJson('/api/formulas?expertId=yaoshan_master');
+    assert.equal(yaoshanFormulasRes.status, 200);
+    assert.equal(yaoshanFormulasRes.body.data.length, 25);
+    assert.ok(yaoshanFormulasRes.body.data.some(f => f.name.includes('天麻隔水燉豬腦')));
+    assert.ok(yaoshanFormulasRes.body.data.some(f => f.name.includes('銀杏白果炒雞丁')));
 
     // 8.2 依傳承專家篩選 (彭秀妹老藥師客庄藥浴與敷膏)
     const hakkaFormulasRes = await fetchJson('/api/formulas?expertId=hakka_grandma');
@@ -1196,6 +1230,33 @@ describe('🌱 台灣本草 Wiki API 測試套件', () => {
     const booksJson = await booksRes.json();
     assert.equal(booksJson.database, 'books');
     assert.ok(Array.isArray(booksJson.records));
+  });
+
+  test('Medicinal Diet Pavilion: 藥膳食療食材檢索與 RAG 典籍端點驗證', async () => {
+    // 1. 取得完整藥膳食材清單 (110味)
+    const allDietRes = await fetchJson('/api/diet');
+    assert.equal(allDietRes.status, 200);
+    assert.equal(allDietRes.body.success, true);
+    assert.equal(allDietRes.body.data.length, 110);
+
+    // 2. 依分類篩選 (溫熱藥材)
+    const warmRes = await fetchJson('/api/diet?category=herb_warm_hot');
+    assert.equal(warmRes.status, 200);
+    assert.equal(warmRes.body.success, true);
+    assert.equal(warmRes.body.data.length, 30);
+    assert.ok(warmRes.body.data.every(d => d.category === 'herb_warm_hot'));
+
+    // 3. 關鍵字模糊檢索 (天麻)
+    const searchRes = await fetchJson('/api/diet?query=天麻');
+    assert.equal(searchRes.status, 200);
+    assert.equal(searchRes.body.success, true);
+    assert.ok(searchRes.body.data.some(d => d.name === '天麻'));
+
+    // 4. 取得單一食材品項詳情
+    const singleRes = await fetchJson('/api/diet/herb-01');
+    assert.equal(singleRes.status, 200);
+    assert.equal(singleRes.body.data.name, '白芷');
+    assert.ok(singleRes.body.data.bookRef.includes('15'));
   });
 
   test('DEMO Mode & Security: 健康狀態與後台狀態端點應如實回傳 demoMode 屬性', async () => {
